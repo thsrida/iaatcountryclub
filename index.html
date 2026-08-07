@@ -703,7 +703,8 @@
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-envelope"></i> Email<input type="email" id="loginEmail" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-lock"></i> Password<input type="password" id="loginPassword" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         
-        <div style="text-align: right; margin-bottom: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <a href="#" onclick="closeModal('loginModal'); openModal('registerModal'); return false;" style="font-size: 13px; color: var(--accent); font-weight: 600;">Create Account</a>
           <a href="#" onclick="closeModal('loginModal'); openModal('resetModal'); return false;" style="font-size: 13px; color: var(--accent); font-weight: 600;">Forgot Password?</a>
         </div>
 
@@ -724,7 +725,12 @@
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-user"></i> Full Name<input type="text" id="regName" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-envelope"></i> Email<input type="email" id="regEmail" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-lock"></i> Password<input type="password" id="regPassword" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
-        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:12px; border-radius:30px;"><i class="fas fa-user-plus"></i> Register</button>
+        
+        <div style="text-align: right; margin-bottom: 10px;">
+          <a href="#" onclick="closeModal('registerModal'); openModal('loginModal'); return false;" style="font-size: 13px; color: var(--accent); font-weight: 600;">Already have an account? Login</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-user-plus"></i> Register</button>
         <p id="regError" style="color:red; font-size:13px; margin-top:8px; display:none;"></p>
       </form>
     </div>
@@ -739,7 +745,12 @@
       
       <form id="resetForm">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-envelope"></i> Email<input type="email" id="resetEmail" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
-        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:12px; border-radius:30px;"><i class="fas fa-paper-plane"></i> Send Reset Link</button>
+        
+        <div style="text-align: right; margin-bottom: 10px;">
+          <a href="#" onclick="closeModal('resetModal'); openModal('loginModal'); return false;" style="font-size: 13px; color: var(--accent); font-weight: 600;">Back to Login</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-paper-plane"></i> Send Reset Link</button>
         <p id="resetMessage" style="font-size:13px; margin-top:10px; display:none; text-align:center; font-weight:600;"></p>
       </form>
     </div>
@@ -793,6 +804,20 @@
         <button type="button" onclick="closeModal('cancelConfirmModal')" class="btn" style="flex: 1; border-radius: 10px; background: #f1f5f9; border: none;">Keep It</button>
         <button type="button" id="confirmCancelBtn" class="btn" style="flex: 1; border-radius: 10px; background: #dc2626; color: #fff; border: none;">Yes, Cancel</button>
       </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS BOOKING CONFIRMATION MODAL -->
+  <div id="successBookingModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 420px; text-align: center; padding: 35px 24px;">
+      <div style="font-size: 50px; color: #19522d; margin-bottom: 14px;">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h2 style="font-size: 22px; margin-bottom: 10px; color: var(--accent);">Booking Submitted!</h2>
+      <p style="font-size: 15px; color: #444; margin-bottom: 25px; line-height: 1.6; font-weight: 600;">
+        We will reach out to you shortly for confirmation
+      </p>
+      <button type="button" onclick="closeModal('successBookingModal')" class="btn btn-primary" style="width: 100%; border-radius: 30px;">OK</button>
     </div>
   </div>
 
@@ -898,9 +923,9 @@
   <!-- HERO -->
   <section id="home" class="hero">
     <div class="container hero-inner">
-          <div class="hero-image">
-      <img src="https://j.top4top.io/p_3621p11r11.jpg" alt="Iaat Country Club">
-    </div>
+      <div class="hero-image">
+        <img src="https://j.top4top.io/p_3621p11r11.jpg" alt="Iaat Country Club">
+      </div>
       <div class="hero-text">
         <h1>Iaat Country Club</h1>
         <p>Your getaway in Bekaa Valley — chalets, pools, karting, weddings & more.</p>
@@ -1069,8 +1094,7 @@
         <h3 style="color: var(--accent-gold);"><i class="fas fa-headset"></i> Contact Us</h3>
         <p><i class="fas fa-phone" style="margin-right: 6px;"></i> Phone: +961 71 561 003</p>
         <p><i class="fas fa-envelope" style="margin-right: 6px;"></i> Email: iaatcountryclub@gmail.com</p>
-        <p><i class="fas fa-map-marker-alt" style="margin-right: 6px;"></i> Location:
-Iaat, Al Arz Main Road, Lebanon</p>
+        <p><i class="fas fa-map-marker-alt" style="margin-right: 6px;"></i> Location: Iaat, Al Arz Main Road, Lebanon</p>
       </div>
      
       <div class="footer-col">
@@ -1287,15 +1311,8 @@ Iaat, Al Arz Main Road, Lebanon</p>
         document.getElementById("bookingForm").reset();
         handleBookingTypeChange();
 
-        let whatsappMsg = `📌 *NEW BOOKING*%0A%0A🏷️ *Type:* ${type}%0A👤 *Name:* ${data.get("name")}%0A📞 *Phone:* ${data.get("phone")}%0A👥 *Guests:* ${data.get("guests")}%0A`;
-        if(type === 'chalet') {
-          whatsappMsg += `📅 *Check-In:* ${checkinVal}%0A📅 *Check-Out:* ${checkoutVal}%0A`;
-        } else {
-          whatsappMsg += `📅 *Date & Time:* ${checkinVal}%0A`;
-        }
-        whatsappMsg += `📋 *Notes:* ${data.get("notes") || "None"}`;
-        
-        window.location.href = `https://wa.me/96171561003?text=${whatsappMsg}`;
+        // إظهار نافذة التأكيد المطلوبة
+        openModal('successBookingModal');
 
       } catch (err) {
         alert("Error saving your booking. Please try again.");
@@ -1360,8 +1377,6 @@ Iaat, Al Arz Main Road, Lebanon</p>
             container.innerHTML = "<p style='text-align:center; color:#777;'>You have no reservations yet.</p>";
           }
 
-          const cancelMsg = `❌ *تم إلغاء الحجز*%0A%0A🏷️ *Type:* ${bookingType}%0A👤 *Name:* ${clientName}%0A📅 *Date:* ${checkinDate}`;
-          window.open(`https://wa.me/96171561003?text=${cancelMsg}`, '_blank');
           alert("Booking cancelled successfully.");
         } catch (err) {
           alert("Failed to cancel booking. Please try again.");
