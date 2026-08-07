@@ -694,12 +694,15 @@
 
   <!-- LOGIN MODAL -->
   <div id="loginModal" class="modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box" style="text-align: center;">
       <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
+      <div style="margin-bottom: 14px;">
+        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; border-radius: 12px; object-fit: cover;">
+      </div>
       <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-sign-in-alt"></i> Welcome Back</h2>
       <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Login to manage and view your bookings.</p>
       
-      <form id="loginForm">
+      <form id="loginForm" style="text-align: left;">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-envelope"></i> Email<input type="email" id="loginEmail" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-lock"></i> Password<input type="password" id="loginPassword" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         
@@ -716,12 +719,15 @@
 
   <!-- REGISTER MODAL -->
   <div id="registerModal" class="modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box" style="text-align: center;">
       <span class="modal-close" onclick="closeModal('registerModal')">&times;</span>
+      <div style="margin-bottom: 14px;">
+        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; border-radius: 12px; object-fit: cover;">
+      </div>
       <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-user-plus"></i> Create Account</h2>
       <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Join us to instantly save and track your reservations.</p>
       
-      <form id="registerForm">
+      <form id="registerForm" style="text-align: left;">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-user"></i> Full Name<input type="text" id="regName" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-envelope"></i> Email<input type="email" id="regEmail" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-lock"></i> Password<input type="password" id="regPassword" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
@@ -738,12 +744,15 @@
 
   <!-- RESET PASSWORD MODAL -->
   <div id="resetModal" class="modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box" style="text-align: center;">
       <span class="modal-close" onclick="closeModal('resetModal')">&times;</span>
+      <div style="margin-bottom: 14px;">
+        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; border-radius: 12px; object-fit: cover;">
+      </div>
       <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-key"></i> Reset Password</h2>
       <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Enter your email and we'll send you a password reset link.</p>
       
-      <form id="resetForm">
+      <form id="resetForm" style="text-align: left;">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-envelope"></i> Email<input type="email" id="resetEmail" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         
         <div style="text-align: right; margin-bottom: 10px;">
@@ -878,7 +887,7 @@
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-envelope"></i> Email (Optional)<input type="email" id="bookEmail" name="email" placeholder="Enter your email" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
 
         <div id="dateSection" style="display:none; gap: 10px; flex-wrap: wrap;">
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-In<input type="date" id="checkinDate" name="checkin" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-In<input type="date" id="checkinDate" name="checkin" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;" onchange="updateCheckoutMin()"></label>
           <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-Out<input type="date" id="checkoutDate" name="checkout" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         </div>
 
@@ -1411,9 +1420,37 @@
   </script>
 
   <script>
+    // تعيين أقل تاريخ مسموح اختياره في حقول التواريخ (تاريخ اليوم حصراً)
+    function setMinDates() {
+      const today = new Date().toISOString().split('T')[0];
+      const checkin = document.getElementById("checkinDate");
+      const checkout = document.getElementById("checkoutDate");
+      const singleDate = document.getElementById("singleDate");
+
+      if(checkin) checkin.min = today;
+      if(checkout) checkout.min = today;
+      if(singleDate) singleDate.min = today;
+    }
+
+    // تحديث الحد الأدنى لتاريخ المغادرة بناءً على تاريخ الوصول
+    function updateCheckoutMin() {
+      const checkin = document.getElementById("checkinDate");
+      const checkout = document.getElementById("checkoutDate");
+      if(checkin && checkout && checkin.value) {
+        checkout.min = checkin.value;
+        if(checkout.value && checkout.value < checkin.value) {
+          checkout.value = checkin.value;
+        }
+      }
+    }
+    window.updateCheckoutMin = updateCheckoutMin;
+
     function openModal(id) {
       document.querySelector(".main-nav")?.classList.remove("open");
       document.getElementById(id).style.display = "flex";
+      if(id === 'bookingModal') {
+        setMinDates();
+      }
     }
 
     function closeModal(id) {
@@ -1432,6 +1469,8 @@
       const checkoutInput = document.getElementById("checkoutDate");
       const singleDateInput = document.getElementById("singleDate");
       const singleTimeInput = document.getElementById("singleTime");
+
+      setMinDates();
 
       if (type === 'chalet') {
         if(dateSection) dateSection.style.display = "flex";
