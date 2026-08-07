@@ -1225,7 +1225,7 @@
         if(navBookingsBtn) navBookingsBtn.style.display = "none";
         if(navSettingsBtn) navSettingsBtn.style.display = "none";
 
-        if(bookingForm) bookingForm.style.display = "flex";
+        if(bookingForm) bookingForm.style.display = "none";
         if(loginRequiredNotice) loginRequiredNotice.style.display = "block";
       }
     });
@@ -1315,7 +1315,7 @@
 
     window.submitBookingToFirebase = async function(e, data) {
       if (!currentUser) {
-        alert("Please login first to make and save your reservation!");
+        closeModal('bookingModal');
         openModal('loginModal');
         return;
       }
@@ -1525,6 +1525,10 @@
     window.handleBookingTypeChange = handleBookingTypeChange;
 
     window.openBookingModal = function(type = '') {
+      if (!window.currentUser) {
+        openModal('loginModal');
+        return;
+      }
       if (type) {
         const select = document.getElementById("bookingType");
         if(select) {
