@@ -853,13 +853,13 @@
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-envelope"></i> Email (Optional)<input type="email" id="bookEmail" name="email" placeholder="Enter your email" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
 
         <div id="dateSection" style="display:none; gap: 10px; flex-wrap: wrap;">
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-In<input type="date" id="checkinDate" name="checkin" style="width: 80%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-Out<input type="date" id="checkoutDate" name="checkout" style="width: 80%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-In<input type="date" id="checkinDate" name="checkin" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-Out<input type="date" id="checkoutDate" name="checkout" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         </div>
 
         <div id="singleDateSection" style="display:flex; gap: 10px; flex-wrap: wrap;">
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Booking Date<input type="date" id="singleDate" name="single_date" style="width: 80%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-clock"></i> Booking Time<input type="time" id="singleTime" name="single_time" style="width: 80%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Booking Date<input type="date" id="singleDate" name="single_date" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-clock"></i> Booking Time<input type="time" id="singleTime" name="single_time" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         </div>
 
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-users"></i> Guests<input type="number" name="guests" min="1" value="2" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
@@ -1069,7 +1069,8 @@
         <h3 style="color: var(--accent-gold);"><i class="fas fa-headset"></i> Contact Us</h3>
         <p><i class="fas fa-phone" style="margin-right: 6px;"></i> Phone: +961 71 561 003</p>
         <p><i class="fas fa-envelope" style="margin-right: 6px;"></i> Email: iaatcountryclub@gmail.com</p>
-        <p><i class="fas fa-map-marker-alt" style="margin-right: 6px;"></i> Location: Iaat, Baalbek-Hermel, Lebanon</p>
+        <p><i class="fas fa-map-marker-alt" style="margin-right: 6px;"></i> Location:
+Iaat, Al Arz Main Road, Lebanon</p>
       </div>
      
       <div class="footer-col">
@@ -1146,7 +1147,10 @@
         if(navSettingsBtn) navSettingsBtn.style.display = "flex";
 
         const bookEmail = document.getElementById("bookEmail");
+        const bookName = document.getElementById("bookName");
         if(bookEmail) bookEmail.value = user.email;
+        if(bookName && user.displayName) bookName.value = user.displayName;
+
         if(bookingForm) bookingForm.style.display = "flex";
         if(loginRequiredNotice) loginRequiredNotice.style.display = "none";
       } else {
@@ -1337,12 +1341,10 @@
       }
     };
 
-    // فتح نافذة التأكيد المنبثقة
     window.cancelBooking = function(docId, bookingType, clientName, checkinDate) {
       openModal('cancelConfirmModal');
       
       const confirmBtn = document.getElementById("confirmCancelBtn");
-      // إزالة أي أحداث سابقة لمنع التكرار
       const newConfirmBtn = confirmBtn.cloneNode(true);
       confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
@@ -1394,14 +1396,14 @@
   </script>
 
   <script>
-function openModal(id) {
-  document.querySelector(".main-nav")?.classList.remove("open");
-  document.getElementById(id).style.display = "flex";
-}
+    function openModal(id) {
+      document.querySelector(".main-nav")?.classList.remove("open");
+      document.getElementById(id).style.display = "flex";
+    }
 
-function closeModal(id) {
-  document.getElementById(id).style.display = "none";
-}
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
 
     window.openModal = openModal;
     window.closeModal = closeModal;
@@ -1446,26 +1448,19 @@ function closeModal(id) {
     };
 
     function filterNavSections() {
-  const input = document.getElementById("navSearchInput").value.toLowerCase();
-  const links = document.querySelectorAll(".main-nav > a");
-  
-  links.forEach(link => {
-    
-    // لا تُظهر Bookings و Settings إذا لم يسجل المستخدم الدخول
-    if (
-  !window.currentUser &&
-  (link.id === "navBookingsBtn" || link.id === "navSettingsBtn")
-) {
-  link.style.display = "none";
-  return;
-}
-    
-    const text = link.textContent.toLowerCase();
-    link.style.display = text.includes(input) ? "flex" : "none";
-  });
-}
-
-window.filterNavSections = filterNavSections;
+      const input = document.getElementById("navSearchInput").value.toLowerCase();
+      const links = document.querySelectorAll(".main-nav > a");
+      
+      links.forEach(link => {
+        if (!window.currentUser && (link.id === "navBookingsBtn" || link.id === "navSettingsBtn")) {
+          link.style.display = "none";
+          return;
+        }
+        const text = link.textContent.toLowerCase();
+        link.style.display = text.includes(input) ? "flex" : "none";
+      });
+    }
+    window.filterNavSections = filterNavSections;
 
     window.addEventListener('click', function(e) {
       document.querySelectorAll('.modal-overlay').forEach(modal => {
