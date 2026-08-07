@@ -141,7 +141,7 @@
     .logo { 
       display: flex; 
       align-items: center; 
-      gap: 20px; 
+      gap: 50px; 
       font-size: 19px; 
       font-weight: 800; 
       color: var(--accent);
@@ -1321,36 +1321,51 @@
       }
       
       const type = data.get("booking_type");
+      const name = data.get("name");
+      const phone = data.get("phone");
+      const email = data.get("email") || "N/A";
+      const guests = data.get("guests");
+      const notes = data.get("notes") || "None";
+      
       let checkinVal = "N/A";
       let checkoutVal = "N/A";
+      let dateTimeText = "";
 
       if (type === 'chalet') {
         checkinVal = data.get("checkin") || "N/A";
         checkoutVal = data.get("checkout") || "N/A";
+        dateTimeText = `%0A📥 *Check-In:* ${checkinVal}%0A📤 *Check-Out:* ${checkoutVal}`;
       } else {
         const sDate = data.get("single_date") || "N/A";
         const sTime = data.get("single_time") || "N/A";
         checkinVal = `${sDate} at ${sTime}`;
+        dateTimeText = `%0A📅 *Date:* ${sDate}%0A⏰ *Time:* ${sTime}`;
       }
 
       try {
+        // Save to Firebase
         await addDoc(collection(db, "bookings"), {
           userId: currentUser.uid,
           userEmail: currentUser.email,
           bookingType: type,
-          name: data.get("name"),
-          phone: data.get("phone"),
-          email: data.get("email"),
-          guests: data.get("guests"),
+          name: name,
+          phone: phone,
+          email: email,
+          guests: guests,
           checkin: checkinVal,
           checkout: checkoutVal,
-          notes: data.get("notes") || "",
+          notes: notes,
           createdAt: serverTimestamp()
         });
 
         closeModal('bookingModal');
         document.getElementById("bookingForm").reset();
         handleBookingTypeChange();
+
+        // Send to WhatsApp
+        const waMessage = `🛎️ *NEW BOOKING REQUEST*%0A%0A🏢 *Type:* ${type.toUpperCase()}%0A👤 *Name:* ${name}%0A📞 *Phone:* ${phone}%0A📧 *Email:* ${email}${dateTimeText}%0A👥 *Guests:* ${guests}%0A💬 *Notes:* ${notes}`;
+        const waUrl = `https://wa.me/96171561003?text=${waMessage}`;
+        window.open(waUrl, '_blank');
 
         openModal('successBookingModal');
 
@@ -1451,13 +1466,12 @@
       minDate: "today"
     });
     flatpickr("#singleTime", {
-  enableTime: true,
-  noCalendar: true,
-  dateFormat: "H:i",
-  time_24hr: false
-});
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: false
+    });
     
-
     function updateCheckoutMin() {
       const checkin = document.getElementById("checkinDate");
       const checkout = document.getElementById("checkoutDate");
