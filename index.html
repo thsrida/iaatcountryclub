@@ -8,6 +8,9 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  
   <style>
     :root {
       --bg: #faf9f5;
@@ -31,6 +34,23 @@
       color: var(--text); 
       line-height: 1.6; 
       overflow-x: hidden;
+    }
+
+    /* --- LUXURY IMAGE LOADER & SHIMMER EFFECT --- */
+    img {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmerLoading 1.5s infinite;
+    }
+
+    img.loaded {
+      background: none;
+      animation: none;
+    }
+
+    @keyframes shimmerLoading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
     
     .container { 
@@ -121,7 +141,7 @@
     .logo { 
       display: flex; 
       align-items: center; 
-      gap: 52px; 
+      gap: 20px; 
       font-size: 19px; 
       font-weight: 800; 
       color: var(--accent);
@@ -129,6 +149,7 @@
 
     .logo img {
       height: 42px;
+      width: 42px;
       border-radius: 10px;
       object-fit: cover;
     }
@@ -592,6 +613,7 @@
     }
     .social-links a.insta { color: #fbad50; }
     .social-links a.fb { color: #1877f2; }
+    .social-links a.wa { color: #25d366; }
     .social-links a.tok { color: #fff; }
     .social-links a:hover { transform: scale(1.15); display: inline-block; }
 
@@ -660,7 +682,7 @@
   <header class="site-header">
     <div class="header-inner container">
       <div class="logo">
-        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Iaat Country Club">
+        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Iaat Country Club" onload="this.classList.add('loaded')">
         <span>Iaat Country Club</span>
       </div>
       
@@ -680,7 +702,6 @@
         <a href="#hours"><i class="fas fa-clock"></i> Hours</a>
         <a href="#" onclick="openJobPopup(event)"><i class="fas fa-briefcase"></i> Careers</a>
         
-        <!-- العناصر التي تظهر فقط بعد تسجيل الدخول -->
         <a href="#" id="navBookingsBtn" onclick="openMyBookings(event)" style="display: none;"><i class="fas fa-bookmark"></i> Bookings</a>
         <a href="#" id="navSettingsBtn" onclick="openModal('settingsModal')" style="display: none;"><i class="fas fa-cog"></i> Settings</a>
 
@@ -697,7 +718,7 @@
     <div class="modal-box" style="text-align: center;">
       <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
       <div style="margin-bottom: 14px;">
-        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; border-radius: 12px; object-fit: cover;">
+        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; width: 55px; border-radius: 12px; object-fit: cover;" onload="this.classList.add('loaded')">
       </div>
       <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-sign-in-alt"></i> Welcome Back</h2>
       <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Login to manage and view your bookings.</p>
@@ -722,7 +743,7 @@
     <div class="modal-box" style="text-align: center;">
       <span class="modal-close" onclick="closeModal('registerModal')">&times;</span>
       <div style="margin-bottom: 14px;">
-        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; border-radius: 12px; object-fit: cover;">
+        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; width: 55px; border-radius: 12px; object-fit: cover;" onload="this.classList.add('loaded')">
       </div>
       <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-user-plus"></i> Create Account</h2>
       <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Join us to instantly save and track your reservations.</p>
@@ -747,7 +768,7 @@
     <div class="modal-box" style="text-align: center;">
       <span class="modal-close" onclick="closeModal('resetModal')">&times;</span>
       <div style="margin-bottom: 14px;">
-        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; border-radius: 12px; object-fit: cover;">
+        <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; width: 55px; border-radius: 12px; object-fit: cover;" onload="this.classList.add('loaded')">
       </div>
       <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-key"></i> Reset Password</h2>
       <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Enter your email and we'll send you a password reset link.</p>
@@ -800,22 +821,6 @@
     </div>
   </div>
 
-  <!-- CANCEL CONFIRMATION POPUP MODAL -->
-  <div id="cancelConfirmModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 400px; text-align: center;">
-      <div style="font-size: 45px; color: #dc2626; margin-bottom: 10px;">
-        <i class="fas fa-exclamation-circle"></i>
-      </div>
-      <h2 style="font-size: 20px; margin-bottom: 8px; color: var(--text);">Cancel Reservation</h2>
-      <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">Are you sure you want to cancel this booking? This action cannot be undone.</p>
-      
-      <div style="display: flex; gap: 10px;">
-        <button type="button" onclick="closeModal('cancelConfirmModal')" class="btn" style="flex: 1; border-radius: 10px; background: #f1f5f9; border: none;">Keep It</button>
-        <button type="button" id="confirmCancelBtn" class="btn" style="flex: 1; border-radius: 10px; background: #dc2626; color: #fff; border: none;">Yes, Cancel</button>
-      </div>
-    </div>
-  </div>
-
   <!-- SUCCESS BOOKING CONFIRMATION MODAL -->
   <div id="successBookingModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 420px; text-align: center; padding: 35px 24px;">
@@ -853,7 +858,6 @@
         <p>Welcome to Iaat Country Club. By accessing our platform and booking our services, you agree to comply with and be bound by the following terms and conditions:</p>
         <p><strong>1. Reservations & Bookings:</strong> All bookings made through our system are subject to availability and confirmation. Please ensure your contact details are accurate.</p>
         <p><strong>2. Club Rules:</strong> Guests are expected to maintain respectful behavior and follow the safety guidelines set by management across all pools, chalets, and recreational areas.</p>
-        <p><strong>3. Cancellations:</strong> You can cancel your reservations through your account dashboard or by contacting our support team directly via WhatsApp.</p>
       </div>
     </div>
   </div>
@@ -869,9 +873,9 @@
         ⚠️ Please <a href="#" onclick="closeModal('bookingModal'); openModal('loginModal'); return false;" style="color: var(--accent); text-decoration: underline;">Login</a> or <a href="#" onclick="closeModal('bookingModal'); openModal('registerModal'); return false;" style="color: var(--accent); text-decoration: underline;">Register</a> to access the booking form.
       </div>
 
-      <form id="bookingForm" style="display: flex; flex-direction: column; gap: 12px;">
+      <form id="bookingForm" style="display: flex; flex-direction: column; gap: 14px;">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-list"></i> Booking Type
-          <select id="bookingType" name="booking_type" required onchange="handleBookingTypeChange()" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;">
+          <select id="bookingType" name="booking_type" required onchange="handleBookingTypeChange()" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'">
             <option value="" disabled selected>Select Booking Type</option>
             <option value="chalet">Chalet</option>
             <option value="karting">Karting</option>
@@ -882,22 +886,49 @@
           </select>
         </label>
 
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-user"></i> Full Name<input type="text" id="bookName" name="name" required placeholder="Enter your full name" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-phone"></i> Phone Number<input type="tel" id="bookPhone" name="phone" required placeholder="Enter your phone number" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-envelope"></i> Email (Optional)<input type="email" id="bookEmail" name="email" placeholder="Enter your email" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-user"></i> Full Name<input type="text" id="bookName" name="name" required placeholder="Enter your full name" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></label>
+        
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-phone"></i> Phone Number<input type="tel" id="bookPhone" name="phone" required placeholder="Enter your phone number" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></label>
+        
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-envelope"></i> Email (Optional)<input type="email" id="bookEmail" name="email" placeholder="Enter your email" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></label>
 
-        <div id="dateSection" style="display:none; gap: 10px; flex-wrap: wrap;">
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-In<input type="date" id="checkinDate" name="checkin" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;" onchange="updateCheckoutMin()"></label>
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Check-Out<input type="date" id="checkoutDate" name="checkout" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+        <!-- LUXURY REDESIGNED CHECK-IN / CHECK-OUT SECTION -->
+        <div id="dateSection" style="display:none; gap:12px; flex-wrap:wrap; background: #f8fafc; padding: 14px; border-radius: 14px; border: 1.5px solid #e2e8f0;">
+          <div style="flex:1; min-width:200px; display:flex; flex-direction:column;">
+            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-calendar-check text-success"></i> Check-In Date
+            </label>
+            <input type="text" id="checkinDate" name="checkin" placeholder="Select Check-In" onchange="updateCheckoutMin()" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#cbd5e1'">
+          </div>
+
+          <div style="flex:1; min-width:200px; display:flex; flex-direction:column;">
+            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-calendar-times text-danger"></i> Check-Out Date
+            </label>
+            <input type="text" id="checkoutDate" name="checkout" placeholder="Select Check-Out" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#cbd5e1'">
+          </div>
         </div>
 
-        <div id="singleDateSection" style="display:flex; gap: 10px; flex-wrap: wrap;">
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-calendar-alt"></i> Booking Date<input type="date" id="singleDate" name="single_date" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
-          <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; flex: 1; min-width: 130px;"><i class="fas fa-clock"></i> Booking Time<input type="time" id="singleTime" name="single_time" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+        <!-- LUXURY REDESIGNED BOOKING DATE & TIME SECTION -->
+        <div id="singleDateSection" style="display:flex; gap:12px; flex-wrap:wrap; background: #f8fafc; padding: 14px; border-radius: 14px; border: 1.5px solid #e2e8f0;">
+          <div style="flex:1; min-width:200px; display:flex; flex-direction:column;">
+            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-calendar-alt"></i> Booking Date
+            </label>
+            <input type="text" id="singleDate" name="single_date" placeholder="Select Date" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#cbd5e1'">
+          </div>
+
+          <div style="flex:1; min-width:200px; display:flex; flex-direction:column;">
+            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-clock"></i> Booking Time
+            </label>
+            <input type="text" id="singleTime" name="single_time" style="min-width:200px; padding: 11px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#cbd5e1'">
+          </div>
         </div>
 
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-users"></i> Guests<input type="number" name="guests" min="1" value="2" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-comment-alt"></i> Notes<textarea name="notes" placeholder="Any special requests?" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc; height: 80px; resize: vertical;"></textarea></label>
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-users"></i> Guests<input type="number" name="guests" min="1" value="2" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></label>
+        
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-comment-alt"></i> Notes<textarea name="notes" placeholder="Any special requests?" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; height: 80px; resize: vertical; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></textarea></label>
 
         <button id="submitBtn" type="submit" style="width:100%; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:30px; font-size:14.5px; font-weight:600; cursor:pointer; margin-top: 5px;"><i class="fab fa-whatsapp"></i> Save & Send Booking via WhatsApp</button>
       </form>
@@ -933,7 +964,7 @@
   <section id="home" class="hero">
     <div class="container hero-inner">
       <div class="hero-image">
-        <img src="https://j.top4top.io/p_3621p11r11.jpg" alt="Iaat Country Club">
+        <img src="https://j.top4top.io/p_3621p11r11.jpg" alt="Iaat Country Club" onload="this.classList.add('loaded')">
       </div>
       <div class="hero-text">
         <h1>Iaat Country Club</h1>
@@ -958,7 +989,7 @@
     <h2>Chalets & Rooms</h2>
     <div class="cards">
       <div class="card">
-        <img src="https://l.top4top.io/p_3621wd3ob1.jpg" alt="Large Chalet">
+        <img src="https://l.top4top.io/p_3621wd3ob1.jpg" alt="Large Chalet" onload="this.classList.add('loaded')">
         <div class="card-body">
           <h3>Large Chalet</h3>
           <p>Up to 4 guests, fully equipped kitchen, balcony, 2 bedrooms, salon.</p>
@@ -968,7 +999,7 @@
       </div>
       
       <div class="card">
-        <img src="https://j.top4top.io/p_36210lzeb1.jpg" alt="Small Chalet">
+        <img src="https://j.top4top.io/p_36210lzeb1.jpg" alt="Small Chalet" onload="this.classList.add('loaded')">
         <div class="card-body">
           <h3>Small Chalet</h3>
           <p>Up to 2 guests, fully equipped kitchen, balcony, 1 bedroom, salon.</p>
@@ -1020,7 +1051,7 @@
       </div>
 
       <div style="flex:1; min-width:280px; display:flex; justify-content:center;">
-        <img src="https://l.top4top.io/p_3621nwt4q1.jpg" alt="Turkish Bath" style="width:100%; max-width:450px; border-radius:var(--radius);">
+        <img src="https://l.top4top.io/p_3621nwt4q1.jpg" alt="Turkish Bath" style="width:100%; max-width:450px; height:320px; object-fit:cover; border-radius:var(--radius);" onload="this.classList.add('loaded')">
       </div>
     </div>
   </section>
@@ -1077,13 +1108,13 @@
     <h2>Gallery</h2>
     <div class="slider-wrapper">
       <div class="slider-track">
-        <img src="https://g.top4top.io/p_374544rbc1.jpg" alt="wings 1" class="slider-item">
-        <img src="https://i.top4top.io/p_3745o7fai1.jpg" alt="chicken 1" class="slider-item">
-        <img src="https://h.top4top.io/p_37453dkk41.jpg" alt="burger 1" class="slider-item">
-        <img src="https://e.top4top.io/p_3621f9sfa1.jpg" alt="Pool 1" class="slider-item">
-        <img src="https://l.top4top.io/p_3621zabi21.jpg" alt="Pool 2" class="slider-item">
-        <img src="https://j.top4top.io/p_36217qmcm1.jpg" alt="Chalet 1" class="slider-item">
-        <img src="https://d.top4top.io/p_3621gxyut1.jpg" alt="Chalet 2" class="slider-item">
+        <img src="https://g.top4top.io/p_374544rbc1.jpg" alt="wings 1" class="slider-item" onload="this.classList.add('loaded')">
+        <img src="https://i.top4top.io/p_3745o7fai1.jpg" alt="chicken 1" class="slider-item" onload="this.classList.add('loaded')">
+        <img src="https://h.top4top.io/p_37453dkk41.jpg" alt="burger 1" class="slider-item" onload="this.classList.add('loaded')">
+        <img src="https://e.top4top.io/p_3621f9sfa1.jpg" alt="Pool 1" class="slider-item" onload="this.classList.add('loaded')">
+        <img src="https://l.top4top.io/p_3621zabi21.jpg" alt="Pool 2" class="slider-item" onload="this.classList.add('loaded')">
+        <img src="https://j.top4top.io/p_36217qmcm1.jpg" alt="Chalet 1" class="slider-item" onload="this.classList.add('loaded')">
+        <img src="https://d.top4top.io/p_3621gxyut1.jpg" alt="Chalet 2" class="slider-item" onload="this.classList.add('loaded')">
       </div>
 
       <button class="slider-prev">&#10094;</button>
@@ -1092,7 +1123,7 @@
 
     <div id="lightbox">
       <span id="lightbox-close">&times;</span>
-      <img id="lightbox-img" src="" alt="Lightbox View">
+      <img id="lightbox-img" src="" alt="Lightbox View" onload="this.classList.add('loaded')">
     </div>
   </section>
 
@@ -1118,6 +1149,7 @@
         <h3 style="color: var(--accent-gold);"><i class="fas fa-share-alt"></i> Follow Us</h3>
         <div class="social-links">
           <a class="insta" href="https://instagram.com/iaatcountryclub" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a class="wa" href="https://wa.me/96171561003" target="_blank"><i class="fab fa-whatsapp"></i></a>
           <a class="fb" href="https://facebook.com/iaatcountryclub" target="_blank"><i class="fab fa-facebook"></i></a>
           <a class="tok" href="https://tiktok.com/@iaatcountryclub" target="_blank"><i class="fab fa-tiktok"></i></a>
         </div>
@@ -1141,7 +1173,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC3GXpvmrcz8z1tNBVP6iSJvdxZ2z750vA",
@@ -1320,7 +1352,6 @@
         document.getElementById("bookingForm").reset();
         handleBookingTypeChange();
 
-        // إظهار نافذة التأكيد المطلوبة
         openModal('successBookingModal');
 
       } catch (err) {
@@ -1342,55 +1373,40 @@
           container.innerHTML = "<p style='text-align:center; color:#777;'>You have no reservations yet.</p>";
           return;
         }
+        const today = new Date().toISOString().split("T")[0];
+
         querySnapshot.forEach((docSnap) => {
           const b = docSnap.data();
-          const docId = docSnap.id;
+          let endDate = "";
+          
+          if (b.bookingType === "chalet") {
+            endDate = b.checkout;
+          } else {
+            endDate = b.checkin.split(" at ")[0];
+          }
+          
+          if (endDate && endDate < today) {
+            return;
+          }
+          
           let dateDisplay = `<b>Date/Check-In:</b> ${b.checkin}`;
-          if(b.bookingType === 'chalet' && b.checkout && b.checkout !== 'N/A') {
+          if (b.bookingType === "chalet" && b.checkout && b.checkout !== "N/A") {
             dateDisplay = `<b>Check-In:</b> ${b.checkin} | <b>Check-Out:</b> ${b.checkout}`;
           }
+          
           container.innerHTML += `
-            <div id="booking-card-${docId}" style="background:#f8fafc; padding:14px; border-radius:10px; border-left:4px solid var(--accent); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-              <div>
-                <h4 style="color:var(--accent); text-transform:uppercase; margin-bottom:4px; font-size:15px;">${b.bookingType}</h4>
-                <p style="font-size:13.5px;"><b>Name:</b> ${b.name} | <b>Phone:</b> ${b.phone}</p>
-                <p style="font-size:13.5px;"><b>Guests:</b> ${b.guests}</p>
-                <p style="font-size:13.5px; color:var(--accent-gold); margin-top:4px;">${dateDisplay}</p>
-              </div>
-              <button onclick="cancelBooking('${docId}', '${b.bookingType}', '${b.name}', '${b.checkin}')" style="background:#fee2e2; color:#dc2626; border:none; padding:7px 12px; border-radius:8px; font-weight:600; cursor:pointer; font-size:13px;">
-                <i class="fas fa-trash-alt"></i> Cancel
-              </button>
-            </div>`;
+            <div style="background:#f8fafc;padding:14px;border-radius:10px;border-left:4px solid var(--accent);">
+              <h4 style="color:var(--accent);text-transform:uppercase;">${b.bookingType}</h4>
+              <p><b>Name:</b> ${b.name}</p>
+              <p><b>Phone:</b> ${b.phone}</p>
+              <p><b>Guests:</b> ${b.guests}</p>
+              <p style="color:var(--accent-gold)">${dateDisplay}</p>
+            </div>
+          `;
         });
       } catch (err) {
         container.innerHTML = "<p style='color:red;'>Failed to load bookings.</p>";
       }
-    };
-
-    window.cancelBooking = function(docId, bookingType, clientName, checkinDate) {
-      openModal('cancelConfirmModal');
-      
-      const confirmBtn = document.getElementById("confirmCancelBtn");
-      const newConfirmBtn = confirmBtn.cloneNode(true);
-      confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
-      newConfirmBtn.addEventListener("click", async function() {
-        closeModal('cancelConfirmModal');
-        try {
-          await deleteDoc(doc(db, "bookings", docId));
-          const card = document.getElementById(`booking-card-${docId}`);
-          if (card) card.remove();
-          
-          const container = document.getElementById("bookingsListContainer");
-          if (container && container.children.length === 0) {
-            container.innerHTML = "<p style='text-align:center; color:#777;'>You have no reservations yet.</p>";
-          }
-
-          alert("Booking cancelled successfully.");
-        } catch (err) {
-          alert("Failed to cancel booking. Please try again.");
-        }
-      });
     };
 
     document.getElementById("bookingForm").addEventListener("submit", function(e) {
@@ -1420,19 +1436,28 @@
   </script>
 
   <script>
-    // تعيين أقل تاريخ مسموح اختياره في حقول التواريخ (تاريخ اليوم حصراً)
-    function setMinDates() {
-      const today = new Date().toISOString().split('T')[0];
-      const checkin = document.getElementById("checkinDate");
-      const checkout = document.getElementById("checkoutDate");
-      const singleDate = document.getElementById("singleDate");
+    flatpickr("#checkinDate", {
+      dateFormat: "Y-m-d",
+      minDate: "today"
+    });
 
-      if(checkin) checkin.min = today;
-      if(checkout) checkout.min = today;
-      if(singleDate) singleDate.min = today;
-    }
+    flatpickr("#checkoutDate", {
+      dateFormat: "Y-m-d",
+      minDate: "today"
+    });
 
-    // تحديث الحد الأدنى لتاريخ المغادرة بناءً على تاريخ الوصول
+    flatpickr("#singleDate", {
+      dateFormat: "Y-m-d",
+      minDate: "today"
+    });
+    flatpickr("#singleTime", {
+  enableTime: true,
+  noCalendar: true,
+  dateFormat: "H:i",
+  time_24hr: false
+});
+    
+
     function updateCheckoutMin() {
       const checkin = document.getElementById("checkinDate");
       const checkout = document.getElementById("checkoutDate");
@@ -1448,9 +1473,6 @@
     function openModal(id) {
       document.querySelector(".main-nav")?.classList.remove("open");
       document.getElementById(id).style.display = "flex";
-      if(id === 'bookingModal') {
-        setMinDates();
-      }
     }
 
     function closeModal(id) {
@@ -1469,8 +1491,6 @@
       const checkoutInput = document.getElementById("checkoutDate");
       const singleDateInput = document.getElementById("singleDate");
       const singleTimeInput = document.getElementById("singleTime");
-
-      setMinDates();
 
       if (type === 'chalet') {
         if(dateSection) dateSection.style.display = "flex";
