@@ -2374,22 +2374,53 @@ loadReviews();
       });
 
       document.querySelectorAll('.main-nav a').forEach(link => {
-        link.addEventListener('click', function(e) {
-          // If it's the dropdown toggle, don't close the menu
-          if (this.getAttribute('onclick')?.includes('toggleDropdown')) return;
-          
-          mainNav.classList.remove('open');
-          document.getElementById("activitiesDropdown")?.classList.remove("active");
-          const href = this.getAttribute('href');
-          if(href && href.startsWith('#')) {
-            const target = document.querySelector(href);
-            if(target) { 
-              e.preventDefault(); 
-              target.scrollIntoView({ behavior: "smooth" }); 
-            }
-          }
+  
+  link.addEventListener('click', function(e) {
+    
+    // Activities dropdown button
+    if (
+      this.getAttribute('onclick')?.includes('toggleDropdown')
+    ) {
+      return;
+    }
+    
+    const href = this.getAttribute('href');
+    
+    // Close mobile navigation
+    mainNav.classList.remove('open');
+    
+    // Close activities dropdown
+    document
+      .getElementById("activitiesDropdown")
+      ?.classList.remove("active");
+    
+    // Ignore empty "#" links
+    if (!href || href === "#") {
+      return;
+    }
+    
+    // Handle internal section links safely
+    if (href.startsWith("#") && href.length > 1) {
+      
+      const targetId = href.substring(1);
+      const target = document.getElementById(targetId);
+      
+      if (target) {
+        
+        e.preventDefault();
+        
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
         });
-      });
+        
+      }
+      
+    }
+    
+  });
+  
+});
     }
 
     const track = document.querySelector('.slider-track');
@@ -2440,12 +2471,13 @@ loadReviews();
     window.openJobPopup = openJobPopup;
     window.closeJobPopup = closeJobPopup;
 
-    class JobFormHandler {
+        class JobFormHandler {
       constructor() {
         const jobForm = document.getElementById("jobForm");
         if(jobForm) {
-          jobForm.addEventListener("submit", function(e) {
+          jobForm.addEventListener("submit", async function(e) {
             e.preventDefault();
+            
             const name = document.getElementById("jobName").value;
             const gender = document.getElementById("jobGender").value;
             const nationality = document.getElementById("jobNationality").value;
@@ -2454,19 +2486,45 @@ loadReviews();
             const position = document.getElementById("jobPosition").value;
             const exp = document.getElementById("jobExp").value;
 
-            const message = `📌 *JOB APPLICATION*%0A%0A👤 *Name:* ${name}%0A🚻 *Gender:* ${gender}%0A🌍 *Nationality:* ${nationality}%0A📞 *Phone:* ${phone}%0A📧 *Email:* ${email}%0A💼 *Position:* ${position}%0A📝 *Experience:* ${exp}`;
-            
-            window.location.href = `https://wa.me/96171561003?text=${message}`;
-            showPopupMessage("Your application was submitted successfully ✅", "Success", "fas fa-check-circle");
-            setTimeout(() => { 
-              closeJobPopup(); 
-            }, 2500);
-            jobForm.reset();
+            try {
+              // حفظ البيانات في فايربيز داخل مجموعة "job_applications"
+              await addDoc(collection(db, "job_applications"), {
+                name: name,
+                gender: gender,
+                nationality: nationality,
+                phone: phone,
+                email: email,
+                position: position,
+                experience: exp,
+                userId: currentUser.uid, // لحفظ هوية المستخدم إذا كان مسجلاً للدخول
+                createdAt: serverTimestamp()
+              });
+
+              // تجهيز رسالة الواتساب
+              const message = `📌 *JOB APPLICATION*%0A%0A👤 *Name:* ${name}%0A🚻 *Gender:* ${gender}%0A🌍 *Nationality:* ${nationality}%0A📞 *Phone:* ${phone}%0A📧 *Email:* ${email}%0A💼 *Position:* ${position}%0A📝 *Experience:* ${exp}`;
+              
+              // إظهار رسالة النجاح
+              showPopupMessage("Your application was submitted and saved successfully ✅", "Success", "fas fa-check-circle");
+              
+              // إعادة تعيين النموذج
+              jobForm.reset();
+
+              // الانتظار قليلاً ليتمكن المستخدم من قراءة رسالة النجاح ثم تحويله للواتساب
+              setTimeout(() => { 
+                closeJobPopup(); 
+                window.location.href = `https://wa.me/96171561003?text=${message}`;
+              }, 1500);
+
+            } catch (error) {
+              console.error("Error saving job application to Firebase: ", error);
+              showPopupMessage("Error saving your application. Please try again.", "Error", "fas fa-times-circle");
+            }
           });
         }
       }
     }
     new JobFormHandler();
+
   </script>
 </body>
 </html>
