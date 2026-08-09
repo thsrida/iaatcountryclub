@@ -697,6 +697,32 @@
       color: #000;
     }
 
+    /* CUSTOM POP MESSAGE MODAL STYLES */
+    #customAlertOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 20px;
+      animation: fadeIn 0.25s ease;
+    }
+    #customAlertBox {
+      background: #fff;
+      width: 100%;
+      max-width: 400px;
+      padding: 30px 24px;
+      border-radius: var(--radius);
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      position: relative;
+      animation: scaleUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
     #topBtn {
       position: fixed;
       bottom: 25px;
@@ -840,6 +866,18 @@
   <!-- Back to top button -->
   <button id="topBtn"><i class="fas fa-arrow-up"></i></button>
 
+  <!-- CUSTOM POP MESSAGE MODAL -->
+  <div id="customAlertOverlay">
+    <div id="customAlertBox">
+      <div id="customAlertIcon" style="font-size: 45px; color: var(--accent); margin-bottom: 14px;">
+        <i class="fas fa-info-circle"></i>
+      </div>
+      <h3 id="customAlertTitle" style="font-size: 20px; color: var(--accent); margin-bottom: 8px;">Notice</h3>
+      <p id="customAlertMessage" style="font-size: 14.5px; color: #555; margin-bottom: 22px; line-height: 1.6;"></p>
+      <button type="button" class="btn btn-primary" onclick="closeCustomAlert()" style="width: 100%; border-radius: 30px;">OK</button>
+    </div>
+  </div>
+
   <!-- HEADER -->
   <header class="site-header">
     <div class="header-inner container">
@@ -872,7 +910,7 @@
         <a href="#restaurant"><i class="fas fa-utensils"></i> Restaurant</a>
         <a href="#reviews"><i class="fas fa-star"></i> Reviews</a>
         <a href="#hours"><i class="fas fa-clock"></i> Hours</a>
-        <a href="#" onclick="openJobPopup(event)"><i class="fas fa-briefcase"></i> Careers</a>
+        <a href="#" id="navCareersBtn" onclick="openJobPopup(event)" style="display: none;"><i class="fas fa-briefcase"></i> Careers</a>
         
         <a href="#" id="navBookingsBtn" onclick="openMyBookings(event)" style="display: none;"><i class="fas fa-bookmark"></i> Bookings</a>
         <a href="#" id="navSettingsBtn" onclick="openModal('settingsModal')" style="display: none;"><i class="fas fa-cog"></i> Settings</a>
@@ -905,7 +943,6 @@
         </div>
 
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-sign-in-alt"></i> Login</button>
-        <p id="loginError" style="color:red; font-size:13px; margin-top:8px; display:none;"></p>
       </form>
     </div>
   </div>
@@ -930,7 +967,6 @@
         </div>
 
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-user-plus"></i> Register</button>
-        <p id="regError" style="color:red; font-size:13px; margin-top:8px; display:none;"></p>
       </form>
     </div>
   </div>
@@ -985,7 +1021,6 @@
         </div>
 
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-paper-plane"></i> Send Reset Link</button>
-        <p id="resetMessage" style="font-size:13px; margin-top:10px; display:none; text-align:center; font-weight:600;"></p>
       </form>
     </div>
   </div>
@@ -1011,7 +1046,6 @@
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-user"></i> Update Full Name<input type="text" id="settingsName" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-lock"></i> New Password (Optional)<input type="password" id="settingsNewPassword" placeholder="Leave blank to keep current" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:12px; border-radius:30px;"><i class="fas fa-save"></i> Save Changes</button>
-        <p id="settingsMessage" style="font-size:13px; margin-top:10px; display:none; text-align:center; font-weight:600;"></p>
       </form>
     </div>
   </div>
@@ -1153,10 +1187,6 @@
         <button type="submit" style="width:100%; margin-top:8px; padding:12px; background:var(--accent); color:#fff; border:none; border-radius:30px; font-size:14.5px; font-weight:600; cursor:pointer;">
           <i class="fas fa-paper-plane"></i> Submit Application
         </button>
-        
-        <p id="jobSuccess" style="display:none; margin-top:8px; color:var(--accent); font-weight:600; text-align:center; font-size:13.5px;">
-          Your application was submitted successfully ✅
-        </p>
       </form>
     </div>
   </div>
@@ -1409,6 +1439,24 @@
     let allReviewsData = [];
     let displayedReviewsCount = 3;
 
+    // Custom Pop Message (Alert Replacement) Function
+    window.showPopupMessage = function(message, title = "Notice", iconClass = "fas fa-info-circle") {
+      const overlay = document.getElementById("customAlertOverlay");
+      const titleEl = document.getElementById("customAlertTitle");
+      const msgEl = document.getElementById("customAlertMessage");
+      const iconEl = document.getElementById("customAlertIcon");
+
+      if (titleEl) titleEl.textContent = title;
+      if (msgEl) msgEl.textContent = message;
+      if (iconEl) iconEl.innerHTML = `<i class="${iconClass}"></i>`;
+      if (overlay) overlay.style.display = "flex";
+    };
+
+    window.closeCustomAlert = function() {
+      const overlay = document.getElementById("customAlertOverlay");
+      if (overlay) overlay.style.display = "none";
+    };
+
     onAuthStateChanged(auth, (user) => {
       currentUser = user;
       window.currentUser = user;
@@ -1418,6 +1466,7 @@
       
       const navBookingsBtn = document.getElementById("navBookingsBtn");
       const navSettingsBtn = document.getElementById("navSettingsBtn");
+      const navCareersBtn = document.getElementById("navCareersBtn");
 
       if (user) {
         if(authContainer) authContainer.style.display = "none";
@@ -1427,6 +1476,7 @@
         
         if(navBookingsBtn) navBookingsBtn.style.display = "flex";
         if(navSettingsBtn) navSettingsBtn.style.display = "flex";
+        if(navCareersBtn) navCareersBtn.style.display = "flex";
 
         const bookEmail = document.getElementById("bookEmail");
         const bookName = document.getElementById("bookName");
@@ -1438,6 +1488,7 @@
         
         if(navBookingsBtn) navBookingsBtn.style.display = "none";
         if(navSettingsBtn) navSettingsBtn.style.display = "none";
+        if(navCareersBtn) navCareersBtn.style.display = "none";
       }
     });
 
@@ -1446,7 +1497,6 @@
       const name = document.getElementById("regName").value;
       const email = document.getElementById("regEmail").value;
       const password = document.getElementById("regPassword").value;
-      const errEl = document.getElementById("regError");
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: name });
@@ -1459,12 +1509,13 @@
         });
 
         closeModal('registerModal');
-        alert("Account created successfully!");
+        showPopupMessage("Account created successfully!", "Success", "fas fa-check-circle");
       } catch (error) {
-        if(errEl) {
-          errEl.textContent = error.message;
-          errEl.style.display = "block";
+        let errorMsg = error.message;
+        if (error.code === 'auth/email-already-in-use') {
+          errorMsg = "This email is already registered. Please log in instead.";
         }
+        showPopupMessage(errorMsg, "Registration Error", "fas fa-exclamation-triangle");
       }
     };
 
@@ -1472,31 +1523,27 @@
       e.preventDefault();
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
-      const errEl = document.getElementById("loginError");
       try {
         await signInWithEmailAndPassword(auth, email, password);
         closeModal('loginModal');
       } catch (error) {
-        if(errEl) {
-          errEl.textContent = "Invalid email or password.";
-          errEl.style.display = "block";
+        let errorMsg = "Invalid email or password.";
+        if (error.code === 'auth/email-already-in-use') {
+          errorMsg = "This email is already registered.";
         }
+        showPopupMessage(errorMsg, "Login Error", "fas fa-exclamation-triangle");
       }
     };
 
     window.resetPassword = async function(e) {
       e.preventDefault();
       const email = document.getElementById("resetEmail").value;
-      const msgEl = document.getElementById("resetMessage");
       try {
         await sendPasswordResetEmail(auth, email);
-        msgEl.style.color = "green";
-        msgEl.textContent = "Password reset link sent to your email!";
-        msgEl.style.display = "block";
+        closeModal('resetModal');
+        showPopupMessage("Password reset link sent to your email!", "Success", "fas fa-check-circle");
       } catch (error) {
-        msgEl.style.color = "red";
-        msgEl.textContent = error.message;
-        msgEl.style.display = "block";
+        showPopupMessage(error.message, "Error", "fas fa-times-circle");
       }
     };
 
@@ -1505,7 +1552,6 @@
       if (!currentUser) return;
       const newName = document.getElementById("settingsName").value;
       const newPassword = document.getElementById("settingsNewPassword").value;
-      const msgEl = document.getElementById("settingsMessage");
       
       try {
         if (newName && newName !== currentUser.displayName) {
@@ -1514,21 +1560,17 @@
         if (newPassword) {
           await updatePassword(currentUser, newPassword);
         }
-        msgEl.style.color = "green";
-        msgEl.textContent = "Settings updated successfully!";
-        msgEl.style.display = "block";
-        setTimeout(() => closeModal('settingsModal'), 2000);
+        showPopupMessage("Settings updated successfully!", "Success", "fas fa-check-circle");
+        setTimeout(() => closeModal('settingsModal'), 1500);
       } catch (error) {
-        msgEl.style.color = "red";
-        msgEl.textContent = error.message;
-        msgEl.style.display = "block";
+        showPopupMessage(error.message, "Error", "fas fa-times-circle");
       }
     };
 
     window.logoutUser = function() {
       signOut(auth).then(() => { 
         closeModal('settingsModal');
-        alert("Logged out successfully."); 
+        showPopupMessage("Logged out successfully.", "Logged Out", "fas fa-sign-out-alt"); 
       });
     };
 
@@ -1573,7 +1615,7 @@ window.submitReview = async function(e) {
     currentUser.email.split('@')[0];
 
   if (!comment) {
-    alert("Please write your review.");
+    showPopupMessage("Please write your review.", "Warning", "fas fa-exclamation-triangle");
     return;
   }
 
@@ -1603,7 +1645,7 @@ window.submitReview = async function(e) {
       star5.checked = true;
     }
 
-    alert("Review added successfully!");
+    showPopupMessage("Review added successfully!", "Success", "fas fa-check-circle");
 
     await loadReviews();
 
@@ -1611,9 +1653,7 @@ window.submitReview = async function(e) {
 
     console.error("Review submit error:", err);
 
-    alert(
-      "Failed to submit review. Please try again."
-    );
+    showPopupMessage("Failed to submit review. Please try again.", "Error", "fas fa-times-circle");
   }
 };
 
@@ -2106,7 +2146,7 @@ loadReviews();
         }, 1000);
 
       } catch (err) {
-        alert("Error saving your booking. Please try again.");
+        showPopupMessage("Error saving your booking. Please try again.", "Error", "fas fa-times-circle");
       }
     };
 
@@ -2120,10 +2160,10 @@ loadReviews();
         closeModal('confirmDeleteModal');
         try {
           await deleteDoc(doc(db, "bookings", bookingId));
-          alert("Booking deleted successfully.");
+          showPopupMessage("Booking deleted successfully.", "Success", "fas fa-check-circle");
           openMyBookings({ preventDefault: () => {} });
         } catch (err) {
-          alert("Failed to delete booking.");
+          showPopupMessage("Failed to delete booking.", "Error", "fas fa-times-circle");
         }
       });
     };
@@ -2271,7 +2311,7 @@ loadReviews();
       const links = document.querySelectorAll(".main-nav > a, .main-nav .dropdown");
       
       links.forEach(item => {
-        if (!window.currentUser && (item.id === "navBookingsBtn" || item.id === "navSettingsBtn")) {
+        if (!window.currentUser && (item.id === "navBookingsBtn" || item.id === "navSettingsBtn" || item.id === "navCareersBtn")) {
           item.style.display = "none";
           return;
         }
@@ -2379,16 +2419,14 @@ loadReviews();
       constructor() {
         const jobForm = document.getElementById("jobForm");
         if(jobForm) {
-          jobForm.addEventListener("submit", function(e) {
+          jobForm.responseHandler = jobForm.addEventListener("submit", function(e) {
             e.preventDefault();
             const message = `📌 *JOB APPLICATION*%0A%0A👤 Name: ${document.getElementById("jobName").value}%0A📞 Phone: ${document.getElementById("jobPhone").value}%0A💼 Position: ${document.getElementById("jobPosition").value}`;
             window.location.href = `https://wa.me/96171561003?text=${message}`;
-            const success = document.getElementById("jobSuccess");
-            if(success) success.style.display = "block";
+            showPopupMessage("Your application was submitted successfully ✅", "Success", "fas fa-check-circle");
             setTimeout(() => { 
-              if(success) success.style.display = "none"; 
               closeJobPopup(); 
-            }, 3000);
+            }, 2500);
             jobForm.reset();
           });
         }
