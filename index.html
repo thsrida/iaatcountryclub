@@ -1179,13 +1179,38 @@
       
       <form id="jobForm" style="display: flex; flex-direction: column; gap: 10px;">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-user"></i> Full Name<input type="text" id="jobName" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
+        
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-venus-mars"></i> Gender
+          <select id="jobGender" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;">
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </label>
+
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-globe"></i> Nationality
+          <select id="jobNationality" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;">
+    <option value="" disabled selected>Select Nationality</option>
+<option value="Lebanese">Lebanese</option>
+<option value="Syrian">Syrian</option>
+<option value="Iraqi">Iraqi</option>
+<option value="Palestinian">Palestinian</option>
+<option value="Jordanian">Jordanian</option>
+<option value="Egyptian">Egyptian</option>
+<option value="Emirati">Emirati</option>
+<option value="Saudi">Saudi</option>
+<option value="Other">Other</option>
+
+          </select>
+        </label>
+
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-phone"></i> Phone Number<input type="tel" id="jobPhone" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-envelope"></i> Email<input type="email" id="jobEmail" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-id-badge"></i> Position<input type="text" id="jobPosition" required placeholder="e.g. Waiter, Chef" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-pen"></i> Experience<textarea id="jobExp" required placeholder="Write your experience" style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc; height: 80px; resize: vertical;"></textarea></label>
         
         <button type="submit" style="width:100%; margin-top:8px; padding:12px; background:var(--accent); color:#fff; border:none; border-radius:30px; font-size:14.5px; font-weight:600; cursor:pointer;">
-          <i class="fas fa-paper-plane"></i> Submit Application
+          <i class="fab fa-whatsapp"></i> Submit Application via WhatsApp
         </button>
       </form>
     </div>
@@ -2419,9 +2444,18 @@ loadReviews();
       constructor() {
         const jobForm = document.getElementById("jobForm");
         if(jobForm) {
-          jobForm.responseHandler = jobForm.addEventListener("submit", function(e) {
+          jobForm.addEventListener("submit", function(e) {
             e.preventDefault();
-            const message = `📌 *JOB APPLICATION*%0A%0A👤 Name: ${document.getElementById("jobName").value}%0A📞 Phone: ${document.getElementById("jobPhone").value}%0A💼 Position: ${document.getElementById("jobPosition").value}`;
+            const name = document.getElementById("jobName").value;
+            const gender = document.getElementById("jobGender").value;
+            const nationality = document.getElementById("jobNationality").value;
+            const phone = document.getElementById("jobPhone").value;
+            const email = document.getElementById("jobEmail").value;
+            const position = document.getElementById("jobPosition").value;
+            const exp = document.getElementById("jobExp").value;
+
+            const message = `📌 *JOB APPLICATION*%0A%0A👤 *Name:* ${name}%0A🚻 *Gender:* ${gender}%0A🌍 *Nationality:* ${nationality}%0A📞 *Phone:* ${phone}%0A📧 *Email:* ${email}%0A💼 *Position:* ${position}%0A📝 *Experience:* ${exp}`;
+            
             window.location.href = `https://wa.me/96171561003?text=${message}`;
             showPopupMessage("Your application was submitted successfully ✅", "Success", "fas fa-check-circle");
             setTimeout(() => { 
