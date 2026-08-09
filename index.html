@@ -468,7 +468,7 @@
       color: #666;
     }
 
-    /* REVIEWS STYLES */
+    /* REVIEWS STYLES & OPTIONS MENU */
     .reviews-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -484,12 +484,26 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: 0.3s;
+      position: relative;
     }
+    .review-card.highlighted-review {
+      border: 2px solid var(--accent-gold);
+      box-shadow: 0 0 20px rgba(195, 155, 75, 0.3);
+      animation: pulseCard 2s infinite;
+    }
+    @keyframes pulseCard {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
     .review-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
+      position: relative;
     }
     .reviewer-info {
       display: flex;
@@ -526,6 +540,70 @@
       font-size: 14px;
       color: #444;
       line-height: 1.6;
+    }
+
+    /* Three Dots Options Menu Dropdown */
+    .comment-menu-container {
+      position: relative;
+      display: inline-block;
+    }
+    .comment-dots-btn {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      color: #888;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+    .comment-dots-btn:hover {
+      background: #f1f5f9;
+      color: var(--accent);
+    }
+    .comment-dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: #ffffff;
+      min-width: 140px;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.12);
+      border-radius: 12px;
+      z-index: 10;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    .comment-dropdown-menu.show {
+      display: block;
+    }
+    .comment-dropdown-menu button {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #444;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .comment-dropdown-menu button:last-child {
+      border-bottom: none;
+    }
+    .comment-dropdown-menu button:hover {
+      background: #f8fafc;
+      color: var(--accent);
+    }
+    .comment-dropdown-menu button.delete-action {
+      color: #dc2626;
+    }
+    .comment-dropdown-menu button.delete-action:hover {
+      background: #fee2e2;
     }
 
     /* Star Rating Selector (Google Style) */
@@ -878,6 +956,24 @@
     </div>
   </div>
 
+  <!-- SHARED / CLICKED COMMENT POPUP MODAL -->
+  <div id="sharedCommentModal" class="modal-overlay">
+    <div class="modal-box" style="text-align: center; border-top: 5px solid var(--accent-gold);">
+      <span class="modal-close" onclick="closeModal('sharedCommentModal')">&times;</span>
+      <div style="font-size: 40px; color: var(--accent-gold); margin-bottom: 10px;">
+        <i class="fas fa-comment-dots"></i>
+      </div>
+      <h2 style="font-size: 20px; margin-bottom: 6px; color: var(--accent);">Featured Comment</h2>
+      <p style="font-size: 13px; color: #777; margin-bottom: 16px;">Someone shared this review with you!</p>
+      
+      <div id="sharedCommentContentBox" style="background: #f8fafc; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: left; margin-bottom: 18px;">
+        <!-- Filled dynamically -->
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="closeModal('sharedCommentModal')" style="width: 100%; border-radius: 30px;">View All Reviews</button>
+    </div>
+  </div>
+
   <!-- HEADER -->
   <header class="site-header">
     <div class="header-inner container">
@@ -1000,6 +1096,90 @@
 
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-paper-plane"></i> Submit Review</button>
       </form>
+    </div>
+  </div>
+
+  <!-- EDIT REVIEW MODAL -->
+  <div id="editReviewModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 480px;">
+      <span class="modal-close" onclick="closeModal('editReviewModal')">&times;</span>
+      <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-edit" style="color:var(--accent);"></i> Edit Your Review</h2>
+      <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Update your review comment.</p>
+      
+      <form id="editReviewForm" style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="editReviewId">
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;">Rating (Stars)
+          <div class="star-rating-selector">
+            <input type="radio" id="editStar5" name="editRating" value="5" />
+            <label for="editStar5" title="5 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="editStar4" name="editRating" value="4" />
+            <label for="editStar4" title="4 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="editStar3" name="editRating" value="3" />
+            <label for="editStar3" title="3 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="editStar2" name="editRating" value="2" />
+            <label for="editStar2" title="2 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="editStar1" name="editRating" value="1" />
+            <label for="editStar1" title="1 star"><i class="fas fa-star"></i></label>
+          </div>
+        </label>
+
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;">Your Comment
+          <textarea id="editReviewComment" required style="width: 100%; padding: 11px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc; height: 100px; resize: vertical; outline: none;"></textarea>
+        </label>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-save"></i> Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- REPORT REVIEW MODAL -->
+  <div id="reportReviewModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 420px;">
+      <span class="modal-close" onclick="closeModal('reportReviewModal')">&times;</span>
+      <div style="font-size: 40px; color: #dc2626; margin-bottom: 10px; text-align: center;">
+        <i class="fas fa-flag"></i>
+      </div>
+      <h2 style="font-size: 20px; margin-bottom: 6px; text-align: center; color: var(--text);">Report Comment</h2>
+      <p style="font-size: 13.5px; color: #666; margin-bottom: 16px; text-align: center;">Please specify why you are reporting this comment for admin review.</p>
+      
+      <form id="reportForm" style="display: flex; flex-direction: column; gap: 12px;">
+        <input type="hidden" id="reportReviewId">
+        <input type="hidden" id="reportReviewText">
+        <input type="hidden" id="reportReviewAuthor">
+
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;">Reason for Report
+          <select id="reportReason" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;">
+            <option value="" disabled selected>Select a reason</option>
+            <option value="Spam or Advertising">Spam or Advertising</option>
+            <option value="Inappropriate Language">Inappropriate Language</option>
+            <option value="Harassment or Hate Speech">Harassment or Hate Speech</option>
+            <option value="False Information">False Information</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;">Additional Details (Optional)
+          <textarea id="reportDetails" placeholder="Add extra info..." style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; height: 70px; font-size: 13.5px; background: #f8fafc; resize: vertical;"></textarea>
+        </label>
+
+        <button type="submit" class="btn" style="width: 100%; border-radius: 30px; background: #dc2626; color: #fff; border: none; margin-top: 6px;"><i class="fas fa-paper-plane"></i> Submit Report to Admin</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM DELETE REVIEW MODAL -->
+  <div id="confirmDeleteReviewModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 400px; text-align: center; padding: 30px 20px;">
+      <span class="modal-close" onclick="closeModal('confirmDeleteReviewModal')">&times;</span>
+      <div style="font-size: 45px; color: #dc2626; margin-bottom: 12px;">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h2 style="font-size: 20px; margin-bottom: 8px; color: var(--text);">Delete Review</h2>
+      <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Are you sure you want to delete this comment? This action cannot be undone.</p>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn" onclick="closeModal('confirmDeleteReviewModal')" style="flex: 1; border-radius: 30px; background: #f1f5f9; border: none;">Cancel</button>
+        <button type="button" id="confirmDeleteReviewBtn" class="btn" style="flex: 1; border-radius: 30px; background: #dc2626; color: #fff; border: none;">Delete</button>
+      </div>
     </div>
   </div>
 
@@ -1190,17 +1370,16 @@
 
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-globe"></i> Nationality
           <select id="jobNationality" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;">
-    <option value="" disabled selected>Select Nationality</option>
-<option value="Lebanese">Lebanese</option>
-<option value="Syrian">Syrian</option>
-<option value="Iraqi">Iraqi</option>
-<option value="Palestinian">Palestinian</option>
-<option value="Jordanian">Jordanian</option>
-<option value="Egyptian">Egyptian</option>
-<option value="Emirati">Emirati</option>
-<option value="Saudi">Saudi</option>
-<option value="Other">Other</option>
-
+            <option value="" disabled selected>Select Nationality</option>
+            <option value="Lebanese">Lebanese</option>
+            <option value="Syrian">Syrian</option>
+            <option value="Iraqi">Iraqi</option>
+            <option value="Palestinian">Palestinian</option>
+            <option value="Jordanian">Jordanian</option>
+            <option value="Egyptian">Egyptian</option>
+            <option value="Emirati">Emirati</option>
+            <option value="Saudi">Saudi</option>
+            <option value="Other">Other</option>
           </select>
         </label>
 
@@ -1338,29 +1517,18 @@
       <h2>Client Reviews & Testimonials</h2>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 
-  <button
-    class="btn btn-primary"
-    onclick="openReviewModal()"
-  >
-    <i class="fas fa-star"></i>
-    Add Website Review
+  <button class="btn btn-primary" onclick="openReviewModal()">
+    <i class="fas fa-star"></i> Add Website Review
   </button>
 
-  <a
-    class="btn google-review-button"
-    href="https://www.google.com/search?q=IAAT+COUNTRY+CLUB"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <i class="fab fa-google"></i>
-    Add Google Review
+  <a class="btn google-review-button" href="https://www.google.com/search?q=IAAT+COUNTRY+CLUB" target="_blank" rel="noopener noreferrer">
+    <i class="fab fa-google"></i> Add Google Review
   </a>
 
 </div>
     </div>
     <p style="margin-bottom: 15px;">See what our valued guests have to say about their experiences at Iaat Country Club.</p>
     
-    <!-- === مكان عرض المتوسط والنجوم الإجمالية === -->
     <div id="reviewsSummary" style="display: flex; align-items: center; gap: 15px; background: #fff; padding: 16px 20px; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.05); margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
       <div id="avgRatingNumber" style="font-size: 32px; font-weight: 800; color: var(--accent);">0.0</div>
       <div>
@@ -1370,7 +1538,6 @@
         <div id="totalReviewsCount" style="font-size: 13px; color: #666;">Based on 0 reviews</div>
       </div>
     </div>
-    <!-- ======================================= -->
 
     <div class="reviews-scroll-container">
       <div id="reviewsContainer" class="reviews-grid">
@@ -1465,7 +1632,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, deleteDoc, updateDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC3GXpvmrcz8z1tNBVP6iSJvdxZ2z750vA",
@@ -1484,7 +1651,6 @@
     let allReviewsData = [];
     let displayedReviewsCount = 3;
 
-    // Custom Pop Message (Alert Replacement) Function
     window.showPopupMessage = function(message, title = "Notice", iconClass = "fas fa-info-circle") {
       const overlay = document.getElementById("customAlertOverlay");
       const titleEl = document.getElementById("customAlertTitle");
@@ -1535,6 +1701,7 @@
         if(navSettingsBtn) navSettingsBtn.style.display = "none";
         if(navCareersBtn) navCareersBtn.style.display = "none";
       }
+      loadReviews();
     });
 
     window.registerUser = async function(e) {
@@ -1573,9 +1740,6 @@
         closeModal('loginModal');
       } catch (error) {
         let errorMsg = "Invalid email or password.";
-        if (error.code === 'auth/email-already-in-use') {
-          errorMsg = "This email is already registered.";
-        }
         showPopupMessage(errorMsg, "Login Error", "fas fa-exclamation-triangle");
       }
     };
@@ -1619,518 +1783,411 @@
       });
     };
 
-// ============================================================
-// REVIEWS LOGIC
-// ============================================================
+    // ============================================================
+    // REVIEWS LOGIC (OPTIONS MENU & REPORT FIX)
+    // ============================================================
 
-window.openReviewModal = function() {
-  if (!currentUser) {
-    openModal('loginModal');
-    return;
-  }
+    window.openReviewModal = function() {
+      if (!currentUser) {
+        openModal('loginModal');
+        return;
+      }
+      openModal('reviewModal');
+    };
 
-  openModal('reviewModal');
-};
+    window.submitReview = async function(e) {
+      e.preventDefault();
+      if (!currentUser) {
+        openModal('loginModal');
+        return;
+      }
 
+      const checkedRating = document.querySelector('input[name="rating"]:checked');
+      const rating = checkedRating ? parseInt(checkedRating.value) : 5;
+      const comment = document.getElementById("reviewComment").value.trim();
+      const accountName = currentUser.displayName || currentUser.email.split('@')[0];
 
-// ============================================================
-// SUBMIT REVIEW
-// ============================================================
+      if (!comment) {
+        showPopupMessage("Please write your review.", "Warning", "fas fa-exclamation-triangle");
+        return;
+      }
 
-window.submitReview = async function(e) {
-  e.preventDefault();
+      try {
+        await addDoc(collection(db, "reviews"), {
+          userId: currentUser.uid,
+          name: accountName,
+          rating: rating,
+          comment: comment,
+          createdAt: serverTimestamp()
+        });
 
-  if (!currentUser) {
-    openModal('loginModal');
-    return;
-  }
+        closeModal('reviewModal');
+        document.getElementById("reviewForm").reset();
+        const star5 = document.getElementById("star5");
+        if (star5) star5.checked = true;
 
-  const checkedRating =
-    document.querySelector('input[name="rating"]:checked');
+        showPopupMessage("Review added successfully!", "Success", "fas fa-check-circle");
+        await loadReviews();
+      } catch (err) {
+        showPopupMessage("Failed to submit review. Please try again.", "Error", "fas fa-times-circle");
+      }
+    };
 
-  const rating = checkedRating
-    ? parseInt(checkedRating.value)
-    : 5;
+    // Toggle Three Dots Dropdown Menu
+    window.toggleCommentMenu = function(id, event) {
+      event.stopPropagation();
+      // إغلاق أي قوائم مفتوحة أخرى أولاً
+      document.querySelectorAll('.comment-dropdown-menu').forEach(menu => {
+        if (menu.id !== `commentMenu-${id}`) menu.classList.remove('show');
+      });
+      const menu = document.getElementById(`commentMenu-${id}`);
+      if (menu) {
+        menu.classList.toggle('show');
+      }
+    };
 
-  const comment =
-    document.getElementById("reviewComment").value.trim();
-
-  const accountName =
-    currentUser.displayName ||
-    currentUser.email.split('@')[0];
-
-  if (!comment) {
-    showPopupMessage("Please write your review.", "Warning", "fas fa-exclamation-triangle");
-    return;
-  }
-
-  try {
-
-    await addDoc(collection(db, "reviews"), {
-
-      userId: currentUser.uid,
-
-      name: accountName,
-
-      rating: rating,
-
-      comment: comment,
-
-      createdAt: serverTimestamp()
-
+    // إغلاق القوائم عند النقر في أي مكان خارجها
+    window.addEventListener('click', () => {
+      document.querySelectorAll('.comment-dropdown-menu').forEach(menu => {
+        menu.classList.remove('show');
+      });
     });
 
-    closeModal('reviewModal');
+    // مشاركة التعليق
+    window.shareReview = function(id, authorName, commentText) {
+      const shareUrl = window.location.origin + window.location.pathname + "?commentId=" + id;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          showPopupMessage("Link copied to clipboard! Anyone who opens it will see this comment directly.", "Link Copied", "fas fa-share-alt");
+        }).catch(() => {
+          prompt("Copy this link to share:", shareUrl);
+        });
+      } else {
+        prompt("Copy this link to share:", shareUrl);
+      }
+    };
 
-    document.getElementById("reviewForm").reset();
+    // فتح نافذة الإبلاغ
+    window.openReportModal = function(id, authorName, commentText) {
+      if (!currentUser) {
+        openModal('loginModal');
+        return;
+      }
+      document.getElementById("reportReviewId").value = id;
+      document.getElementById("reportReviewAuthor").value = authorName;
+      document.getElementById("reportReviewText").value = commentText;
+      document.getElementById("reportForm").reset();
+      openModal('reportReviewModal');
+    };
 
-    const star5 = document.getElementById("star5");
+    // إرسال الإبلاغ لقاعدة البيانات
+    document.getElementById("reportForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const reviewId = document.getElementById("reportReviewId").value;
+      const author = document.getElementById("reportReviewAuthor").value;
+      const text = document.getElementById("reportReviewText").value;
+      const reason = document.getElementById("reportReason").value;
+      const details = document.getElementById("reportDetails").value || "No extra details";
 
-    if (star5) {
-      star5.checked = true;
+      try {
+        await addDoc(collection(db, "admin_reports"), {
+          reviewId: reviewId,
+          commentAuthor: author,
+          commentText: text,
+          reportedByUid: currentUser.uid,
+          reportedByEmail: currentUser.email,
+          reason: reason,
+          details: details,
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
+
+        closeModal('reportReviewModal');
+        showPopupMessage("Report submitted successfully. The admin has been notified.", "Report Sent", "fas fa-check-circle");
+      } catch(err) {
+        showPopupMessage("Failed to send report. Please try again.", "Error", "fas fa-times-circle");
+      }
+    });
+
+    window.openEditReviewModal = function(id, currentComment, currentRating) {
+      document.getElementById("editReviewId").value = id;
+      document.getElementById("editReviewComment").value = currentComment;
+      const starInput = document.getElementById(`editStar${currentRating}`);
+      if (starInput) starInput.checked = true;
+      openModal('editReviewModal');
+    };
+
+    window.updateReview = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById("editReviewId").value;
+      const comment = document.getElementById("editReviewComment").value.trim();
+      const checkedRating = document.querySelector('input[name="editRating"]:checked');
+      const rating = checkedRating ? parseInt(checkedRating.value) : 5;
+
+      if (!comment) return;
+
+      try {
+        await updateDoc(doc(db, "reviews", id), {
+          comment: comment,
+          rating: rating
+        });
+        closeModal('editReviewModal');
+        showPopupMessage("Review updated successfully!", "Success", "fas fa-check-circle");
+        await loadReviews();
+      } catch(err) {
+        showPopupMessage("Failed to update review.", "Error", "fas fa-times-circle");
+      }
+    };
+
+    window.confirmDeleteReview = function(id) {
+      openModal('confirmDeleteReviewModal');
+      const confirmBtn = document.getElementById("confirmDeleteReviewBtn");
+      const newBtn = confirmBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+      newBtn.addEventListener("click", async () => {
+        closeModal('confirmDeleteReviewModal');
+        try {
+          await deleteDoc(doc(db, "reviews", id));
+          showPopupMessage("Review deleted successfully.", "Success", "fas fa-check-circle");
+          await loadReviews();
+        } catch(err) {
+          showPopupMessage("Failed to delete review.", "Error", "fas fa-times-circle");
+        }
+      });
+    };
+
+    function createCumulativeStars(totalPoints) {
+      let starValue = totalPoints / 15;
+      starValue = Math.min(5, starValue);
+      starValue = Math.round(starValue * 2) / 2;
+      let html = "";
+      for (let i = 1; i <= 5; i++) {
+        if (starValue >= i) {
+          html += `<i class="fas fa-star" style="color:var(--accent-gold);"></i>`;
+        } else if (starValue >= i - 0.5) {
+          html += `<i class="fas fa-star-half-stroke" style="color:var(--accent-gold);"></i>`;
+        } else {
+          html += `<i class="far fa-star" style="color:#cbd5e1;"></i>`;
+        }
+      }
+      return html;
     }
 
-    showPopupMessage("Review added successfully!", "Success", "fas fa-check-circle");
+    window.loadReviews = async function() {
+      const container = document.getElementById("reviewsContainer");
+      const loadMoreContainer = document.getElementById("loadMoreContainer");
+      if (!container) return;
 
-    await loadReviews();
+      try {
+        const querySnapshot = await getDocs(collection(db, "reviews"));
+        allReviewsData = [];
+        let totalRatingPoints = 0;
 
-  } catch (err) {
+        querySnapshot.forEach((docSnap) => {
+          const revData = docSnap.data();
+          const rating = Number(revData.rating) || 0;
+          allReviewsData.push({
+            id: docSnap.id,
+            ...revData
+          });
+          if (rating >= 1 && rating <= 5) {
+            totalRatingPoints += rating / 5;
+          }
+        });
 
-    console.error("Review submit error:", err);
+        const totalReviews = allReviewsData.length;
+        const avgNumEl = document.getElementById("avgRatingNumber");
+        const avgStarsEl = document.getElementById("avgRatingStars");
+        const totalCountEl = document.getElementById("totalReviewsCount");
 
-    showPopupMessage("Failed to submit review. Please try again.", "Error", "fas fa-times-circle");
-  }
-};
+        if (totalReviews === 0) {
+          if (avgNumEl) avgNumEl.textContent = "0.0";
+          if (totalCountEl) totalCountEl.textContent = "Based on 0 reviews";
+          if (avgStarsEl) {
+            avgStarsEl.innerHTML = `<i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>`;
+          }
+          container.innerHTML = `<p style="color:#777; grid-column:1/-1; text-align:center;">No reviews yet. Be the first to share your experience!</p>`;
+          if (loadMoreContainer) loadMoreContainer.style.display = "none";
+          return;
+        }
 
+        let cumulativeStars = totalRatingPoints / 15;
+        cumulativeStars = Math.min(5, cumulativeStars);
+        cumulativeStars = Math.round(cumulativeStars * 2) / 2;
 
-// ============================================================
-// CREATE GOOGLE-STYLE STAR HTML
-// ============================================================
+        if (avgNumEl) avgNumEl.textContent = cumulativeStars.toFixed(1);
+        if (totalCountEl) totalCountEl.textContent = `Based on ${totalReviews} reviews`;
+        if (avgStarsEl) avgStarsEl.innerHTML = createCumulativeStars(totalRatingPoints);
 
-function createCumulativeStars(totalPoints) {
+        allReviewsData.sort((a, b) => {
+          const dateA = a.createdAt && typeof a.createdAt.toDate === "function" ? a.createdAt.toDate() : new Date(0);
+          const dateB = b.createdAt && typeof b.createdAt.toDate === "function" ? b.createdAt.toDate() : new Date(0);
+          return dateB - dateA;
+        });
 
-  let starValue = totalPoints / 15;
+        displayedReviewsCount = 3;
+        renderReviewsList();
+        checkUrlForSharedComment();
 
-  starValue = Math.min(5, starValue);
+      } catch (err) {
+        container.innerHTML = `<p style="color:red; grid-column:1/-1; text-align:center;">Failed to load reviews.</p>`;
+      }
+    };
 
-  starValue =
-    Math.round(starValue * 2) / 2;
+    window.renderReviewsList = function() {
+      const container = document.getElementById("reviewsContainer");
+      const loadMoreContainer = document.getElementById("loadMoreContainer");
+      if (!container) return;
 
-  let html = "";
+      container.innerHTML = "";
+      const reviewsToShow = allReviewsData.slice(0, displayedReviewsCount);
 
-  for (let i = 1; i <= 5; i++) {
+      reviewsToShow.forEach((r) => {
+        const name = r.name || "Guest";
+        const initial = name.charAt(0).toUpperCase();
+        const rating = Number(r.rating) || 0;
+        let starsHtml = "";
+        for (let i = 1; i <= 5; i++) {
+          if (i <= rating) {
+            starsHtml += `<i class="fas fa-star" style="color:var(--accent-gold);"></i>`;
+          } else {
+            starsHtml += `<i class="far fa-star" style="color:#cbd5e1;"></i>`;
+          }
+        }
 
-    if (starValue >= i) {
+        let dateStr = "Recently";
+        if (r.createdAt && typeof r.createdAt.toDate === "function") {
+          dateStr = r.createdAt.toDate().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+        }
 
-      html += `
-        <i
-          class="fas fa-star"
-          style="color:var(--accent-gold);"
-        ></i>
-      `;
+        const safeName = String(name).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        const safeComment = String(r.comment || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 
-    }
+        // تحديد ما إذا كان المستخدم الحالي هو صاحب التعليق
+        const isOwner = currentUser && currentUser.uid === r.userId;
 
-    else if (starValue >= i - 0.5) {
+        // قائمة الثلاث نقاط (Three Dots Menu) المنسدلة
+        let menuItemsHtml = `
+          <button onclick="shareReview('${r.id}', '${safeName.replace(/'/g, "\\'")}', '${safeComment.replace(/'/g, "\\'")}')"><i class="fas fa-share-alt"></i> Share</button>
+        `;
 
-      html += `
-        <i
-          class="fas fa-star-half-stroke"
-          style="color:var(--accent-gold);"
-        ></i>
-      `;
+        // زر التبليغ يظهر فقط لغير صاحب التعليق
+        if (!isOwner) {
+          menuItemsHtml += `
+            <button onclick="openReportModal('${r.id}', '${safeName.replace(/'/g, "\\'")}', '${safeComment.replace(/'/g, "\\'")}')" style="color: #dc2626;"><i class="fas fa-flag"></i> Report</button>
+          `;
+        }
 
-    }
+        // خيارات التعديل والحذف تظهر فقط لصاحب التعليق
+        if (isOwner) {
+          menuItemsHtml += `
+            <button onclick="openEditReviewModal('${r.id}', '${safeComment.replace(/'/g, "\\'")}', ${rating})"><i class="fas fa-edit"></i> Edit</button>
+            <button class="delete-action" onclick="confirmDeleteReview('${r.id}')"><i class="fas fa-trash-alt"></i> Delete</button>
+          `;
+        }
 
-    else {
+        const dropdownHtml = `
+          <div class="comment-menu-container">
+            <button class="comment-dots-btn" onclick="toggleCommentMenu('${r.id}', event)"><i class="fas fa-ellipsis-v"></i></button>
+            <div class="comment-dropdown-menu" id="commentMenu-${r.id}">
+              ${menuItemsHtml}
+            </div>
+          </div>
+        `;
 
-      html += `
-        <i
-          class="far fa-star"
-          style="color:#cbd5e1;"
-        ></i>
-      `;
-    }
-  }
-
-  return html;
-}
-
-
-// ============================================================
-// LOAD REVIEWS
-// ============================================================
-
-window.loadReviews = async function() {
-
-  const container =
-    document.getElementById("reviewsContainer");
-
-  const loadMoreContainer =
-    document.getElementById("loadMoreContainer");
-
-  if (!container) return;
-
-  try {
-
-    const querySnapshot =
-      await getDocs(collection(db, "reviews"));
-
-    allReviewsData = [];
-
-    let totalRatingPoints = 0;
-
-    querySnapshot.forEach((docSnap) => {
-
-      const revData = docSnap.data();
-
-      const rating =
-        Number(revData.rating) || 0;
-
-      allReviewsData.push({
-        id: docSnap.id,
-        ...revData
+        container.innerHTML += `
+          <div class="review-card" id="review-card-${r.id}">
+            <div>
+              <div class="review-header">
+                <div class="reviewer-info">
+                  <div class="reviewer-avatar">${initial}</div>
+                  <div>
+                    <span class="reviewer-name">${safeName}</span>
+                    <span class="review-date" style="display:block;">${dateStr}</span>
+                  </div>
+                </div>
+                ${dropdownHtml}
+              </div>
+              <div class="review-stars">${starsHtml}</div>
+              <p class="review-text">"${safeComment}"</p>
+            </div>
+          </div>
+        `;
       });
 
-      if (rating >= 1 && rating <= 5) {
-
-        totalRatingPoints +=
-          rating / 5;
-      }
-
-    });
-
-    const totalReviews =
-      allReviewsData.length;
-
-    const avgNumEl =
-      document.getElementById("avgRatingNumber");
-
-    const avgStarsEl =
-      document.getElementById("avgRatingStars");
-
-    const totalCountEl =
-      document.getElementById("totalReviewsCount");
-
-    if (totalReviews === 0) {
-
-      if (avgNumEl) {
-        avgNumEl.textContent = "0.0";
-      }
-
-      if (totalCountEl) {
-        totalCountEl.textContent =
-          "Based on 0 reviews";
-      }
-
-      if (avgStarsEl) {
-
-        avgStarsEl.innerHTML = `
-          <i class="far fa-star"></i>
-          <i class="far fa-star"></i>
-          <i class="far fa-star"></i>
-          <i class="far fa-star"></i>
-          <i class="far fa-star"></i>
-        `;
-      }
-
-      container.innerHTML = `
-        <p
-          style="
-            color:#777;
-            grid-column:1/-1;
-            text-align:center;
-          "
-        >
-          No reviews yet.
-          Be the first to share your experience!
-        </p>
-      `;
-
       if (loadMoreContainer) {
-        loadMoreContainer.style.display = "none";
+        if (allReviewsData.length > 3 && displayedReviewsCount === 3) {
+          loadMoreContainer.style.display = "block";
+        } else {
+          loadMoreContainer.style.display = "none";
+        }
       }
+    };
 
-      return;
-    }
+    function checkUrlForSharedComment() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const commentId = urlParams.get("commentId");
+      if (!commentId) return;
 
-    let cumulativeStars =
-      totalRatingPoints / 15;
+      const targetReview = allReviewsData.find(r => r.id === commentId);
+      if (targetReview) {
+        const box = document.getElementById("sharedCommentContentBox");
+        const safeName = String(targetReview.name || "Guest").replace(/</g, "&lt;");
+        const safeComment = String(targetReview.comment || "").replace(/</g, "&lt;");
+        
+        let stars = "";
+        for(let i=1; i<=5; i++){
+          stars += i <= targetReview.rating ? `<i class="fas fa-star" style="color:var(--accent-gold);"></i>` : `<i class="far fa-star" style="color:#cbd5e1;"></i>`;
+        }
 
-    cumulativeStars =
-      Math.min(5, cumulativeStars);
-
-    cumulativeStars =
-      Math.round(cumulativeStars * 2) / 2;
-
-    if (avgNumEl) {
-
-      avgNumEl.textContent =
-        cumulativeStars.toFixed(1);
-    }
-
-    if (totalCountEl) {
-
-      totalCountEl.textContent =
-        `Based on ${totalReviews} reviews`;
-    }
-
-    if (avgStarsEl) {
-
-      avgStarsEl.innerHTML =
-        createCumulativeStars(totalRatingPoints);
-    }
-
-    allReviewsData.sort((a, b) => {
-
-      const dateA =
-        a.createdAt &&
-        typeof a.createdAt.toDate === "function"
-          ? a.createdAt.toDate()
-          : new Date(0);
-
-      const dateB =
-        b.createdAt &&
-        typeof b.createdAt.toDate === "function"
-          ? b.createdAt.toDate()
-          : new Date(0);
-
-      return dateB - dateA;
-    });
-
-    displayedReviewsCount = 3;
-
-    renderReviewsList();
-
-  } catch (err) {
-
-    console.error(
-      "Failed to load reviews:",
-      err
-    );
-
-    container.innerHTML = `
-      <p
-        style="
-          color:red;
-          grid-column:1/-1;
-          text-align:center;
-        "
-      >
-        Failed to load reviews.
-      </p>
-    `;
-  }
-};
-
-
-// ============================================================
-// RENDER REVIEWS
-// ============================================================
-
-window.renderReviewsList = function() {
-
-  const container =
-    document.getElementById("reviewsContainer");
-
-  const loadMoreContainer =
-    document.getElementById("loadMoreContainer");
-
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  const reviewsToShow =
-    allReviewsData.slice(
-      0,
-      displayedReviewsCount
-    );
-
-  reviewsToShow.forEach((r) => {
-
-    const name =
-      r.name || "Guest";
-
-    const initial =
-      name.charAt(0).toUpperCase();
-
-    const rating =
-      Number(r.rating) || 0;
-
-    let starsHtml = "";
-
-    for (let i = 1; i <= 5; i++) {
-
-      if (i <= rating) {
-
-        starsHtml += `
-          <i
-            class="fas fa-star"
-            style="color:var(--accent-gold);"
-          ></i>
-        `;
-
-      } else {
-
-        starsHtml += `
-          <i
-            class="far fa-star"
-            style="color:#cbd5e1;"
-          ></i>
-        `;
-      }
-    }
-
-    let dateStr = "Recently";
-
-    if (
-      r.createdAt &&
-      typeof r.createdAt.toDate === "function"
-    ) {
-
-      dateStr =
-        r.createdAt
-          .toDate()
-          .toLocaleDateString(
-            "en-US",
-            {
-              year: "numeric",
-              month: "short",
-              day: "numeric"
-            }
-          );
-    }
-
-    const safeName =
-      String(name)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-    const safeComment =
-      String(r.comment || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-    container.innerHTML += `
-
-      <div class="review-card">
-
-        <div>
-
-          <div class="review-header">
-
-            <div class="reviewer-info">
-
-              <div class="reviewer-avatar">
-                ${initial}
-              </div>
-
-              <span class="reviewer-name">
-                ${safeName}
-              </span>
-
+        box.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <div class="reviewer-avatar" style="width:32px; height:32px; font-size:14px;">${safeName.charAt(0).toUpperCase()}</div>
+            <div>
+              <span style="font-weight:700; font-size:14px; color:var(--accent); display:block;">${safeName}</span>
+              <div style="font-size:12px;">${stars}</div>
             </div>
-
-            <span class="review-date">
-              ${dateStr}
-            </span>
-
           </div>
+          <p style="font-size:14px; color:#444; font-style:italic;">"${safeComment}"</p>
+        `;
 
+        openModal('sharedCommentModal');
 
-          <div class="review-stars">
-            ${starsHtml}
-          </div>
-
-
-          <p class="review-text">
-            "${safeComment}"
-          </p>
-
-        </div>
-
-      </div>
-
-    `;
-  });
-
-  if (loadMoreContainer) {
-
-    if (
-      allReviewsData.length > 3 &&
-      displayedReviewsCount === 3
-    ) {
-
-      loadMoreContainer.style.display =
-        "block";
-
-    } else {
-
-      loadMoreContainer.style.display =
-        "none";
-    }
-  }
-};
-
-
-// ============================================================
-// LOAD MORE REVIEWS
-// ============================================================
-
-window.loadMoreReviews = function() {
-
-  displayedReviewsCount =
-    allReviewsData.length;
-
-  renderReviewsList();
-
-  setTimeout(() => {
-
-    const container =
-      document.querySelector(
-        ".reviews-scroll-container"
-      );
-
-    if (container) {
-
-      container.scrollTop = 0;
+        setTimeout(() => {
+          const cardEl = document.getElementById(`review-card-${commentId}`);
+          if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cardEl.classList.add("highlighted-review");
+            setTimeout(() => cardEl.classList.remove("highlighted-review"), 4000);
+          }
+        }, 500);
+      }
     }
 
-  }, 100);
-};
+    window.loadMoreReviews = function() {
+      displayedReviewsCount = allReviewsData.length;
+      renderReviewsList();
+      setTimeout(() => {
+        const container = document.querySelector(".reviews-scroll-container");
+        if (container) container.scrollTop = 0;
+      }, 100);
+    };
 
-
-// ============================================================
-// REVIEW FORM
-// ============================================================
-
-const reviewForm =
-  document.getElementById("reviewForm");
-
-if (reviewForm) {
-
-  reviewForm.addEventListener(
-    "submit",
-    function(e) {
-
-      window.submitReview(e);
-
+    const reviewForm = document.getElementById("reviewForm");
+    if (reviewForm) {
+      reviewForm.addEventListener("submit", function(e) {
+        window.submitReview(e);
+      });
     }
-  );
-}
 
-
-// ============================================================
-// INITIAL LOAD
-// ============================================================
-
-loadReviews();
+    const editReviewForm = document.getElementById("editReviewForm");
+    if (editReviewForm) {
+      editReviewForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        window.updateReview(e);
+      });
+    }
 
     window.submitBookingToFirebase = async function(e, data) {
       if (!currentUser) {
@@ -2157,394 +2214,294 @@ loadReviews();
       } else {
         const sDate = data.get("single_date") || "N/A";
         const sTime = data.get("single_time") || "N/A";
-        checkinVal = `${sDate} at ${sTime}`;
         dateTimeText = `%0A📅 *Date:* ${sDate}%0A⏰ *Time:* ${sTime}`;
       }
 
       try {
         await addDoc(collection(db, "bookings"), {
           userId: currentUser.uid,
-          userEmail: currentUser.email,
           bookingType: type,
           name: name,
           phone: phone,
           email: email,
-          guests: guests,
           checkin: checkinVal,
           checkout: checkoutVal,
+          guests: guests,
           notes: notes,
           createdAt: serverTimestamp()
         });
 
         closeModal('bookingModal');
         document.getElementById("bookingForm").reset();
-        handleBookingTypeChange();
 
-        const waMessage = `🛎️ *NEW BOOKING REQUEST*%0A%0A🏢 *Type:* ${type.toUpperCase()}%0A👤 *Name:* ${name}%0A📞 *Phone:* ${phone}%0A📧 *Email:* ${email}${dateTimeText}%0A👥 *Guests:* ${guests}%0A💬 *Notes:* ${notes}`;
-        const waUrl = `https://wa.me/96171561003?text=${waMessage}`;
-        
-        document.getElementById("whatsappRedirectBtn").href = waUrl;
-        openModal('successBookingModal');
+        const whatsappMsg = `*New Booking Request - Iaat Country Club*%0A%0A👤 *Name:* ${name}%0A📱 *Phone:* ${phone}%0A🏨 *Type:* ${type}${dateTimeText}%0A👥 *Guests:* ${guests}%0A💬 *Notes:* ${notes}`;
+        const whatsappUrl = `https://wa.me/96171561003?text=${whatsappMsg}`;
+
+        const successModal = document.getElementById("successBookingModal");
+        const redirectBtn = document.getElementById("whatsappRedirectBtn");
+        if (redirectBtn) redirectBtn.href = whatsappUrl;
+        if (successModal) successModal.style.display = "flex";
 
         setTimeout(() => {
-          window.location.href = waUrl;
-        }, 1000);
+          window.open(whatsappUrl, '_blank');
+        }, 1200);
 
       } catch (err) {
-        showPopupMessage("Error saving your booking. Please try again.", "Error", "fas fa-times-circle");
+        showPopupMessage("Failed to submit booking. Please try again.", "Error", "fas fa-times-circle");
       }
     };
 
-    window.confirmDeleteBooking = function(bookingId) {
-      openModal('confirmDeleteModal');
-      const confirmBtn = document.getElementById("confirmDeleteBtn");
-      const newBtn = confirmBtn.cloneNode(true);
-      confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
-      
-      newBtn.addEventListener("click", async () => {
-        closeModal('confirmDeleteModal');
-        try {
-          await deleteDoc(doc(db, "bookings", bookingId));
-          showPopupMessage("Booking deleted successfully.", "Success", "fas fa-check-circle");
-          openMyBookings({ preventDefault: () => {} });
-        } catch (err) {
-          showPopupMessage("Failed to delete booking.", "Error", "fas fa-times-circle");
+    const bookingForm = document.getElementById("bookingForm");
+    if (bookingForm) {
+      bookingForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        window.submitBookingToFirebase(e, formData);
+      });
+    }
+
+    const jobForm = document.getElementById("jobForm");
+    if (jobForm) {
+      jobForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("jobName").value;
+        const gender = document.getElementById("jobGender").value;
+        const nationality = document.getElementById("jobNationality").value;
+        const phone = document.getElementById("jobPhone").value;
+        const email = document.getElementById("jobEmail").value;
+        const position = document.getElementById("jobPosition").value;
+        const exp = document.getElementById("jobExp").value;
+
+        const whatsappMsg = `*New Job Application - Iaat Country Club*%0A%0A👤 *Name:* ${name}%0A🚻 *Gender:* ${gender}%0A🌍 *Nationality:* ${nationality}%0A📱 *Phone:* ${phone}%0A✉️ *Email:* ${email}%0A💼 *Position:* ${position}%0A📝 *Experience:* ${exp}`;
+        const whatsappUrl = `https://wa.me/96171561003?text=${whatsappMsg}`;
+        
+        closeJobPopup();
+        window.open(whatsappUrl, '_blank');
+      });
+    }
+
+    const settingsForm = document.getElementById("settingsForm");
+    if (settingsForm) {
+      settingsForm.addEventListener("submit", updateSettings);
+    }
+  </script>
+
+  <script>
+    // General UI Helpers
+    window.openModal = function(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = "flex";
+    };
+
+    window.closeModal = function(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = "none";
+    };
+
+    window.openJobPopup = function(e) {
+      if (e) e.preventDefault();
+      openModal('jobPopup');
+    };
+
+    window.closeJobPopup = function() {
+      closeModal('jobPopup');
+    };
+
+    window.openBookingModal = function(type) {
+      openModal('bookingModal');
+      const select = document.getElementById("bookingType");
+      if (select && type) {
+        select.value = type;
+        handleBookingTypeChange();
+      }
+    };
+
+    window.toggleDropdown = function(e) {
+      if (e) e.preventDefault();
+      const dropdown = document.getElementById("activitiesDropdown");
+      if (dropdown) dropdown.classList.toggle("active");
+    };
+
+    window.filterNavSections = function() {
+      const query = document.getElementById("navSearchInput").value.toLowerCase();
+      const navLinks = document.querySelectorAll(".main-nav a:not(.auth-btn):not(.dropdown a)");
+      navLinks.forEach(link => {
+        const text = link.textContent.toLowerCase();
+        if (text.includes(query) || query === "") {
+          link.style.display = "flex";
+        } else {
+          link.style.display = "none";
         }
       });
     };
 
-    window.openMyBookings = async function(e) {
-      e.preventDefault();
-      if (!currentUser) return;
-      const container = document.getElementById("bookingsListContainer");
-      container.innerHTML = "<p>Loading your reservations...</p>";
-      openModal('bookingsModal');
-      try {
-        const q = query(collection(db, "bookings"), where("userId", "==", currentUser.uid));
-        const querySnapshot = await getDocs(q);
-        container.innerHTML = "";
-        if (querySnapshot.empty) {
-          container.innerHTML = "<p style='text-align:center; color:#777;'>You have no reservations yet.</p>";
-          return;
-        }
-
-        const now = new Date();
-        const currentDateStr = now.toISOString().split("T")[0];
-        const currentTimeStr = now.toTimeString().slice(0, 5);
-
-        querySnapshot.forEach((docSnap) => {
-          const b = docSnap.data();
-          const docId = docSnap.id;
-          
-          let isExpired = false;
-          if (b.bookingType === "chalet") {
-            if (b.checkout && b.checkout < currentDateStr) isExpired = true;
-          } else {
-            const datePart = b.checkin.split(" at ")[0];
-            const timePart = b.checkin.split(" at ")[1];
-            if (datePart && datePart < currentDateStr) isExpired = true;
-            else if (datePart === currentDateStr && timePart && timePart < currentTimeStr) isExpired = true;
-          }
-          
-          let dateDisplay = `<b>Date/Check-In:</b> ${b.checkin}`;
-          if (b.bookingType === "chalet" && b.checkout && b.checkout !== "N/A") {
-            dateDisplay = `<b>Check-In:</b> ${b.checkin} | <b>Check-Out:</b> ${b.checkout}`;
-          }
-
-          let expiredBadge = isExpired ? `<div style="margin-top:8px; display:inline-block; background:#fee2e2; color:#dc2626; padding:4px 10px; border-radius:6px; font-weight:700; font-size:12px;"><i class="fas fa-exclamation-circle"></i> Booking Expired</div>` : '';
-          let deleteBtn = isExpired ? `<button onclick="confirmDeleteBooking('${docId}')" style="margin-top:10px; background:#dc2626; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:600; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px;"><i class="fas fa-trash-alt"></i> Delete Booking</button>` : '';
-          
-          container.innerHTML += `
-            <div style="background:#f8fafc;padding:14px;border-radius:10px;border-left:4px solid ${isExpired ? '#dc2626' : 'var(--accent)'}; margin-bottom: 8px;">
-              <h4 style="color:var(--accent);text-transform:uppercase;">${b.bookingType}</h4>
-              <p><b>Name:</b> ${b.name}</p>
-              <p><b>Phone:</b> ${b.phone}</p>
-              <p><b>Guests:</b> ${b.guests}</p>
-              <p style="color:var(--accent-gold); margin-top:4px;">${dateDisplay}</p>
-              <div>${expiredBadge}</div>
-              <div>${deleteBtn}</div>
-            </div>
-          `;
-        });
-      } catch (err) {
-        container.innerHTML = "<p style='color:red;'>Failed to load bookings.</p>";
-      }
-    };
-
-    document.getElementById("bookingForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      window.submitBookingToFirebase(e, new FormData(e.target));
+    // Flatpickr & Booking Logic
+    let checkinPicker, checkoutPicker, singleDatePicker, singleTimePicker;
+    document.addEventListener("DOMContentLoaded", function() {
+      checkinPicker = flatpickr("#checkinDate", { minDate: "today", dateFormat: "Y-m-d" });
+      checkoutPicker = flatpickr("#checkoutDate", { minDate: "today", dateFormat: "Y-m-d" });
+      singleDatePicker = flatpickr("#singleDate", { minDate: "today", dateFormat: "Y-m-d" });
+      singleTimePicker = flatpickr("#singleTime", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
     });
-
-    document.getElementById("loginForm").addEventListener("submit", function(e) { e.preventDefault(); window.loginUser(e); });
-    document.getElementById("registerForm").addEventListener("submit", function(e) { e.preventDefault(); window.registerUser(e); });
-    document.getElementById("resetForm").addEventListener("submit", function(e) { e.preventDefault(); window.resetPassword(e); });
-    document.getElementById("settingsForm").addEventListener("submit", function(e) { e.preventDefault(); window.updateSettings(e); });
- 
-    flatpickr("#checkinDate", { dateFormat: "Y-m-d", minDate: "today" });
-    flatpickr("#checkoutDate", { dateFormat: "Y-m-d", minDate: "today" });
-    flatpickr("#singleDate", { dateFormat: "Y-m-d", minDate: "today" });
-    flatpickr("#singleTime", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: false });
-    
-    function updateCheckoutMin() {
-      const checkin = document.getElementById("checkinDate");
-      const checkout = document.getElementById("checkoutDate");
-      if(checkin && checkout && checkin.value) {
-        checkout.min = checkin.value;
-        if(checkout.value && checkout.value < checkin.value) checkout.value = checkin.value;
-      }
-    }
-    window.updateCheckoutMin = updateCheckoutMin;
-
-    function openModal(id) {
-      document.querySelector(".main-nav")?.classList.remove("open");
-      document.getElementById(id).style.display = "flex";
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).style.display = "none";
-    }
-
-    window.openModal = openModal;
-    window.closeModal = closeModal;
 
     window.handleBookingTypeChange = function() {
       const type = document.getElementById("bookingType").value;
       const dateSection = document.getElementById("dateSection");
       const singleDateSection = document.getElementById("singleDateSection");
-      
-      const checkinInput = document.getElementById("checkinDate");
-      const checkoutInput = document.getElementById("checkoutDate");
-      const singleDateInput = document.getElementById("singleDate");
-      const singleTimeInput = document.getElementById("singleTime");
 
       if (type === 'chalet') {
         if(dateSection) dateSection.style.display = "flex";
         if(singleDateSection) singleDateSection.style.display = "none";
-        if(checkinInput) checkinInput.required = true;
-        if(checkoutInput) checkoutInput.required = true;
-        if(singleDateInput) singleDateInput.required = false;
-        if(singleTimeInput) singleTimeInput.required = false;
       } else {
         if(dateSection) dateSection.style.display = "none";
         if(singleDateSection) singleDateSection.style.display = "flex";
-        if(checkinInput) checkinInput.required = false;
-        if(checkoutInput) checkoutInput.required = false;
-        if(singleDateInput) singleDateInput.required = true;
-        if(singleTimeInput) singleTimeInput.required = true;
       }
     };
-    window.handleBookingTypeChange = handleBookingTypeChange;
 
-    window.openBookingModal = function(type = '') {
-      if (!window.currentUser) {
+    window.updateCheckoutMin = function() {
+      const checkinDate = document.getElementById("checkinDate").value;
+      if (checkinDate && checkoutPicker) {
+        checkoutPicker.set("minDate", checkinDate);
+      }
+    };
+
+    window.openMyBookings = async function(e) {
+      if(e) e.preventDefault();
+      if(!window.currentUser) {
         openModal('loginModal');
         return;
       }
-      if (type) {
-        const select = document.getElementById("bookingType");
-        if(select) {
-          select.value = type;
-          handleBookingTypeChange();
-        }
-      }
-      openModal('bookingModal');
-    };
+      openModal('bookingsModal');
+      const container = document.getElementById("bookingsListContainer");
+      container.innerHTML = `<p style="text-align:center; color:#777;">Loading your bookings...</p>`;
 
-    function filterNavSections() {
-      const input = document.getElementById("navSearchInput").value.toLowerCase();
-      const links = document.querySelectorAll(".main-nav > a, .main-nav .dropdown");
-      
-      links.forEach(item => {
-        if (!window.currentUser && (item.id === "navBookingsBtn" || item.id === "navSettingsBtn" || item.id === "navCareersBtn")) {
-          item.style.display = "none";
+      try {
+        const { getFirestore, collection, getDocs, query, where, doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        const db = getFirestore();
+        const q = query(collection(db, "bookings"), where("userId", "==", window.currentUser.uid));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          container.innerHTML = `<p style="text-align:center; color:#777;">No reservations found.</p>`;
           return;
         }
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(input) ? "flex" : "none";
-      });
-    }
-    window.filterNavSections = filterNavSections;
 
-    // Toggle dropdown function
-    window.toggleDropdown = function(e) {
-      e.preventDefault();
-      const dropdown = document.getElementById("activitiesDropdown");
-      dropdown.classList.toggle("active");
+        container.innerHTML = "";
+        querySnapshot.forEach((docSnap) => {
+          const b = docSnap.data();
+          const id = docSnap.id;
+          let dateInfo = b.bookingType === 'chalet' ? `Check-In: ${b.checkin} | Check-Out: ${b.checkout}` : `Date: ${b.checkin}`;
+
+          container.innerHTML += `
+            <div style="background:#f8fafc; padding:14px; border-radius:12px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+              <div>
+                <span style="font-weight:700; color:var(--accent); font-size:15px; display:block; text-transform:uppercase;">${b.bookingType}</span>
+                <span style="font-size:13px; color:#555; display:block;">${dateInfo}</span>
+                <span style="font-size:12px; color:#888;">Guests: ${b.guests}</span>
+              </div>
+              <button onclick="confirmDeleteBooking('${id}')" style="background:#fee2e2; color:#dc2626; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:13px;"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          `;
+        });
+      } catch(err) {
+        container.innerHTML = `<p style="text-align:center; color:red;">Failed to load bookings.</p>`;
+      }
     };
 
-    // Close dropdown when clicking outside
-    window.addEventListener('click', function(e) {
-      if (!e.target.closest('#activitiesDropdown')) {
-        document.getElementById("activitiesDropdown")?.classList.remove("active");
-      }
-      document.querySelectorAll('.modal-overlay').forEach(modal => {
-        if (e.target === modal) modal.style.display = 'none';
+    window.confirmDeleteBooking = function(id) {
+      openModal('confirmDeleteModal');
+      const confirmBtn = document.getElementById("confirmDeleteBtn");
+      const newBtn = confirmBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+      newBtn.addEventListener("click", async () => {
+        closeModal('confirmDeleteModal');
+        try {
+          const { getFirestore, doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+          const db = getFirestore();
+          await deleteDoc(doc(db, "bookings", id));
+          showPopupMessage("Booking deleted successfully.", "Success", "fas fa-check-circle");
+          openMyBookings();
+        } catch(err) {
+          showPopupMessage("Failed to delete booking.", "Error", "fas fa-times-circle");
+        }
+      });
+    };
+
+    // Mobile Nav Toggle
+    const navToggle = document.querySelector(".nav-toggle");
+    const mainNav = document.querySelector(".main-nav");
+    if (navToggle && mainNav) {
+      navToggle.addEventListener("click", () => {
+        mainNav.classList.toggle("open");
+      });
+    }
+
+    // Lightbox for Gallery
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxClose = document.getElementById("lightbox-close");
+    const sliderItems = document.querySelectorAll(".slider-item");
+
+    sliderItems.forEach(item => {
+      item.addEventListener("click", () => {
+        if(lightbox && lightboxImg) {
+          lightbox.style.display = "flex";
+          lightboxImg.src = item.src;
+        }
       });
     });
 
-    const navToggle = document.querySelector('.nav-toggle');
-    const mainNav = document.querySelector('.main-nav');
-
-    if(navToggle && mainNav) {
-      navToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        mainNav.classList.toggle('open');
+    if (lightboxClose) {
+      lightboxClose.addEventListener("click", () => {
+        lightbox.style.display = "none";
       });
-
-      document.querySelectorAll('.main-nav a').forEach(link => {
-  
-  link.addEventListener('click', function(e) {
-    
-    // Activities dropdown button
-    if (
-      this.getAttribute('onclick')?.includes('toggleDropdown')
-    ) {
-      return;
     }
-    
-    const href = this.getAttribute('href');
-    
-    // Close mobile navigation
-    mainNav.classList.remove('open');
-    
-    // Close activities dropdown
-    document
-      .getElementById("activitiesDropdown")
-      ?.classList.remove("active");
-    
-    // Ignore empty "#" links
-    if (!href || href === "#") {
-      return;
-    }
-    
-    // Handle internal section links safely
-    if (href.startsWith("#") && href.length > 1) {
-      
-      const targetId = href.substring(1);
-      const target = document.getElementById(targetId);
-      
-      if (target) {
-        
-        e.preventDefault();
-        
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-        
-      }
-      
-    }
-    
-  });
-  
-});
+    if (lightbox) {
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) lightbox.style.display = "none";
+      });
     }
 
-    const track = document.querySelector('.slider-track');
-    const items = document.querySelectorAll('.slider-item');
-    const prev = document.querySelector('.slider-prev');
-    const next = document.querySelector('.slider-next');
-    let scrollAmount = 0;
-    let itemWidth = 296;
+    // Slider Track Navigation
+    const sliderTrack = document.querySelector(".slider-track");
+    const sliderPrev = document.querySelector(".slider-prev");
+    const sliderNext = document.querySelector(".slider-next");
+    let sliderScrollAmount = 0;
 
-    if(track && next && prev) {
-      next.addEventListener('click', () => {
-        if (scrollAmount < (items.length - 2) * itemWidth) {
-          scrollAmount += itemWidth;
-          track.style.transform = `translateX(-${scrollAmount}px)`;
+    if (sliderNext && sliderTrack) {
+      sliderNext.addEventListener("click", () => {
+        sliderScrollAmount += 300;
+        if (sliderScrollAmount > sliderTrack.scrollWidth - sliderTrack.clientWidth) {
+          sliderScrollAmount = sliderTrack.scrollWidth - sliderTrack.clientWidth;
         }
-      });
-      prev.addEventListener('click', () => {
-        if (scrollAmount > 0) {
-          scrollAmount -= itemWidth;
-          track.style.transform = `translateX(-${scrollAmount}px)`;
-        }
+        sliderTrack.style.transform = `translateX(-${sliderScrollAmount}px)`;
       });
     }
 
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-
-    if(lightbox && lightboxImg) {
-      items.forEach(img => {
-        img.addEventListener('click', () => {
-          lightbox.style.display = 'flex';
-          lightboxImg.src = img.src;
-        });
+    if (sliderPrev && sliderTrack) {
+      sliderPrev.addEventListener("click", () => {
+        sliderScrollAmount -= 300;
+        if (sliderScrollAmount < 0) sliderScrollAmount = 0;
+        sliderTrack.style.transform = `translateX(-${sliderScrollAmount}px)`;
       });
-      document.getElementById('lightbox-close').addEventListener('click', () => { lightbox.style.display = 'none'; });
     }
 
+    // Back to Top Button
     const topBtn = document.getElementById("topBtn");
-    if(topBtn) {
-      window.onscroll = function() {
-        topBtn.style.display = document.documentElement.scrollTop > 400 ? "block" : "none";
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        if(topBtn) topBtn.style.display = "block";
+      } else {
+        if(topBtn) topBtn.style.display = "none";
       }
-      topBtn.onclick = function() { window.scrollTo({ top: 0, behavior: "smooth" }); }
+    });
+
+    if (topBtn) {
+      topBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
     }
-
-    function openJobPopup(e) { e.preventDefault(); document.getElementById("jobPopup").style.display = "flex"; }
-    function closeJobPopup() { document.getElementById("jobPopup").style.display = "none"; }
-    window.openJobPopup = openJobPopup;
-    window.closeJobPopup = closeJobPopup;
-
-        class JobFormHandler {
-      constructor() {
-        const jobForm = document.getElementById("jobForm");
-        if(jobForm) {
-          jobForm.addEventListener("submit", async function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById("jobName").value;
-            const gender = document.getElementById("jobGender").value;
-            const nationality = document.getElementById("jobNationality").value;
-            const phone = document.getElementById("jobPhone").value;
-            const email = document.getElementById("jobEmail").value;
-            const position = document.getElementById("jobPosition").value;
-            const exp = document.getElementById("jobExp").value;
-
-            try {
-              // حفظ البيانات في فايربيز داخل مجموعة "job_applications"
-              await addDoc(collection(db, "job_applications"), {
-                name: name,
-                gender: gender,
-                nationality: nationality,
-                phone: phone,
-                email: email,
-                position: position,
-                experience: exp,
-                userId: currentUser.uid, // لحفظ هوية المستخدم إذا كان مسجلاً للدخول
-                createdAt: serverTimestamp()
-              });
-
-              // تجهيز رسالة الواتساب
-              const message = `📌 *JOB APPLICATION*%0A%0A👤 *Name:* ${name}%0A🚻 *Gender:* ${gender}%0A🌍 *Nationality:* ${nationality}%0A📞 *Phone:* ${phone}%0A📧 *Email:* ${email}%0A💼 *Position:* ${position}%0A📝 *Experience:* ${exp}`;
-              
-              // إظهار رسالة النجاح
-              showPopupMessage("Your application was submitted and saved successfully ✅", "Success", "fas fa-check-circle");
-              
-              // إعادة تعيين النموذج
-              jobForm.reset();
-
-              // الانتظار قليلاً ليتمكن المستخدم من قراءة رسالة النجاح ثم تحويله للواتساب
-              setTimeout(() => { 
-                closeJobPopup(); 
-                window.location.href = `https://wa.me/96171561003?text=${message}`;
-              }, 1500);
-
-            } catch (error) {
-              console.error("Error saving job application to Firebase: ", error);
-              showPopupMessage("Error saving your application. Please try again.", "Error", "fas fa-times-circle");
-            }
-          });
-        }
-      }
-    }
-    new JobFormHandler();
-
   </script>
 </body>
 </html>
