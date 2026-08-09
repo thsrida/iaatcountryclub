@@ -181,6 +181,49 @@
       background: rgba(25, 82, 45, 0.06);
     }
 
+    /* Dropdown for Activities */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #ffffff;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      z-index: 1001;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .dropdown-content a {
+      color: var(--muted);
+      padding: 10px 14px;
+      text-decoration: none;
+      display: block;
+      font-size: 13.5px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .dropdown-content a:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-content a:hover {
+      background-color: rgba(25, 82, 45, 0.06);
+      color: var(--accent);
+      padding-left: 18px;
+    }
+
+    .dropdown.active .dropdown-content {
+      display: block;
+    }
+
     /* Search Box inside Nav */
     .nav-search-box {
       position: relative;
@@ -425,6 +468,112 @@
       color: #666;
     }
 
+    /* REVIEWS STYLES */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .review-card {
+      background: var(--card);
+      padding: 22px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .reviewer-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .reviewer-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(25, 82, 45, 0.1);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .reviewer-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--accent);
+    }
+    .review-date {
+      font-size: 12px;
+      color: #888;
+    }
+    .review-stars {
+      color: var(--accent-gold);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .review-text {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    /* Star Rating Selector (Google Style) */
+    .star-rating-selector {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .star-rating-selector input {
+      display: none;
+    }
+    .star-rating-selector label {
+      font-size: 26px;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+    .star-rating-selector label:hover,
+    .star-rating-selector label:hover ~ label,
+    .star-rating-selector input:checked ~ label {
+      color: var(--accent-gold);
+    }
+    .star-rating-selector label:hover {
+      transform: scale(1.15);
+    }
+
+    /* Scrollable Comments Box with Load More */
+    .reviews-scroll-container {
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 5px;
+      margin-bottom: 20px;
+    }
+    .reviews-scroll-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .reviews-scroll-container::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .load-more-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
     .slider-wrapper {
       position: relative;
       overflow: hidden;
@@ -641,11 +790,24 @@
         right: 0;
       }
 
-      .main-nav a {
+      .main-nav a, .main-nav .dropdown {
         width: 100%;
+      }
+
+      .main-nav a {
         padding: 12px 15px;
         border-bottom: 1px solid #f1f5f9;
         font-size: 15px;
+      }
+
+      .dropdown-content {
+        position: static;
+        box-shadow: none;
+        border: none;
+        background: #f8fafc;
+        width: 100%;
+        border-radius: 0;
+        padding-left: 15px;
       }
 
       .nav-search-box {
@@ -695,10 +857,20 @@
         </div>
         <a href="#home"><i class="fas fa-home"></i> Home</a>
         <a href="#chalets"><i class="fas fa-bed"></i> Chalets</a>
-        <a href="#pools"><i class="fas fa-swimmer"></i> Pools</a>
-        <a href="#karting"><i class="fas fa-flag-checkered"></i> Karting</a>
+        
+        <!-- Activities Dropdown -->
+        <div class="dropdown" id="activitiesDropdown">
+          <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-bolt"></i> Activities <i class="fas fa-chevron-down" style="font-size: 10px; margin-left: auto;"></i></a>
+          <div class="dropdown-content">
+            <a href="#pools"><i class="fas fa-swimmer"></i> Pools</a>
+            <a href="#karting"><i class="fas fa-flag-checkered"></i> Karting</a>
+            <a href="#atv"><i class="fas fa-motorcycle"></i> ATV</a>
+          </div>
+        </div>
+
         <a href="#events"><i class="fas fa-glass-cheers"></i> Weddings</a>
         <a href="#restaurant"><i class="fas fa-utensils"></i> Restaurant</a>
+        <a href="#reviews"><i class="fas fa-star"></i> Reviews</a>
         <a href="#hours"><i class="fas fa-clock"></i> Hours</a>
         <a href="#" onclick="openJobPopup(event)"><i class="fas fa-briefcase"></i> Careers</a>
         
@@ -721,7 +893,7 @@
         <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; width: 55px; border-radius: 12px; object-fit: cover;" onload="this.classList.add('loaded')">
       </div>
       <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-sign-in-alt"></i> Welcome Back</h2>
-      <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Login or Register to access the booking form.</p>
+      <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Login or Register to access services.</p>
       
       <form id="loginForm" style="text-align: left;">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-envelope"></i> Email<input type="email" id="loginEmail" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
@@ -746,7 +918,7 @@
         <img src="https://d.top4top.io/s_36185sjce1.jpg" alt="Logo" style="height: 55px; width: 55px; border-radius: 12px; object-fit: cover;" onload="this.classList.add('loaded')">
       </div>
       <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-user-plus"></i> Create Account</h2>
-      <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Register to access the booking form.</p>
+      <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Register to access services.</p>
       
       <form id="registerForm" style="text-align: left;">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600; margin-bottom: 10px;"><i class="fas fa-user"></i> Full Name<input type="text" id="regName" required style="width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc;"></label>
@@ -759,6 +931,38 @@
 
         <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-user-plus"></i> Register</button>
         <p id="regError" style="color:red; font-size:13px; margin-top:8px; display:none;"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD REVIEW MODAL -->
+  <div id="reviewModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 480px;">
+      <span class="modal-close" onclick="closeModal('reviewModal')">&times;</span>
+      <h2 style="font-size:22px; margin-bottom:6px;"><i class="fas fa-star" style="color:var(--accent-gold);"></i> Add Your Review</h2>
+      <p style="font-size:13.5px; color:#666; margin-bottom:18px;">Share your experience with us.</p>
+      
+      <form id="reviewForm" style="display: flex; flex-direction: column; gap: 14px;">
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;">Rating (Stars)
+          <div class="star-rating-selector">
+            <input type="radio" id="star5" name="rating" value="5" checked />
+            <label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+          </div>
+        </label>
+
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;">Your Comment
+          <textarea id="reviewComment" required placeholder="Write your review here..." style="width: 100%; padding: 11px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; margin-top: 6px; font-size: 14px; background: #f8fafc; height: 100px; resize: vertical; outline: none;"></textarea>
+        </label>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px; border-radius:30px;"><i class="fas fa-paper-plane"></i> Submit Review</button>
       </form>
     </div>
   </div>
@@ -858,10 +1062,7 @@
       <span class="modal-close" onclick="closeModal('privacyModal')">&times;</span>
       <h2 style="font-size:22px; margin-bottom:12px;"><i class="fas fa-shield-alt"></i> Privacy Policy</h2>
       <div style="font-size: 14px; color: #555; display: flex; flex-direction: column; gap: 10px; line-height: 1.7;">
-        <p>At Iaat Country Club, we respect your privacy and are committed to protecting your personal information. This policy outlines how we collect, use, and safeguard your data when you visit our website or make a reservation.</p>
-        <p><strong>1. Information We Collect:</strong> We may collect personal details such as your full name, phone number, email address, and booking preferences when you register or reserve a service.</p>
-        <p><strong>2. Use of Information:</strong> Your information is used strictly to process bookings, communicate updates regarding your reservations, and improve our club services.</p>
-        <p><strong>3. Data Security:</strong> We implement robust security measures via secure cloud services (Firebase) to keep your personal records safe from unauthorized access.</p>
+        <p>At Iaat Country Club, we respect your privacy and are committed to protecting your personal information.</p>
       </div>
     </div>
   </div>
@@ -872,9 +1073,7 @@
       <span class="modal-close" onclick="closeModal('termsModal')">&times;</span>
       <h2 style="font-size:22px; margin-bottom:12px;"><i class="fas fa-file-contract"></i> Terms & Conditions</h2>
       <div style="font-size: 14px; color: #555; display: flex; flex-direction: column; gap: 10px; line-height: 1.7;">
-        <p>Welcome to Iaat Country Club. By accessing our platform and booking our services, you agree to comply with and be bound by the following terms and conditions:</p>
-        <p><strong>1. Reservations & Bookings:</strong> All bookings made through our system are subject to availability and confirmation. Please ensure your contact details are accurate.</p>
-        <p><strong>2. Club Rules:</strong> Guests are expected to maintain respectful behavior and follow the safety guidelines set by management across all pools, chalets, and recreational areas.</p>
+        <p>Welcome to Iaat Country Club. By accessing our platform you agree to our terms.</p>
       </div>
     </div>
   </div>
@@ -888,10 +1087,11 @@
 
       <form id="bookingForm" style="display: flex; flex-direction: column; gap: 14px;">
         <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-list"></i> Booking Type
-          <select id="bookingType" name="booking_type" required onchange="handleBookingTypeChange()" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'">
+          <select id="bookingType" name="booking_type" required onchange="handleBookingTypeChange()" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none;">
             <option value="" disabled selected>Select Booking Type</option>
             <option value="chalet">Chalet</option>
             <option value="karting">Karting</option>
+            <option value="atv">ATV</option>
             <option value="turkish_bath">Turkish Bath</option>
             <option value="restaurant">Restaurant</option>
             <option value="pool">Swimming Pool</option>
@@ -899,49 +1099,37 @@
           </select>
         </label>
 
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-user"></i> Full Name<input type="text" id="bookName" name="name" required placeholder="Enter your full name" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></label>
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-user"></i> Full Name<input type="text" id="bookName" name="name" required placeholder="Enter your full name" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none;"></label>
         
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-phone"></i> Phone Number<input type="tel" id="bookPhone" name="phone" required placeholder="Enter your phone number" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></label>
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-phone"></i> Phone Number<input type="tel" id="bookPhone" name="phone" required placeholder="Enter your phone number" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none;"></label>
         
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-envelope"></i> Email (Optional)<input type="email" id="bookEmail" name="email" placeholder="Enter your email" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></label>
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-envelope"></i> Email (Optional)<input type="email" id="bookEmail" name="email" placeholder="Enter your email" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none;"></label>
 
-        <!-- LUXURY REDESIGNED CHECK-IN / CHECK-OUT SECTION -->
         <div id="dateSection" style="display:none; gap:12px; flex-wrap:wrap; background: #f8fafc; padding: 14px; border-radius: 14px; border: 1.5px solid #e2e8f0;">
           <div style="flex:1; min-width:200px; display:flex; flex-direction:column;">
-            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-              <i class="fas fa-calendar-check text-success"></i> Check-In Date
-            </label>
-            <input type="text" id="checkinDate" name="checkin" placeholder="Select Check-In" onchange="updateCheckoutMin()" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#cbd5e1'">
+            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px;"><i class="fas fa-calendar-check"></i> Check-In Date</label>
+            <input type="text" id="checkinDate" name="checkin" placeholder="Select Check-In" onchange="updateCheckoutMin()" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none;">
           </div>
-
           <div style="flex:1; min-width:200px; display:flex; flex-direction:column;">
-            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-              <i class="fas fa-calendar-times text-danger"></i> Check-Out Date
-            </label>
-            <input type="text" id="checkoutDate" name="checkout" placeholder="Select Check-Out" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#cbd5e1'">
+            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px;"><i class="fas fa-calendar-times"></i> Check-Out Date</label>
+            <input type="text" id="checkoutDate" name="checkout" placeholder="Select Check-Out" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none;">
           </div>
         </div>
 
-        <!-- LUXURY REDESIGNED BOOKING DATE & TIME SECTION -->
         <div id="singleDateSection" style="display:flex; gap:12px; flex-wrap:wrap; background: #f8fafc; padding: 14px; border-radius: 14px; border: 1.5px solid #e2e8f0;">
           <div style="flex:1; min-width:200px; display:flex; flex-direction:column;">
-            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-              <i class="fas fa-calendar-alt"></i> Booking Date
-            </label>
-            <input type="text" id="singleDate" name="single_date" placeholder="Select Date" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#cbd5e1'">
+            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px;"><i class="fas fa-calendar-alt"></i> Booking Date</label>
+            <input type="text" id="singleDate" name="single_date" placeholder="Select Date" style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none;">
           </div>
-
           <div style="flex:1; min-width:200px; display:flex; flex-direction:column;">
-            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-              <i class="fas fa-clock"></i> Booking Time
-            </label>
-            <input type="text" id="singleTime" name="single_time" style="min-width:200px; padding: 11px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#cbd5e1'">
+            <label style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 6px;"><i class="fas fa-clock"></i> Booking Time</label>
+            <input type="text" id="singleTime" name="single_time" style="min-width:200px; padding: 11px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; outline: none;">
           </div>
         </div>
 
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-users"></i> Guests<input type="number" name="guests" min="1" value="2" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></label>
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-users"></i> Guests<input type="number" name="guests" min="1" value="2" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; outline: none;"></label>
         
-        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-comment-alt"></i> Notes<textarea name="notes" placeholder="Any special requests?" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; height: 80px; resize: vertical; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e2e8f0'"></textarea></label>
+        <label style="font-size: 13.5px; color: #444; display: flex; flex-direction: column; font-weight: 600;"><i class="fas fa-comment-alt"></i> Notes<textarea name="notes" placeholder="Any special requests?" style="width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; margin-top: 6px; font-size: 14px; background: #f8fafc; height: 80px; resize: vertical; outline: none;"></textarea></label>
 
         <button id="submitBtn" type="submit" style="width:100%; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:30px; font-size:14.5px; font-weight:600; cursor:pointer; margin-top: 5px;"><i class="fab fa-whatsapp"></i> Save & Send Booking via WhatsApp</button>
       </form>
@@ -1048,21 +1236,8 @@
         <p style="font-size:15px; color:#444; line-height:1.7; margin-bottom:18px;">
           Experience a traditional luxury Turkish Bath designed for complete relaxation — hot marble stone, steam therapy, deep cleansing rituals, and total body comfort.
         </p>
-
-        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <i class="fas fa-water" style="font-size:16px; color:var(--accent-gold);"></i>
-            <span style="font-weight:600; font-size:14.5px;">Steam Room & Hot Stone</span>
-          </div>
-          <div style="display:flex; align-items:center; gap:10px;">
-            <i class="fas fa-spa" style="font-size:16px; color:var(--accent-gold);"></i>
-            <span style="font-weight:600; font-size:14.5px;">Full Body Wellness Treatment</span>
-          </div>
-        </div>
-
         <button class="btn btn-primary" onclick="openBookingModal('turkish_bath')"><i class="fas fa-spa"></i> Book Turkish Bath</button>
       </div>
-
       <div style="flex:1; min-width:280px; display:flex; justify-content:center;">
         <img src="https://l.top4top.io/p_3621nwt4q1.jpg" alt="Turkish Bath" style="width:100%; max-width:450px; height:320px; object-fit:cover; border-radius:var(--radius);" onload="this.classList.add('loaded')">
       </div>
@@ -1074,6 +1249,13 @@
     <h2><i class="fas fa-flag-checkered"></i> Karting Track</h2>
     <p>Safe & exciting karting track for kids & adults. Hourly bookings with full safety gear.</p>
     <button class="btn" onclick="openBookingModal('karting')"><i class="fas fa-flag-checkered"></i> Book Track</button>
+  </section>
+
+  <!-- ATV -->
+  <section id="atv" class="container section highlight" style="background: linear-gradient(135deg, rgba(195, 155, 75, 0.92) 0%, rgba(174, 132, 59, 0.97) 100%);">
+    <h2><i class="fas fa-motorcycle"></i> ATV Off-Road</h2>
+    <p>Thrilling ATV adventures across rugged terrain and scenic mountain trails. Safety equipment and guided tours included.</p>
+    <button class="btn" style="background: var(--accent); color: #fff; border: none;" onclick="openBookingModal('atv')"><i class="fas fa-motorcycle"></i> Book ATV</button>
   </section>
 
   <!-- WEDDINGS -->
@@ -1095,6 +1277,37 @@
     <button class="btn btn-primary" style="margin-top:15px;" onclick="openBookingModal('restaurant')"><i class="fas fa-utensils"></i> Reserve a Table</button>
   </section>
 
+  <!-- REVIEWS SECTION -->
+  <section id="reviews" class="container section">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+      <h2>Client Reviews & Testimonials</h2>
+      <button class="btn btn-primary" onclick="openReviewModal()"><i class="fas fa-star"></i> Add Review</button>
+    </div>
+    <p style="margin-bottom: 15px;">See what our valued guests have to say about their experiences at Iaat Country Club.</p>
+    
+    <!-- === مكان عرض المتوسط والنجوم الإجمالية === -->
+    <div id="reviewsSummary" style="display: flex; align-items: center; gap: 15px; background: #fff; padding: 16px 20px; border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.05); margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+      <div id="avgRatingNumber" style="font-size: 32px; font-weight: 800; color: var(--accent);">0.0</div>
+      <div>
+        <div id="avgRatingStars" style="color: var(--accent-gold); font-size: 16px; margin-bottom: 4px;">
+          <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+        </div>
+        <div id="totalReviewsCount" style="font-size: 13px; color: #666;">Based on 0 reviews</div>
+      </div>
+    </div>
+    <!-- ======================================= -->
+
+    <div class="reviews-scroll-container">
+      <div id="reviewsContainer" class="reviews-grid">
+        <p style="color:#777;">Loading reviews...</p>
+      </div>
+    </div>
+
+    <div id="loadMoreContainer" class="load-more-container" style="display: none;">
+      <button class="btn" onclick="loadMoreReviews()"><i class="fas fa-chevron-down"></i> Load More Comments</button>
+    </div>
+  </section>
+
   <!-- WORKING HOURS SECTION -->
   <section id="hours" class="container section">
     <h2><i class="fas fa-clock" style="color: var(--accent-gold);"></i> Working Hours</h2>
@@ -1110,12 +1323,6 @@
     </div>
   </section>
 
-  <!-- KIDS -->
-  <section id="kids" class="container section">
-    <h2>Kids Playroom</h2>
-    <p>Supervised indoor playroom for children aged 3 to 12. Fun and safe environment.</p>
-  </section>
-
   <!-- GALLERY -->
   <section id="gallery" class="container section">
     <h2>Gallery</h2>
@@ -1126,10 +1333,7 @@
         <img src="https://h.top4top.io/p_37453dkk41.jpg" alt="burger 1" class="slider-item" onload="this.classList.add('loaded')">
         <img src="https://e.top4top.io/p_3621f9sfa1.jpg" alt="Pool 1" class="slider-item" onload="this.classList.add('loaded')">
         <img src="https://l.top4top.io/p_3621zabi21.jpg" alt="Pool 2" class="slider-item" onload="this.classList.add('loaded')">
-        <img src="https://j.top4top.io/p_36217qmcm1.jpg" alt="Chalet 1" class="slider-item" onload="this.classList.add('loaded')">
-        <img src="https://d.top4top.io/p_3621gxyut1.jpg" alt="Chalet 2" class="slider-item" onload="this.classList.add('loaded')">
       </div>
-
       <button class="slider-prev">&#10094;</button>
       <button class="slider-next">&#10095;</button>
     </div>
@@ -1186,7 +1390,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC3GXpvmrcz8z1tNBVP6iSJvdxZ2z750vA",
@@ -1202,6 +1406,8 @@
     const db = getFirestore(app);
 
     let currentUser = null;
+    let allReviewsData = [];
+    let displayedReviewsCount = 3;
 
     onAuthStateChanged(auth, (user) => {
       currentUser = user;
@@ -1245,7 +1451,6 @@
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: name });
         
-        // حفظ بيانات المستخدم في collection باسم accounts مع استخدام الـ uid كمعرّف للمستند
         await setDoc(doc(db, "accounts", userCredential.user.uid), {
           uid: userCredential.user.uid,
           name: name,
@@ -1327,6 +1532,521 @@
       });
     };
 
+// ============================================================
+// REVIEWS LOGIC
+// ============================================================
+
+window.openReviewModal = function() {
+  if (!currentUser) {
+    openModal('loginModal');
+    return;
+  }
+
+  openModal('reviewModal');
+};
+
+
+// ============================================================
+// SUBMIT REVIEW
+// ============================================================
+
+window.submitReview = async function(e) {
+  e.preventDefault();
+
+  if (!currentUser) {
+    openModal('loginModal');
+    return;
+  }
+
+  const checkedRating =
+    document.querySelector('input[name="rating"]:checked');
+
+  const rating = checkedRating
+    ? parseInt(checkedRating.value)
+    : 5;
+
+  const comment =
+    document.getElementById("reviewComment").value.trim();
+
+  const accountName =
+    currentUser.displayName ||
+    currentUser.email.split('@')[0];
+
+  if (!comment) {
+    alert("Please write your review.");
+    return;
+  }
+
+  try {
+
+    await addDoc(collection(db, "reviews"), {
+
+      userId: currentUser.uid,
+
+      name: accountName,
+
+      rating: rating,
+
+      comment: comment,
+
+      createdAt: serverTimestamp()
+
+    });
+
+    closeModal('reviewModal');
+
+    document.getElementById("reviewForm").reset();
+
+    const star5 = document.getElementById("star5");
+
+    if (star5) {
+      star5.checked = true;
+    }
+
+    alert("Review added successfully!");
+
+    await loadReviews();
+
+  } catch (err) {
+
+    console.error("Review submit error:", err);
+
+    alert(
+      "Failed to submit review. Please try again."
+    );
+  }
+};
+
+
+// ============================================================
+// CREATE GOOGLE-STYLE STAR HTML
+// ============================================================
+
+function createCumulativeStars(totalPoints) {
+
+  let starValue = totalPoints / 15;
+
+  starValue = Math.min(5, starValue);
+
+  starValue =
+    Math.round(starValue * 2) / 2;
+
+  let html = "";
+
+  for (let i = 1; i <= 5; i++) {
+
+    if (starValue >= i) {
+
+      html += `
+        <i
+          class="fas fa-star"
+          style="color:var(--accent-gold);"
+        ></i>
+      `;
+
+    }
+
+    else if (starValue >= i - 0.5) {
+
+      html += `
+        <i
+          class="fas fa-star-half-stroke"
+          style="color:var(--accent-gold);"
+        ></i>
+      `;
+
+    }
+
+    else {
+
+      html += `
+        <i
+          class="far fa-star"
+          style="color:#cbd5e1;"
+        ></i>
+      `;
+    }
+  }
+
+  return html;
+}
+
+
+// ============================================================
+// LOAD REVIEWS
+// ============================================================
+
+window.loadReviews = async function() {
+
+  const container =
+    document.getElementById("reviewsContainer");
+
+  const loadMoreContainer =
+    document.getElementById("loadMoreContainer");
+
+  if (!container) return;
+
+  try {
+
+    const querySnapshot =
+      await getDocs(collection(db, "reviews"));
+
+    allReviewsData = [];
+
+    let totalRatingPoints = 0;
+
+    querySnapshot.forEach((docSnap) => {
+
+      const revData = docSnap.data();
+
+      const rating =
+        Number(revData.rating) || 0;
+
+      allReviewsData.push({
+        id: docSnap.id,
+        ...revData
+      });
+
+      if (rating >= 1 && rating <= 5) {
+
+        totalRatingPoints +=
+          rating / 5;
+      }
+
+    });
+
+    const totalReviews =
+      allReviewsData.length;
+
+    const avgNumEl =
+      document.getElementById("avgRatingNumber");
+
+    const avgStarsEl =
+      document.getElementById("avgRatingStars");
+
+    const totalCountEl =
+      document.getElementById("totalReviewsCount");
+
+    if (totalReviews === 0) {
+
+      if (avgNumEl) {
+        avgNumEl.textContent = "0.0";
+      }
+
+      if (totalCountEl) {
+        totalCountEl.textContent =
+          "Based on 0 reviews";
+      }
+
+      if (avgStarsEl) {
+
+        avgStarsEl.innerHTML = `
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+        `;
+      }
+
+      container.innerHTML = `
+        <p
+          style="
+            color:#777;
+            grid-column:1/-1;
+            text-align:center;
+          "
+        >
+          No reviews yet.
+          Be the first to share your experience!
+        </p>
+      `;
+
+      if (loadMoreContainer) {
+        loadMoreContainer.style.display = "none";
+      }
+
+      return;
+    }
+
+    let cumulativeStars =
+      totalRatingPoints / 15;
+
+    cumulativeStars =
+      Math.min(5, cumulativeStars);
+
+    cumulativeStars =
+      Math.round(cumulativeStars * 2) / 2;
+
+    if (avgNumEl) {
+
+      avgNumEl.textContent =
+        cumulativeStars.toFixed(1);
+    }
+
+    if (totalCountEl) {
+
+      totalCountEl.textContent =
+        `Based on ${totalReviews} reviews`;
+    }
+
+    if (avgStarsEl) {
+
+      avgStarsEl.innerHTML =
+        createCumulativeStars(totalRatingPoints);
+    }
+
+    allReviewsData.sort((a, b) => {
+
+      const dateA =
+        a.createdAt &&
+        typeof a.createdAt.toDate === "function"
+          ? a.createdAt.toDate()
+          : new Date(0);
+
+      const dateB =
+        b.createdAt &&
+        typeof b.createdAt.toDate === "function"
+          ? b.createdAt.toDate()
+          : new Date(0);
+
+      return dateB - dateA;
+    });
+
+    displayedReviewsCount = 3;
+
+    renderReviewsList();
+
+  } catch (err) {
+
+    console.error(
+      "Failed to load reviews:",
+      err
+    );
+
+    container.innerHTML = `
+      <p
+        style="
+          color:red;
+          grid-column:1/-1;
+          text-align:center;
+        "
+      >
+        Failed to load reviews.
+      </p>
+    `;
+  }
+};
+
+
+// ============================================================
+// RENDER REVIEWS
+// ============================================================
+
+window.renderReviewsList = function() {
+
+  const container =
+    document.getElementById("reviewsContainer");
+
+  const loadMoreContainer =
+    document.getElementById("loadMoreContainer");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const reviewsToShow =
+    allReviewsData.slice(
+      0,
+      displayedReviewsCount
+    );
+
+  reviewsToShow.forEach((r) => {
+
+    const name =
+      r.name || "Guest";
+
+    const initial =
+      name.charAt(0).toUpperCase();
+
+    const rating =
+      Number(r.rating) || 0;
+
+    let starsHtml = "";
+
+    for (let i = 1; i <= 5; i++) {
+
+      if (i <= rating) {
+
+        starsHtml += `
+          <i
+            class="fas fa-star"
+            style="color:var(--accent-gold);"
+          ></i>
+        `;
+
+      } else {
+
+        starsHtml += `
+          <i
+            class="far fa-star"
+            style="color:#cbd5e1;"
+          ></i>
+        `;
+      }
+    }
+
+    let dateStr = "Recently";
+
+    if (
+      r.createdAt &&
+      typeof r.createdAt.toDate === "function"
+    ) {
+
+      dateStr =
+        r.createdAt
+          .toDate()
+          .toLocaleDateString(
+            "en-US",
+            {
+              year: "numeric",
+              month: "short",
+              day: "numeric"
+            }
+          );
+    }
+
+    const safeName =
+      String(name)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    const safeComment =
+      String(r.comment || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    container.innerHTML += `
+
+      <div class="review-card">
+
+        <div>
+
+          <div class="review-header">
+
+            <div class="reviewer-info">
+
+              <div class="reviewer-avatar">
+                ${initial}
+              </div>
+
+              <span class="reviewer-name">
+                ${safeName}
+              </span>
+
+            </div>
+
+            <span class="review-date">
+              ${dateStr}
+            </span>
+
+          </div>
+
+
+          <div class="review-stars">
+            ${starsHtml}
+          </div>
+
+
+          <p class="review-text">
+            "${safeComment}"
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+  });
+
+  if (loadMoreContainer) {
+
+    if (
+      allReviewsData.length > 3 &&
+      displayedReviewsCount === 3
+    ) {
+
+      loadMoreContainer.style.display =
+        "block";
+
+    } else {
+
+      loadMoreContainer.style.display =
+        "none";
+    }
+  }
+};
+
+
+// ============================================================
+// LOAD MORE REVIEWS
+// ============================================================
+
+window.loadMoreReviews = function() {
+
+  displayedReviewsCount =
+    allReviewsData.length;
+
+  renderReviewsList();
+
+  setTimeout(() => {
+
+    const container =
+      document.querySelector(
+        ".reviews-scroll-container"
+      );
+
+    if (container) {
+
+      container.scrollTop = 0;
+    }
+
+  }, 100);
+};
+
+
+// ============================================================
+// REVIEW FORM
+// ============================================================
+
+const reviewForm =
+  document.getElementById("reviewForm");
+
+if (reviewForm) {
+
+  reviewForm.addEventListener(
+    "submit",
+    function(e) {
+
+      window.submitReview(e);
+
+    }
+  );
+}
+
+
+// ============================================================
+// INITIAL LOAD
+// ============================================================
+
+loadReviews();
+
     window.submitBookingToFirebase = async function(e, data) {
       if (!currentUser) {
         closeModal('bookingModal');
@@ -1379,7 +2099,6 @@
         const waUrl = `https://wa.me/96171561003?text=${waMessage}`;
         
         document.getElementById("whatsappRedirectBtn").href = waUrl;
-
         openModal('successBookingModal');
 
         setTimeout(() => {
@@ -1432,22 +2151,14 @@
           const b = docSnap.data();
           const docId = docSnap.id;
           
-          let endDate = "";
           let isExpired = false;
-          
           if (b.bookingType === "chalet") {
-            endDate = b.checkout;
-            if (endDate && endDate < currentDateStr) {
-              isExpired = true;
-            }
+            if (b.checkout && b.checkout < currentDateStr) isExpired = true;
           } else {
             const datePart = b.checkin.split(" at ")[0];
             const timePart = b.checkin.split(" at ")[1];
-            if (datePart && datePart < currentDateStr) {
-              isExpired = true;
-            } else if (datePart === currentDateStr && timePart && timePart < currentTimeStr) {
-              isExpired = true;
-            }
+            if (datePart && datePart < currentDateStr) isExpired = true;
+            else if (datePart === currentDateStr && timePart && timePart < currentTimeStr) isExpired = true;
           }
           
           let dateDisplay = `<b>Date/Check-In:</b> ${b.checkin}`;
@@ -1456,7 +2167,6 @@
           }
 
           let expiredBadge = isExpired ? `<div style="margin-top:8px; display:inline-block; background:#fee2e2; color:#dc2626; padding:4px 10px; border-radius:6px; font-weight:700; font-size:12px;"><i class="fas fa-exclamation-circle"></i> Booking Expired</div>` : '';
-          
           let deleteBtn = isExpired ? `<button onclick="confirmDeleteBooking('${docId}')" style="margin-top:10px; background:#dc2626; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:600; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px;"><i class="fas fa-trash-alt"></i> Delete Booking</button>` : '';
           
           container.innerHTML += `
@@ -1481,55 +2191,22 @@
       window.submitBookingToFirebase(e, new FormData(e.target));
     });
 
-    document.getElementById("loginForm").addEventListener("submit", function(e) { 
-      e.preventDefault(); 
-      window.loginUser(e); 
-    });
-
-    document.getElementById("registerForm").addEventListener("submit", function(e) { 
-      e.preventDefault(); 
-      window.registerUser(e); 
-    });
-
-    document.getElementById("resetForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      window.resetPassword(e);
-    });
-
-    document.getElementById("settingsForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      window.updateSettings(e);
-    });
+    document.getElementById("loginForm").addEventListener("submit", function(e) { e.preventDefault(); window.loginUser(e); });
+    document.getElementById("registerForm").addEventListener("submit", function(e) { e.preventDefault(); window.registerUser(e); });
+    document.getElementById("resetForm").addEventListener("submit", function(e) { e.preventDefault(); window.resetPassword(e); });
+    document.getElementById("settingsForm").addEventListener("submit", function(e) { e.preventDefault(); window.updateSettings(e); });
  
-    flatpickr("#checkinDate", {
-      dateFormat: "Y-m-d",
-      minDate: "today"
-    });
-
-    flatpickr("#checkoutDate", {
-      dateFormat: "Y-m-d",
-      minDate: "today"
-    });
-
-    flatpickr("#singleDate", {
-      dateFormat: "Y-m-d",
-      minDate: "today"
-    });
-    flatpickr("#singleTime", {
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: "H:i",
-      time_24hr: false
-    });
+    flatpickr("#checkinDate", { dateFormat: "Y-m-d", minDate: "today" });
+    flatpickr("#checkoutDate", { dateFormat: "Y-m-d", minDate: "today" });
+    flatpickr("#singleDate", { dateFormat: "Y-m-d", minDate: "today" });
+    flatpickr("#singleTime", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: false });
     
     function updateCheckoutMin() {
       const checkin = document.getElementById("checkinDate");
       const checkout = document.getElementById("checkoutDate");
       if(checkin && checkout && checkin.value) {
         checkout.min = checkin.value;
-        if(checkout.value && checkout.value < checkin.value) {
-          checkout.value = checkin.value;
-        }
+        if(checkout.value && checkout.value < checkin.value) checkout.value = checkin.value;
       }
     }
     window.updateCheckoutMin = updateCheckoutMin;
@@ -1591,24 +2268,33 @@
 
     function filterNavSections() {
       const input = document.getElementById("navSearchInput").value.toLowerCase();
-      const links = document.querySelectorAll(".main-nav > a");
+      const links = document.querySelectorAll(".main-nav > a, .main-nav .dropdown");
       
-      links.forEach(link => {
-        if (!window.currentUser && (link.id === "navBookingsBtn" || link.id === "navSettingsBtn")) {
-          link.style.display = "none";
+      links.forEach(item => {
+        if (!window.currentUser && (item.id === "navBookingsBtn" || item.id === "navSettingsBtn")) {
+          item.style.display = "none";
           return;
         }
-        const text = link.textContent.toLowerCase();
-        link.style.display = text.includes(input) ? "flex" : "none";
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(input) ? "flex" : "none";
       });
     }
     window.filterNavSections = filterNavSections;
 
+    // Toggle dropdown function
+    window.toggleDropdown = function(e) {
+      e.preventDefault();
+      const dropdown = document.getElementById("activitiesDropdown");
+      dropdown.classList.toggle("active");
+    };
+
+    // Close dropdown when clicking outside
     window.addEventListener('click', function(e) {
+      if (!e.target.closest('#activitiesDropdown')) {
+        document.getElementById("activitiesDropdown")?.classList.remove("active");
+      }
       document.querySelectorAll('.modal-overlay').forEach(modal => {
-        if (e.target === modal) {
-          modal.style.display = 'none';
-        }
+        if (e.target === modal) modal.style.display = 'none';
       });
     });
 
@@ -1624,7 +2310,11 @@
 
       document.querySelectorAll('.main-nav a').forEach(link => {
         link.addEventListener('click', function(e) {
+          // If it's the dropdown toggle, don't close the menu
+          if (this.getAttribute('onclick')?.includes('toggleDropdown')) return;
+          
           mainNav.classList.remove('open');
+          document.getElementById("activitiesDropdown")?.classList.remove("active");
           const href = this.getAttribute('href');
           if(href && href.startsWith('#')) {
             const target = document.querySelector(href);
@@ -1651,11 +2341,10 @@
           track.style.transform = `translateX(-${scrollAmount}px)`;
         }
       });
-
       prev.addEventListener('click', () => {
         if (scrollAmount > 0) {
           scrollAmount -= itemWidth;
-          track.style.transform = `translateX(-${scrollAmount}px)`
+          track.style.transform = `translateX(-${scrollAmount}px)`;
         }
       });
     }
