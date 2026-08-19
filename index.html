@@ -1,102 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></title>
-  
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>This site can’t be reached</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    background:#fff;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    color:#202124;
+}
+
+.error-page{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 24px;
+}
+
+.error-box{
+    width:100%;
+    max-width:620px;
+}
+
+h1{
+    margin:0 0 18px;
+    font-size:30px;
+    font-weight:400;
+    letter-spacing:-.3px;
+}
+
+p{
+    margin:0 0 22px;
+    color:#5f6368;
+    font-size:16px;
+    line-height:1.6;
+}
+
+.info{
+    color:#5f6368;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.details{
+    margin-top:24px;
+    padding-top:18px;
+    border-top:1px solid #eee;
+    font-size:14px;
+    color:#5f6368;
+}
+
+.details div{
+    margin:7px 0;
+}
+
+.details strong{
+    color:#202124;
+    font-weight:500;
+}
+
+@media(max-width:600px){
+    h1{
+        font-size:25px;
     }
-    
-    body {
-      background: #fff;
-      color: #202124;
-      font-family: Arial, Helvetica, sans-serif;
+
+    p{
+        font-size:15px;
     }
-    
-    #error {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-    }
-    
-    .box {
-      width: 100%;
-      max-width: 600px;
-    }
-    
-    h1 {
-      font-size: 30px;
-      font-weight: 400;
-      margin-bottom: 20px;
-    }
-    
-    p {
-      font-size: 16px;
-      line-height: 1.6;
-      color: #5f6368;
-    }
-    
-    .code {
-      margin-top: 25px;
-      font-size: 14px;
-      color: #5f6368;
-    }
-    
-    button {
-      margin-top: 30px;
-      padding: 10px 20px;
-      border: 1px solid #dadce0;
-      background: #fff;
-      border-radius: 4px;
-      color: #1a73e8;
-      font-size: 14px;
-      cursor: pointer;
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
-  
-  <div id="error">
-    
-    <div class="box">
-      
-      <h1>This site can’t be reached</h1>
-      
-      <p>
-        The website is currently unavailable.
-      </p>
-      
-      <div class="code">
-        ERR_CONNECTION_CLOSED
-      </div>
-      
-    </div>
-    
-  </div>
-  
-  <script>
-    /* Subscription expiration date */
-    const expirationDate = new Date("2026-12-31T23:59:59");
-    
-    /*
-       This page represents the state shown
-       after the subscription has expired.
-    */
-    
-    if (new Date() < expirationDate) {
-      // Your normal website should be loaded here
-    }
-  </script>
-  
-</body>
 
+<div class="error-page">
+
+    <div class="error-box">
+
+        <h1>This site can’t be reached</h1>
+
+        <p>
+            The website is currently unavailable.
+        </p>
+
+        <div class="info">
+            The domain and hosting subscription has expired.
+        </div>
+
+        <div class="details">
+
+            <div>
+                Domain &amp; Hosting:
+                <strong>$25</strong>
+            </div>
+
+            <div>
+                Late renewal fee:
+                <strong>$4</strong>
+            </div>
+
+            <div>
+                Namecheap tax:
+                <strong>Applicable</strong>
+            </div>
+
+            <div>
+                Renewal total:
+                <strong>$29 + Tax</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
 </html>
