@@ -107,20 +107,25 @@
     </div>
 
     <!-- Top Navigation Bar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm w-full">
+        <div class="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
             
             <div class="flex items-center gap-3 sm:gap-4">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-50 rounded-2xl border border-slate-200 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
                     <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
-                    <h1 class="text-base sm:text-2xl font-black text-mono-950 tracking-tight">
+                    <h1 class="text-base sm:text-xl font-black text-mono-950 tracking-tight">
                         Iaat Country Club
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-mono-500 font-bold tracking-wide">
-                        إيعات كونتري كلوب - إدارة المسبح الشتوي
-                    </p>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <span class="text-[11px] text-mono-500 font-bold">إدارة المسبح الشتوي</span>
+                        <!-- Server Connection Status Indicator -->
+                        <span id="serverStatusBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" id="statusDot"></span>
+                            <span id="statusText">جاري الاتصال بالسيرفر...</span>
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -145,7 +150,7 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    <main class="flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
         <!-- Stats Grid Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -227,8 +232,8 @@
         </div>
 
         <!-- PC Table View -->
-        <div class="hidden lg:block mono-card rounded-2xl overflow-hidden">
-            <div class="overflow-x-auto">
+        <div class="hidden lg:block mono-card rounded-2xl overflow-hidden w-full">
+            <div class="overflow-x-auto w-full">
                 <table class="w-full text-right text-sm whitespace-nowrap">
                     <thead class="bg-mono-950 text-white uppercase text-xs font-bold tracking-wider">
                         <tr>
@@ -419,18 +424,19 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        // استبدل بيانات التكوين أدناه ببيانات مشروعك الفعلي على Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyABfBoajVCS8E6u8o1fJrQUuqvS9LPBM9g",
+            authDomain: "beweblestore.firebaseapp.com",
+            databaseURL: "https://beweblestore-default-rtdb.firebaseio.com",
+            projectId: "beweblestore",
+            storageBucket: "beweblestore.firebasestorage.app",
+            messagingSenderId: "392640420443",
+            appId: "1:392640420443:web:6065fbc4a00e52977d3d7e"
         };
+
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -444,7 +450,6 @@
         window.doc = doc;
         window.onSnapshot = onSnapshot;
 
-        // بدء الاستماع لقاعدة البيانات فور تحميل الصفحة
         initFirebaseListeners();
     </script>
 
@@ -480,7 +485,6 @@
             document.getElementById('lockScreen').classList.add('hidden');
         }
 
-        // Full Screen Toggle Function
         function toggleFullScreen() {
             const icon = document.getElementById('fullScreenIcon');
             if (!document.fullscreenElement) {
@@ -498,8 +502,22 @@
             }
         }
 
+        function updateServerStatus(isConnected, message) {
+            const badge = document.getElementById('serverStatusBadge');
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+
+            text.textContent = message;
+            if (isConnected) {
+                badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+                dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+            } else {
+                badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200";
+                dot.className = "w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse";
+            }
+        }
+
         function initFirebaseListeners() {
-            // الاستماع اللحظي لمجموعة المشتركين في فايربيز (Firestore)
             try {
                 window.onSnapshot(window.collection(window.db, "pool_members"), (snapshot) => {
                     membersData = [];
@@ -509,12 +527,14 @@
                     document.getElementById('tableLoader').classList.add('hidden');
                     updateStatistics();
                     applyFilters();
+                    updateServerStatus(true, "متصل بالسيرفر (مباشر)");
                 }, (error) => {
                     console.error("Firebase error: ", error);
+                    updateServerStatus(false, "خطأ في اتصال السيرفر");
                     document.getElementById('tableLoader').innerHTML = `<p class="text-rose-600 font-bold">خطأ في الاتصال بقاعدة البيانات. تأكد من إعدادات Firebase.</p>`;
                 });
             } catch (err) {
-                console.log("Waiting for firebase initialization...");
+                updateServerStatus(false, "جاري التهيئة...");
             }
         }
 
@@ -546,7 +566,6 @@
                     `<span class="px-3 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>نشط</span>` : 
                     `<span class="px-3 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>منتهي</span>`;
 
-                // PC Row
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition duration-150";
                 tr.innerHTML = `
@@ -573,7 +592,6 @@
                 `;
                 tbody.appendChild(tr);
 
-                // Mobile Card
                 const card = document.createElement('div');
                 card.className = "mono-card rounded-2xl p-4 space-y-3 relative";
                 
@@ -705,7 +723,6 @@
             document.getElementById('memberEndDate').value = startDate.toISOString().split('T')[0];
         };
 
-        // Save to Firebase
         window.saveMember = async function(e) {
             e.preventDefault();
 
@@ -745,7 +762,7 @@
                 closeMemberModal();
             } catch (err) {
                 console.error("Error saving member: ", err);
-                showToast("حدث خطأ أثناء الحفظ. يجدر التحقق من الاتصال.", "error");
+                showToast("حدث خطأ أثناء الحفظ. تأكد من الاتصال.", "error");
             }
         };
 
@@ -777,7 +794,6 @@
             document.getElementById('memberModal').classList.remove('hidden');
         };
 
-        // Delete confirmation popup handlers
         window.promptDeleteMember = function(docId, name) {
             memberToDeleteId = docId;
             document.getElementById('deleteMemberName').textContent = name;
