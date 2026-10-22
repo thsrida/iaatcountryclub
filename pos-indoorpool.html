@@ -28,6 +28,7 @@
                     },
                     fontFamily: {
                         sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+                        mono: ['Courier New', 'Courier', 'monospace']
                     }
                 }
             }
@@ -66,9 +67,56 @@
         .developer-badge {
             animation: pulseGlow 4s infinite ease-in-out;
         }
+
+        /* Terminal CMD Overlay Style */
+        .cmd-terminal {
+            background-color: #050811;
+            color: #38bdf8;
+            font-family: 'Consolas', 'Courier New', monospace;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+        .cmd-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: #38bdf8;
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-mono-900 font-sans min-h-screen flex flex-col antialiased selection:bg-mono-900 selection:text-white">
+
+    <!-- TERMINAL CMD REFRESH MODAL (شاشة المزامنة السوداء) -->
+    <div id="cmdTerminalModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="cmd-terminal w-full max-w-2xl rounded-2xl border border-slate-800 overflow-hidden flex flex-col shadow-2xl">
+            <!-- Header bar -->
+            <div class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                    <span class="text-xs font-mono text-slate-400 font-bold mr-2">Iaat OS Core Sync [Terminal Engine]</span>
+                </div>
+                <span class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20 font-mono">v3.4.0 Active</span>
+            </div>
+            
+            <!-- Terminal Screen Content -->
+            <div id="cmdTerminalLogs" class="p-5 h-80 overflow-y-auto text-xs space-y-2 dir-ltr text-left font-mono">
+                <div class="text-slate-500">// Initiating System Refresh & Data Synchronization Process...</div>
+            </div>
+
+            <!-- Footer Progress -->
+            <div class="bg-slate-900/80 px-5 py-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                <span id="cmdStatusText" class="text-emerald-400 font-mono font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-spinner fa-spin"></i> جاري مزامنة قواعد البيانات والاتصال...
+                </span>
+                <span id="cmdPercent" class="text-sky-400 font-mono font-bold">0%</span>
+            </div>
+        </div>
+    </div>
 
     <!-- PASSWORD LOCK SCREEN OVERLAY -->
     <div id="lockScreen" class="fixed inset-0 bg-mono-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -83,15 +131,15 @@
             <div>
                 <h2 class="text-2xl font-black text-mono-950">Iaat Country Club</h2>
                 <p class="text-xs text-mono-600 font-bold tracking-widest uppercase mt-1">نظام إدارة المسبح الشتوي</p>
-                <p class="text-xs text-mono-500 mt-2">يرجى إدخال كلمة السر للوصول إلى لوحة التحكم</p>
+                <p class="text-xs text-mono-500 mt-2">يرجى إدخال رمز الوصول الخاص بك للدخول للنظام</p>
             </div>
 
             <form onsubmit="checkPassword(event)" class="space-y-4">
                 <div class="relative">
-                    <input type="password" id="passInput" placeholder="أدخل كلمة السر..." autofocus required class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-center text-lg font-mono font-bold text-mono-950 tracking-widest focus:outline-none focus:border-mono-900 focus:ring-2 focus:ring-mono-900/10 transition">
+                    <input type="password" id="passInput" placeholder="أدخل الرمز الخاص بك" autofocus required class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-center text-lg font-mono font-bold text-mono-950 tracking-widest focus:outline-none focus:border-mono-900 focus:ring-2 focus:ring-mono-900/10 transition">
                 </div>
                 <p id="passError" class="text-xs text-rose-600 hidden font-bold flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-circle-exclamation"></i> كلمة السر غير صحيحة!
+                    <i class="fa-solid fa-circle-exclamation"></i> الكود غير صحيح!
                 </p>
                 <button type="submit" class="w-full bg-mono-950 hover:bg-mono-800 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
                     <i class="fa-solid fa-lock-open"></i>
@@ -134,8 +182,7 @@
                         Iaat Country Club
                     </h1>
                     <div class="flex items-center gap-2 mt-0.5">
-                        <span class="text-[11px] text-mono-500 font-bold">إدارة المسبح الشتوي</span>
-                        <!-- Server Connection Status Indicator -->
+                        <span id="currentUserBadge" class="text-[11px] bg-slate-100 text-mono-900 px-2 py-0.5 rounded-lg font-bold border border-slate-200">المستخدم: -</span>
                         <span id="serverStatusBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" id="statusDot"></span>
                             <span id="statusText">جاري الاتصال بالسيرفر...</span>
@@ -146,14 +193,25 @@
 
             <!-- Actions Header -->
             <div class="flex items-center gap-2 sm:gap-3">
+                <!-- زر إعادة تعيين وحذف جميع البيانات (خاص بـ Sandra الإدارة) -->
+                <button id="resetAllBtn" onclick="promptResetAllData()" class="hidden px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-bold transition items-center gap-2 border border-rose-200" title="تصفية وحذف كافة المشتركين (الإدارة)">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span class="hidden md:inline">تصفية الكل (إدارة)</span>
+                </button>
+
+                <button onclick="triggerCmdSync()" class="px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-blue-200" title="مزامنة وتحديث النظام">
+                    <i class="fa-solid fa-rotate" id="refreshIcon"></i>
+                    <span class="hidden md:inline">مزامنة النظام</span>
+                </button>
+
                 <button onclick="toggleFullScreen()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-slate-200" title="ملء الشاشة">
                     <i class="fa-solid fa-expand" id="fullScreenIcon"></i>
                     <span class="hidden md:inline">ملء الشاشة</span>
                 </button>
 
-                <button onclick="openSupportModal()" class="hidden sm:flex items-center gap-2 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition border border-emerald-200" title="الدعم الفني">
-                    <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
-                    <span>الدعم الفني</span>
+                <button onclick="openSystemSettingsModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-slate-200" title="إعدادات النظام">
+                    <i class="fa-solid fa-gears"></i>
+                    <span class="hidden md:inline">إعدادات النظام</span>
                 </button>
 
                 <button onclick="lockSystem()" class="px-3 py-2 bg-mono-950 hover:bg-mono-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm" title="قفل النظام">
@@ -219,7 +277,7 @@
                 </button>
 
                 <div class="relative flex-1 max-w-md">
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ابحث باسم المشترك، المعرّف ID، أو الهاتف..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pr-10 pl-4 py-2.5 text-sm text-mono-950 placeholder-mono-400 focus:outline-none focus:border-mono-900 focus:ring-2 focus:ring-mono-900/10 transition">
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ابحث باسم المشترك، المعرّف ID، أو الكاشير..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pr-10 pl-4 py-2.5 text-sm text-mono-950 placeholder-mono-400 focus:outline-none focus:border-mono-900 focus:ring-2 focus:ring-mono-900/10 transition">
                     <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3.5 text-mono-400 text-sm"></i>
                 </div>
             </div>
@@ -265,6 +323,7 @@
                             <th class="py-4 px-4">رقم ID</th>
                             <th class="py-4 px-4">اسم المشترك</th>
                             <th class="py-4 px-4">رقم الهاتف / العنوان</th>
+                            <th class="py-4 px-4">الكاشير</th>
                             <th class="py-4 px-4">تاريخ الاشتراك</th>
                             <th class="py-4 px-4">تاريخ الانتهاء</th>
                             <th class="py-4 px-4 text-center">حالة الدفع</th>
@@ -299,7 +358,7 @@
 
     </main>
 
-    <!-- Professional Footer with Developer Signature -->
+    <!-- Professional Footer -->
     <footer class="mt-auto bg-white border-t border-slate-200 py-6 px-4 text-center text-xs text-mono-500 space-y-2">
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <span>Iaat Country Club &copy; 2026 - جميع الحقوق محفوظة</span>
@@ -315,10 +374,9 @@
         </div>
     </footer>
 
-    <!-- Modal 1: Add / Edit Member Dialog -->
+    <!-- Modal: Add / Edit Member -->
     <div id="memberModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
-            
             <div class="bg-mono-950 text-white px-6 py-4 flex justify-between items-center shrink-0">
                 <h3 class="text-base sm:text-lg font-bold flex items-center gap-2.5" id="modalTitle">
                     <i class="fa-solid fa-user-plus"></i>
@@ -384,7 +442,6 @@
                 <!-- Webcam Photo Section -->
                 <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
                     <label class="block text-xs font-bold text-mono-700">صورة المشترك الشخصية</label>
-                    
                     <div class="flex flex-col sm:flex-row items-center gap-4">
                         <div class="w-28 h-28 bg-white border-2 border-dashed border-slate-300 rounded-2xl flex items-center justify-center overflow-hidden relative shrink-0 shadow-inner">
                             <img id="photoPreview" src="" class="hidden w-full h-full object-cover">
@@ -435,7 +492,7 @@
         </div>
     </div>
 
-    <!-- Modal 2: Delete Confirmation Popup -->
+    <!-- Modal: Delete Single Member -->
     <div id="deleteModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
             <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-100">
@@ -452,7 +509,28 @@
         </div>
     </div>
 
-    <!-- Modal 3: Full Image View -->
+    <!-- Modal: Reset All Data Confirmation (Sandra Admin Only) -->
+    <div id="resetAllModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-100">
+                <i class="fa-solid fa-bomb"></i>
+            </div>
+            <div>
+                <h4 class="text-lg font-black text-rose-600">تحذير خطير: حذف كافة البيانات!</h4>
+                <p class="text-xs text-mono-600 mt-1.5 leading-relaxed">أنتِ على وشك مسح وحذف **جميع سجلات المشتركين** من قاعدة البيانات نهائياً. هذا الإجراء مخصص لإدارة الكاشير Sandra فقط ولا يمكن التراجع عنه أبداً.</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-right space-y-1">
+                <label class="block text-[11px] font-bold text-mono-700">أدخلي رمز Sandra الخاص بك لتأكيد الحذف الكلي:</label>
+                <input type="password" id="adminResetPasswordInput" placeholder="أدخلي الكود (sa123)" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono font-bold text-mono-950 text-center tracking-widest focus:outline-none focus:border-rose-600">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button type="button" onclick="closeResetAllModal()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-mono-900 rounded-xl text-xs font-bold transition">إلغاء</button>
+                <button type="button" onclick="confirmResetAllData()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-md">مسح كافة البيانات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Full Image View -->
     <div id="imageModal" class="fixed inset-0 bg-mono-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4" onclick="closeImageModal()">
         <div class="relative max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-4 flex flex-col items-center shadow-2xl" onclick="event.stopPropagation()">
             <button onclick="closeImageModal()" class="absolute top-4 right-4 text-mono-500 hover:text-mono-950 bg-slate-100 w-8 h-8 rounded-full transition flex items-center justify-center">
@@ -463,7 +541,46 @@
         </div>
     </div>
 
-    <!-- Modal 4: Interactive WhatsApp Support -->
+    <!-- Modal: System Settings -->
+    <div id="systemSettingsModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 text-mono-950 flex items-center justify-center text-lg border border-slate-200">
+                        <i class="fa-solid fa-gears"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-base font-black text-mono-950">إعدادات النظام العامة</h4>
+                        <p class="text-[11px] text-mono-500 font-bold">إدارة الاتصال والخيارات</p>
+                    </div>
+                </div>
+                <button onclick="closeSystemSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-mono-700 transition flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4 pt-2 text-xs">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                    <p class="font-bold text-mono-900">حالة السيرفر والمزامنة:</p>
+                    <p class="text-mono-600">النظام مرتبط بقاعدة البيانات السحابية مباشرة. عند الحاجة يمكنك بدء مزامنة الأوامر البرمجية.</p>
+                </div>
+
+                <div class="space-y-2">
+                    <button type="button" onclick="closeSystemSettingsModal(); triggerCmdSync();" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition text-xs shadow-md">
+                        <i class="fa-solid fa-terminal"></i>
+                        <span>بدء مزامنة الأوامر البرمجية (CMD Engine)</span>
+                    </button>
+                    
+                    <button type="button" onclick="closeSystemSettingsModal(); openSupportModal();" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition text-xs shadow-md">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <span>طلب دعم فني مباشر</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Support WhatsApp -->
     <div id="supportModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center">
@@ -534,7 +651,13 @@
 
     <!-- App Scripts -->
     <script>
-        const REQUIRED_PASS = "2018";
+        // حسابات الكاشير فقط - تم تحويل صلاحيات الإدارة الكاملة لـ Sandra وتلغية حساب الإدارة 2018
+        const VALID_USERS = {
+            "sa123": { name: "Sandra", role: "admin" },
+            "le999": { name: "Lekaa", role: "cashier" },
+            "mo0123": { name: "Mohammad", role: "cashier" }
+        };
+
         let membersData = [];
         let webcamStream = null;
         let capturedImageData = null;
@@ -542,10 +665,29 @@
 
         function checkPassword(e) {
             e.preventDefault();
-            const inputVal = document.getElementById('passInput').value;
-            if (inputVal === REQUIRED_PASS) {
+            const inputVal = document.getElementById('passInput').value.trim();
+            
+            if (VALID_USERS[inputVal]) {
+                const userData = VALID_USERS[inputVal];
+                const loggedUser = userData.name;
+                
                 document.getElementById('lockScreen').classList.add('hidden');
                 sessionStorage.setItem('iaat_auth_session', 'true');
+                sessionStorage.setItem('iaat_logged_user', loggedUser);
+                sessionStorage.setItem('iaat_pass_code', inputVal);
+                
+                document.getElementById('currentUserBadge').textContent = `المستخدم: ${loggedUser}`;
+                
+                // إظهار زر التصفية الكلية فقط إذا كان الحساب هو Sandra (sa123)
+                if (inputVal === "sa123") {
+                    document.getElementById('resetAllBtn').classList.remove('hidden');
+                    document.getElementById('resetAllBtn').classList.add('inline-flex');
+                } else {
+                    document.getElementById('resetAllBtn').classList.add('hidden');
+                    document.getElementById('resetAllBtn').classList.remove('inline-flex');
+                }
+
+                showToast(`مرحباً بكِ، ${loggedUser}`, "success");
             } else {
                 document.getElementById('passError').classList.remove('hidden');
                 document.getElementById('passInput').value = '';
@@ -555,50 +697,96 @@
 
         function lockSystem() {
             sessionStorage.removeItem('iaat_auth_session');
+            sessionStorage.removeItem('iaat_logged_user');
+            sessionStorage.removeItem('iaat_pass_code');
             document.getElementById('lockScreen').classList.remove('hidden');
             document.getElementById('passInput').value = '';
             document.getElementById('passError').classList.add('hidden');
+            document.getElementById('resetAllBtn').classList.add('hidden');
         }
 
+        // تحقق من حالة الجلسة عند التحميل
         if (sessionStorage.getItem('iaat_auth_session') === 'true') {
             document.getElementById('lockScreen').classList.add('hidden');
+            const savedUser = sessionStorage.getItem('iaat_logged_user') || 'مستخدم عام';
+            const passCode = sessionStorage.getItem('iaat_pass_code');
+            document.getElementById('currentUserBadge').textContent = `المستخدم: ${savedUser}`;
+            
+            if (passCode === "sa123") {
+                document.getElementById('resetAllBtn').classList.remove('hidden');
+                document.getElementById('resetAllBtn').classList.add('inline-flex');
+            }
         }
 
         function toggleFullScreen() {
             const icon = document.getElementById('fullScreenIcon');
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    showToast("تعذر تفعيل وضع ملء الشاشة", "error");
-                });
+                document.documentElement.requestFullscreen().catch(() => {});
                 icon.classList.remove('fa-expand');
                 icon.classList.add('fa-compress');
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+                if (document.exitFullscreen) document.exitFullscreen();
                 icon.classList.remove('fa-compress');
                 icon.classList.add('fa-expand');
             }
         }
 
+        // --- شاشة المزامنة والتحميل السوداء المبتكرة (CMD Console Simulator) ---
+        function triggerCmdSync() {
+            const modal = document.getElementById('cmdTerminalModal');
+            const logsContainer = document.getElementById('cmdTerminalLogs');
+            const statusText = document.getElementById('cmdStatusText');
+            const percentText = document.getElementById('cmdPercent');
+
+            modal.classList.remove('hidden');
+            logsContainer.innerHTML = '<div class="text-slate-500">// Initiating System Refresh & Data Synchronization Process...</div>';
+
+            const cmdSteps = [
+                { text: "> CONNECTING to cloud host: db.iaatcountryclub.internal...", delay: 200, percent: 15 },
+                { text: "> AUTHENTICATING session token [Sandra_Admin_Node]...", delay: 500, percent: 30 },
+                { text: "> FETCHING latest pool_members collection from Firestore...", delay: 800, percent: 50 },
+                { text: "> SYNCING member records & profile photo payloads...", delay: 1100, percent: 75 },
+                { text: "> PURGING local memory cache & rebuilding data tables...", delay: 1400, percent: 90 },
+                { text: "> SUCCESS: Data synchronization complete. Re-indexing complete.", delay: 1700, percent: 100 }
+            ];
+
+            cmdSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = index === cmdSteps.length - 1 ? 'text-emerald-400 font-bold' : 'text-sky-300';
+                    line.innerHTML = `${step.text} <span class="cmd-cursor"></span>`;
+                    
+                    // إزالة الـ cursor القديم
+                    const oldCursors = logsContainer.querySelectorAll('.cmd-cursor');
+                    oldCursors.forEach(c => c.remove());
+
+                    logsContainer.appendChild(line);
+                    logsContainer.scrollTop = logsContainer.scrollHeight;
+
+                    percentText.textContent = `${step.percent}%`;
+                }, step.delay);
+            });
+
+            setTimeout(() => {
+                statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> تم تحديث ومزامنة البيانات بنجاح!`;
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    window.location.reload();
+                }, 700);
+            }, 2200);
+        }
+
+        function openSystemSettingsModal() { document.getElementById('systemSettingsModal').classList.remove('hidden'); }
+        function closeSystemSettingsModal() { document.getElementById('systemSettingsModal').classList.add('hidden'); }
         function sendWhatsAppSupport() {
             const msg = document.getElementById('quickSupportMsg').value;
-            const encoded = encodeURIComponent(msg);
-            window.open(`https://wa.me/96181112046?text=${encoded}`, '_blank');
+            window.open(`https://wa.me/96181112046?text=${encodeURIComponent(msg)}`, '_blank');
         }
-
-        function openSupportModal() {
-            document.getElementById('supportModal').classList.remove('hidden');
-        }
-
-        function closeSupportModal() {
-            document.getElementById('supportModal').classList.add('hidden');
-        }
-
+        function openSupportModal() { document.getElementById('supportModal').classList.remove('hidden'); }
+        function closeSupportModal() { document.getElementById('supportModal').classList.add('hidden'); }
         function submitSupportMessage() {
             const msg = document.getElementById('modalSupportText').value;
-            const encoded = encodeURIComponent(msg);
-            window.open(`https://wa.me/96181112046?text=${encoded}`, '_blank');
+            window.open(`https://wa.me/96181112046?text=${encodeURIComponent(msg)}`, '_blank');
             closeSupportModal();
         }
 
@@ -606,7 +794,6 @@
             const badge = document.getElementById('serverStatusBadge');
             const dot = document.getElementById('statusDot');
             const text = document.getElementById('statusText');
-
             text.textContent = message;
             if (isConnected) {
                 badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
@@ -627,11 +814,10 @@
                     document.getElementById('tableLoader').classList.add('hidden');
                     updateStatistics();
                     applyFilters();
-                    updateServerStatus(true, "متصل بالسيرفر (مباشر)");
+                    updateServerStatus(true, "متصل بالسيرفر");
                 }, (error) => {
                     console.error("Firebase error: ", error);
                     updateServerStatus(false, "خطأ في اتصال السيرفر");
-                    document.getElementById('tableLoader').innerHTML = `<p class="text-rose-600 font-bold">خطأ في الاتصال بقاعدة البيانات. تأكد من إعدادات Firebase.</p>`;
                 });
             } catch (err) {
                 updateServerStatus(false, "جاري التهيئة...");
@@ -658,6 +844,7 @@
             items.forEach((item) => {
                 const isActive = item.endDate >= todayStr;
                 const isPaid = item.paymentStatus === 'paid';
+                const addedBy = item.addedBy || 'غير محدد';
 
                 const imgHtml = item.photoUrl ? 
                     `<img src="${item.photoUrl}" onclick="openImageModal('${item.photoUrl}', '${escapeHtml(item.name)}')" class="w-10 h-10 rounded-xl object-cover border border-slate-300 cursor-pointer hover:scale-105 transition mx-auto">` :
@@ -680,6 +867,11 @@
                     <td class="py-3 px-4 text-xs">
                         <div class="font-mono font-bold text-mono-950"><i class="fa-solid fa-phone text-[10px] ml-1 text-mono-400"></i>${escapeHtml(item.phone || '-')}</div>
                         <div class="text-[11px] text-mono-500 font-medium truncate max-w-[150px]">${escapeHtml(item.address || 'لا يوجد عنوان')}</div>
+                    </td>
+                    <td class="py-3 px-4 text-xs">
+                        <span class="bg-slate-100 text-mono-900 px-2.5 py-1 rounded-lg font-bold border border-slate-200 inline-flex items-center gap-1">
+                            <i class="fa-solid fa-user-shield text-[10px] text-mono-500"></i> ${escapeHtml(addedBy)}
+                        </span>
                     </td>
                     <td class="py-3 px-4 text-xs font-mono font-bold text-mono-700">${item.startDate || '-'}</td>
                     <td class="py-3 px-4 text-xs font-mono font-bold ${isActive ? 'text-emerald-700' : 'text-rose-700'}">${item.endDate || '-'}</td>
@@ -723,8 +915,8 @@
                             <span class="font-mono font-bold text-mono-950">${escapeHtml(item.phone || '-')}</span>
                         </div>
                         <div>
-                            <span class="text-mono-500 block text-[10px] font-bold">العنوان:</span>
-                            <span class="font-mono font-bold text-mono-800 truncate block">${escapeHtml(item.address || 'بدون عنوان')}</span>
+                            <span class="text-mono-500 block text-[10px] font-bold">بواسطة:</span>
+                            <span class="font-bold text-mono-900 truncate block">${escapeHtml(addedBy)}</span>
                         </div>
                         <div>
                             <span class="text-mono-500 block text-[10px] font-bold">تاريخ البدء:</span>
@@ -761,10 +953,7 @@
             membersData.forEach(m => {
                 if (m.endDate >= todayStr) active++;
                 if (m.paymentStatus === 'paid') paid++;
-
-                if (m.customId && m.customId.startsWith(currentYearMonth)) {
-                    thisMonth++;
-                }
+                if (m.customId && m.customId.startsWith(currentYearMonth)) thisMonth++;
             });
 
             document.getElementById('statTotal').textContent = total;
@@ -785,6 +974,7 @@
                 const matchesSearch = !searchVal || 
                     (item.name && item.name.toLowerCase().includes(searchVal)) ||
                     (item.customId && item.customId.toLowerCase().includes(searchVal)) ||
+                    (item.addedBy && item.addedBy.toLowerCase().includes(searchVal)) ||
                     (item.phone && item.phone.includes(searchVal));
 
                 const isActive = item.endDate >= todayStr;
@@ -816,14 +1006,11 @@
             membersData.forEach(m => {
                 if (m.customId && m.customId.startsWith(prefix)) {
                     const seqPart = parseInt(m.customId.substring(prefix.length), 10);
-                    if (!isNaN(seqPart) && seqPart > maxSeq) {
-                        maxSeq = seqPart;
-                    }
+                    if (!isNaN(seqPart) && seqPart > maxSeq) maxSeq = seqPart;
                 }
             });
 
-            const newSeq = String(maxSeq + 1).padStart(3, '0');
-            document.getElementById('memberCustomId').value = `${prefix}${newSeq}`;
+            document.getElementById('memberCustomId').value = `${prefix}${String(maxSeq + 1).padStart(3, '0')}`;
         };
 
         window.autoCalculateEndDate = function() {
@@ -845,28 +1032,20 @@
             const startDate = document.getElementById('memberStartDate').value;
             const endDate = document.getElementById('memberEndDate').value;
             const paymentStatus = document.getElementById('memberPaymentStatus').value;
+            const loggedUser = sessionStorage.getItem('iaat_logged_user') || 'مستخدم عام';
 
             let photoUrl = window.currentExistingPhotoUrl || '';
-            if (capturedImageData) {
-                photoUrl = capturedImageData;
-            }
+            if (capturedImageData) photoUrl = capturedImageData;
 
             const memberPayload = {
-                customId,
-                name,
-                phone,
-                address,
-                startDate,
-                endDate,
-                paymentStatus,
-                photoUrl,
+                customId, name, phone, address, startDate, endDate, paymentStatus, photoUrl,
+                addedBy: loggedUser,
                 updatedAt: new Date().toISOString()
             };
 
             try {
                 if (docId) {
-                    const docRef = window.doc(window.db, "pool_members", docId);
-                    await window.updateDoc(docRef, memberPayload);
+                    await window.updateDoc(window.doc(window.db, "pool_members", docId), memberPayload);
                     showToast("تم تحديث بيانات المشترك بنجاح", "success");
                 } else {
                     await window.addDoc(window.collection(window.db, "pool_members"), memberPayload);
@@ -874,8 +1053,7 @@
                 }
                 closeMemberModal();
             } catch (err) {
-                console.error("Error saving member: ", err);
-                showToast("حدث خطأ أثناء الحفظ. تأكد من الاتصال.", "error");
+                showToast("حدث خطأ أثناء الحفظ", "error");
             }
         };
 
@@ -926,23 +1104,55 @@
                 showToast("تم حذف المشترك بنجاح", "success");
                 closeDeleteModal();
             } catch (err) {
-                console.error("Error deleting member:", err);
                 showToast("فشل عملية الحذف", "error");
             }
         });
 
+        // دوال تصفية وحذف كافة البيانات (خاص بـ Sandra الإدارة)
+        window.promptResetAllData = function() {
+            document.getElementById('adminResetPasswordInput').value = '';
+            document.getElementById('resetAllModal').classList.remove('hidden');
+        }
+
+        window.closeResetAllModal = function() {
+            document.getElementById('resetAllModal').classList.add('hidden');
+        }
+
+        window.confirmResetAllData = async function() {
+            const passInput = document.getElementById('adminResetPasswordInput').value.trim();
+            if (passInput !== "sa123") {
+                showToast("رمز Sandra غير صحيح!", "error");
+                return;
+            }
+
+            try {
+                showToast("جاري مسح كافة السجلات...", "info");
+                const querySnapshot = await window.getDocs(window.collection(window.db, "pool_members"));
+                
+                const deletePromises = [];
+                querySnapshot.forEach((docSnap) => {
+                    deletePromises.push(window.deleteDoc(window.doc(window.db, "pool_members", docSnap.id)));
+                });
+
+                await Promise.all(deletePromises);
+                showToast("تم مسح وحذف كافة البيانات بنجاح!", "success");
+                closeResetAllModal();
+            } catch (err) {
+                console.error("Reset all error:", err);
+                showToast("حدث خطأ أثناء تصفية البيانات", "error");
+            }
+        };
+
         window.startWebcam = async function() {
             const video = document.getElementById('webcamVideo');
             const container = document.getElementById('webcamContainer');
-
             try {
                 webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
                 video.srcObject = webcamStream;
                 container.classList.remove('hidden');
                 container.classList.add('flex');
             } catch (err) {
-                console.error("Camera error:", err);
-                showToast("تعذر الوصول للكاميرا. يرجى إعطاء الصلاحيات اللازمة.", "error");
+                showToast("تعذر الوصول للكاميرا", "error");
             }
         };
 
@@ -960,15 +1170,11 @@
             const video = document.getElementById('webcamVideo');
             const canvas = document.getElementById('snapshotCanvas');
             const context = canvas.getContext('2d');
-
             canvas.width = 350;
             canvas.height = 350;
 
             const minDim = Math.min(video.videoWidth, video.videoHeight);
-            const startX = (video.videoWidth - minDim) / 2;
-            const startY = (video.videoHeight - minDim) / 2;
-
-            context.drawImage(video, startX, startY, minDim, minDim, 0, 0, 350, 350);
+            context.drawImage(video, (video.videoWidth - minDim) / 2, (video.videoHeight - minDim) / 2, minDim, minDim, 0, 0, 350, 350);
             capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
 
             document.getElementById('photoPreview').src = capturedImageData;
@@ -980,14 +1186,11 @@
             showToast("تم التقاط الصورة بنجاح!", "success");
         };
 
-        window.triggerFileInput = function() {
-            document.getElementById('fileInput').click();
-        };
+        window.triggerFileInput = function() { document.getElementById('fileInput').click(); };
 
         window.handleFileSelect = function(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
@@ -997,7 +1200,6 @@
                     canvas.width = 350;
                     canvas.height = 350;
                     ctx.drawImage(img, 0, 0, 350, 350);
-                    
                     capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
                     document.getElementById('photoPreview').src = capturedImageData;
                     document.getElementById('photoPreview').classList.remove('hidden');
@@ -1031,15 +1233,12 @@
             capturedImageData = null;
             
             const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
-            document.getElementById('memberStartDate').value = todayStr;
-            
+            document.getElementById('memberStartDate').value = today.toISOString().split('T')[0];
             const nextMonth = new Date();
             nextMonth.setMonth(nextMonth.getMonth() + 1);
             document.getElementById('memberEndDate').value = nextMonth.toISOString().split('T')[0];
 
             if (window.generateSmartId) window.generateSmartId();
-
             resetPhotoPreview();
             document.getElementById('memberModal').classList.remove('hidden');
         }
@@ -1052,13 +1251,10 @@
         function openImageModal(url, name) {
             document.getElementById('enlargedImage').src = url;
             document.getElementById('imageModalTitle').textContent = `صورة المشترك: ${name}`;
-            document.getElementById('imageModal').classList.add('hidden'); // Reset
             document.getElementById('imageModal').classList.remove('hidden');
         }
 
-        function closeImageModal() {
-            document.getElementById('imageModal').classList.add('hidden');
-        }
+        function closeImageModal() { document.getElementById('imageModal').classList.add('hidden'); }
 
         function showToast(msg, type = "info") {
             const toast = document.getElementById('toast');
@@ -1066,28 +1262,19 @@
             const iconEl = document.getElementById('toastIcon');
 
             msgEl.textContent = msg;
-            if (type === "success") {
-                iconEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
-            } else if (type === "error") {
-                iconEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i>`;
-            } else {
-                iconEl.innerHTML = `<i class="fa-solid fa-info-circle text-mono-400"></i>`;
-            }
+            if (type === "success") iconEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+            else if (type === "error") iconEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i>`;
+            else iconEl.innerHTML = `<i class="fa-solid fa-info-circle text-mono-400"></i>`;
 
             toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
         }
 
         function escapeHtml(text) {
             if (!text) return '';
             return String(text)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
 </body>
