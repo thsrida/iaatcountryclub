@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iaat Country Club | نظام إدارة المسبح الشتوي</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mono: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0f172a;
+        }
+
+        .mono-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-mono-900 font-sans min-h-screen flex flex-col antialiased selection:bg-mono-900 selection:text-white">
+
+    <!-- PASSWORD LOCK SCREEN OVERLAY -->
+    <div id="lockScreen" class="fixed inset-0 bg-mono-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-6 relative overflow-hidden">
+            
+            <div class="flex justify-center mb-2">
+                <div class="w-24 h-24 bg-slate-50 rounded-2xl p-2 border border-slate-200 shadow-sm flex items-center justify-center">
+                    <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain">
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-black text-mono-950">Iaat Country Club</h2>
+                <p class="text-xs text-mono-600 font-bold tracking-widest uppercase mt-1">نظام إدارة المسبح الشتوي</p>
+                <p class="text-xs text-mono-500 mt-2">يرجى إدخال كلمة السر للوصول إلى لوحة التحكم</p>
+            </div>
+
+            <form onsubmit="checkPassword(event)" class="space-y-4">
+                <div class="relative">
+                    <input type="password" id="passInput" placeholder="أدخل كلمة السر..." autofocus required class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-center text-lg font-mono font-bold text-mono-950 tracking-widest focus:outline-none focus:border-mono-900 focus:ring-2 focus:ring-mono-900/10 transition">
+                </div>
+                <p id="passError" class="text-xs text-rose-600 hidden font-bold flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-circle-exclamation"></i> كلمة السر غير صحيحة!
+                </p>
+                <button type="submit" class="w-full bg-mono-950 hover:bg-mono-800 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-lock-open"></i>
+                    <span>دخول للنظام</span>
+                </button>
+            </form>
+
+            <div class="pt-4 border-t border-slate-100 text-xs space-y-2">
+                <p class="text-mono-500 font-medium">نسيت كلمة السر أو تواجه مشكلة؟</p>
+                <a href="https://wa.me/96181112046" target="_blank" class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-xl font-mono font-bold transition text-xs">
+                    <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                    <span>الدعم الفني: +961 81112046</span>
+                </a>
+            </div>
+
+            <div class="pt-2 text-[11px] text-mono-400 border-t border-slate-100 flex justify-between items-center">
+                <span>Iaat Country Club &copy; 2026</span>
+                <span class="font-bold text-mono-600">إيعات كونتري كلوب</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-50 rounded-2xl border border-slate-200 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
+                    <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-2xl font-black text-mono-950 tracking-tight">
+                        Iaat Country Club
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-mono-500 font-bold tracking-wide">
+                        إيعات كونتري كلوب - إدارة المسبح الشتوي
+                    </p>
+                </div>
+            </div>
+
+            <!-- Actions Header -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="toggleFullScreen()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-slate-200" title="ملء الشاشة">
+                    <i class="fa-solid fa-expand" id="fullScreenIcon"></i>
+                    <span class="hidden md:inline">ملء الشاشة</span>
+                </button>
+
+                <a href="https://wa.me/96181112046" target="_blank" class="hidden sm:flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-mono-800 rounded-xl text-xs font-bold transition border border-slate-200" title="مراسلة الدعم">
+                    <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                    <span class="font-mono">+961 81112046</span>
+                </a>
+
+                <button onclick="lockSystem()" class="px-3 py-2 bg-mono-950 hover:bg-mono-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm" title="قفل النظام">
+                    <i class="fa-solid fa-lock"></i>
+                    <span class="hidden md:inline">قفل النظام</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+        <!-- Stats Grid Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div class="mono-card rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-mono-500 font-bold">إجمالي المشتركين</p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 mt-1 font-mono" id="statTotal">0</h3>
+                </div>
+                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-mono-950 text-white rounded-xl flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+
+            <div class="mono-card rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-mono-500 font-bold">اشتراكات نشطة</p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 mt-1 font-mono" id="statActive">0</h3>
+                </div>
+                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+            </div>
+
+            <div class="mono-card rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-mono-500 font-bold">اشتراكات منتهية</p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 mt-1 font-mono" id="statExpired">0</h3>
+                </div>
+                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-user-xmark"></i>
+                </div>
+            </div>
+
+            <div class="mono-card rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-mono-500 font-bold">مشتركو هذا الشهر</p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 mt-1 font-mono" id="statThisMonth">0</h3>
+                </div>
+                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-slate-100 text-mono-900 border border-slate-300 rounded-xl flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls & Filters Section -->
+        <div class="mono-card rounded-2xl p-5 space-y-5">
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <button onclick="openMemberModal()" class="bg-mono-950 hover:bg-mono-800 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2.5 shadow-md transition duration-200 text-sm">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>إضافة مشترك جديد</span>
+                </button>
+
+                <div class="relative flex-1 max-w-md">
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ابحث باسم المشترك، المعرّف ID، أو الهاتف..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pr-10 pl-4 py-2.5 text-sm text-mono-950 placeholder-mono-400 focus:outline-none focus:border-mono-900 focus:ring-2 focus:ring-mono-900/10 transition">
+                    <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3.5 text-mono-400 text-sm"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100 text-xs">
+                <div>
+                    <label class="text-mono-600 font-bold mb-1.5 block">حالة الاشتراك</label>
+                    <select id="statusFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-mono-900 font-semibold focus:outline-none focus:border-mono-900">
+                        <option value="all">جميع الحالات</option>
+                        <option value="active">الاشتراكات النشطة فقط</option>
+                        <option value="expired">الاشتراكات المنتهية فقط</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-mono-600 font-bold mb-1.5 block">تاريخ الاشتراك من</label>
+                    <input type="date" id="dateFromFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-mono-900 font-semibold focus:outline-none focus:border-mono-900">
+                </div>
+
+                <div>
+                    <label class="text-mono-600 font-bold mb-1.5 block">تاريخ الاشتراك إلى</label>
+                    <input type="date" id="dateToFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-mono-900 font-semibold focus:outline-none focus:border-mono-900">
+                </div>
+            </div>
+        </div>
+
+        <!-- PC Table View -->
+        <div class="hidden lg:block mono-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-right text-sm whitespace-nowrap">
+                    <thead class="bg-mono-950 text-white uppercase text-xs font-bold tracking-wider">
+                        <tr>
+                            <th class="py-4 px-4 text-center">الصورة</th>
+                            <th class="py-4 px-4">رقم ID</th>
+                            <th class="py-4 px-4">اسم المشترك</th>
+                            <th class="py-4 px-4">رقم الهاتف / العنوان</th>
+                            <th class="py-4 px-4">تاريخ الاشتراك</th>
+                            <th class="py-4 px-4">تاريخ الانتهاء</th>
+                            <th class="py-4 px-4 text-center">الحالة</th>
+                            <th class="py-4 px-4 text-center">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody" class="divide-y divide-slate-100 text-mono-900"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Mobile Cards Grid View -->
+        <div id="membersMobileGrid" class="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-4"></div>
+
+        <!-- Loader State -->
+        <div id="tableLoader" class="py-16 text-center text-mono-500 flex flex-col items-center justify-center gap-3">
+            <div class="w-10 h-10 border-4 border-mono-900 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-sm font-bold">جاري مزامنة سجلات المشتركين مع قاعدة البيانات...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden py-16 text-center text-mono-500 flex flex-col items-center justify-center gap-3 mono-card rounded-2xl">
+            <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-mono-400 text-2xl">
+                <i class="fa-solid fa-users-slash"></i>
+            </div>
+            <div>
+                <p class="font-bold text-base text-mono-900">لا يوجد مشتركون لعرضهم</p>
+                <p class="text-xs text-mono-500 mt-1">قم بإضافة مشترك جديد أو تعديل معايير البحث والفلترة.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal 1: Add / Edit Member Dialog -->
+    <div id="memberModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+            
+            <div class="bg-mono-950 text-white px-6 py-4 flex justify-between items-center shrink-0">
+                <h3 class="text-base sm:text-lg font-bold flex items-center gap-2.5" id="modalTitle">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>إضافة مشترك جديد</span>
+                </h3>
+                <button onclick="closeMemberModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white transition flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="memberForm" onsubmit="saveMember(event)" class="p-5 sm:p-6 space-y-4 overflow-y-auto">
+                <input type="hidden" id="memberDocId">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-mono-700 mb-1.5">رقم المعرّف (ID المشترك) <span class="text-rose-600">*</span></label>
+                        <div class="relative">
+                            <input type="text" id="memberCustomId" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-mono font-bold focus:outline-none focus:border-mono-900">
+                            <button type="button" onclick="generateSmartId()" class="absolute left-1 top-1 bottom-1 px-3 bg-mono-950 text-white text-xs font-bold rounded-lg transition hover:bg-mono-800">
+                                توليد ذكي
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-mono-700 mb-1.5">الاسم الكامل <span class="text-rose-600">*</span></label>
+                        <input type="text" id="memberName" required placeholder="أدخل اسم المشترك الثلاثي..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-semibold focus:outline-none focus:border-mono-900">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-mono-700 mb-1.5">رقم الهاتف <span class="text-rose-600">*</span></label>
+                        <input type="tel" id="memberPhone" required placeholder="03-XXXXXX أو +961..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-mono font-bold focus:outline-none focus:border-mono-900">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-mono-700 mb-1.5">عنوان السكن</label>
+                        <input type="text" id="memberAddress" placeholder="البلدة / المدينة..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-semibold focus:outline-none focus:border-mono-900">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-mono-700 mb-1.5">تاريخ بدء الاشتراك <span class="text-rose-600">*</span></label>
+                        <input type="date" id="memberStartDate" required onchange="autoCalculateEndDate()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-semibold focus:outline-none focus:border-mono-900">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-mono-700 mb-1.5">تاريخ انتهاء الاشتراك <span class="text-rose-600">*</span></label>
+                        <input type="date" id="memberEndDate" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-semibold focus:outline-none focus:border-mono-900">
+                    </div>
+                </div>
+
+                <!-- Webcam Photo Section -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <label class="block text-xs font-bold text-mono-700">صورة المشترك الشخصية</label>
+                    
+                    <div class="flex flex-col sm:flex-row items-center gap-4">
+                        <div class="w-28 h-28 bg-white border-2 border-dashed border-slate-300 rounded-2xl flex items-center justify-center overflow-hidden relative shrink-0 shadow-inner">
+                            <img id="photoPreview" src="" class="hidden w-full h-full object-cover">
+                            <div id="photoPlaceholder" class="text-center text-mono-400">
+                                <i class="fa-solid fa-camera text-2xl mb-1"></i>
+                                <span class="block text-[10px] font-bold">لا توجد صورة</span>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 space-y-2 w-full text-center sm:text-right">
+                            <div class="flex flex-wrap justify-center sm:justify-start gap-2">
+                                <button type="button" onclick="startWebcam()" class="px-3 py-2 bg-mono-950 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition hover:bg-mono-800">
+                                    <i class="fa-solid fa-video"></i> فتح الكاميرا
+                                </button>
+                                <button type="button" onclick="triggerFileInput()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-mono-900 rounded-xl text-xs font-bold border border-slate-300 flex items-center gap-1.5 transition">
+                                    <i class="fa-solid fa-upload"></i> رفع ملف
+                                </button>
+                                <button type="button" onclick="removeCapturedPhoto()" id="removePhotoBtn" class="hidden px-3 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-xs font-bold border border-rose-300 flex items-center gap-1.5 transition">
+                                    <i class="fa-solid fa-trash"></i> حذف
+                                </button>
+                            </div>
+                            <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                            <p class="text-[11px] text-mono-500 font-medium">التقط صورة مباشرة من الجهاز أو اختر صورة مخزنة.</p>
+                        </div>
+                    </div>
+
+                    <div id="webcamContainer" class="hidden flex-col items-center gap-2 pt-3 border-t border-slate-200">
+                        <video id="webcamVideo" autoplay playsinline class="w-full max-w-xs sm:max-w-sm rounded-xl border-2 border-mono-900 bg-black"></video>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="captureSnapshot()" class="px-4 py-2 bg-mono-950 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-camera-retro"></i> التقاط الصورة
+                            </button>
+                            <button type="button" onclick="stopWebcam()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-mono-900 rounded-xl text-xs font-bold transition">
+                                إغلاق الكاميرا
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3 border-t border-slate-200 shrink-0">
+                    <button type="button" onclick="closeMemberModal()" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-mono-900 text-xs font-bold transition">إلغاء</button>
+                    <button type="submit" id="saveBtn" class="px-6 py-2.5 rounded-xl bg-mono-950 hover:bg-mono-800 text-white text-xs font-bold shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>حفظ البيانات</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Delete Confirmation Popup -->
+    <div id="deleteModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-100">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h4 class="text-lg font-black text-mono-950">تأكيد الحذف</h4>
+                <p class="text-xs text-mono-500 mt-1">هل أنت متأكد من رغبتك في حذف المشترك <span id="deleteMemberName" class="font-bold text-mono-900"></span>؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button type="button" onclick="closeDeleteModal()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-mono-900 rounded-xl text-xs font-bold transition">إلغاء</button>
+                <button type="button" id="confirmDeleteBtn" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-md">تأكيد الحذف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Full Image View -->
+    <div id="imageModal" class="fixed inset-0 bg-mono-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4" onclick="closeImageModal()">
+        <div class="relative max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-4 flex flex-col items-center shadow-2xl" onclick="event.stopPropagation()">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-mono-500 hover:text-mono-950 bg-slate-100 w-8 h-8 rounded-full transition flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h4 class="text-sm font-bold text-mono-950 mb-3" id="imageModalTitle">صورة المشترك</h4>
+            <img id="enlargedImage" src="" class="max-h-[70vh] w-auto rounded-2xl border border-slate-300 object-contain shadow-lg">
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-mono-950 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 max-w-sm border border-slate-800">
+        <div id="toastIcon" class="text-lg"></div>
+        <div id="toastMessage" class="text-xs font-bold"></div>
+    </div>
+
+    <canvas id="snapshotCanvas" class="hidden"></canvas>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // استبدل بيانات التكوين أدناه ببيانات مشروعك الفعلي على Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.getDocs = getDocs;
+        window.addDoc = addDoc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.doc = doc;
+        window.onSnapshot = onSnapshot;
+
+        // بدء الاستماع لقاعدة البيانات فور تحميل الصفحة
+        initFirebaseListeners();
+    </script>
+
+    <!-- App Scripts -->
+    <script>
+        const REQUIRED_PASS = "2018";
+        let membersData = [];
+        let webcamStream = null;
+        let capturedImageData = null;
+        let memberToDeleteId = null;
+
+        function checkPassword(e) {
+            e.preventDefault();
+            const inputVal = document.getElementById('passInput').value;
+            if (inputVal === REQUIRED_PASS) {
+                document.getElementById('lockScreen').classList.add('hidden');
+                sessionStorage.setItem('iaat_auth_session', 'true');
+            } else {
+                document.getElementById('passError').classList.remove('hidden');
+                document.getElementById('passInput').value = '';
+                document.getElementById('passInput').focus();
+            }
+        }
+
+        function lockSystem() {
+            sessionStorage.removeItem('iaat_auth_session');
+            document.getElementById('lockScreen').classList.remove('hidden');
+            document.getElementById('passInput').value = '';
+            document.getElementById('passError').classList.add('hidden');
+        }
+
+        if (sessionStorage.getItem('iaat_auth_session') === 'true') {
+            document.getElementById('lockScreen').classList.add('hidden');
+        }
+
+        // Full Screen Toggle Function
+        function toggleFullScreen() {
+            const icon = document.getElementById('fullScreenIcon');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    showToast("تعذر تفعيل وضع ملء الشاشة", "error");
+                });
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+            }
+        }
+
+        function initFirebaseListeners() {
+            // الاستماع اللحظي لمجموعة المشتركين في فايربيز (Firestore)
+            try {
+                window.onSnapshot(window.collection(window.db, "pool_members"), (snapshot) => {
+                    membersData = [];
+                    snapshot.forEach((docSnap) => {
+                        membersData.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    document.getElementById('tableLoader').classList.add('hidden');
+                    updateStatistics();
+                    applyFilters();
+                }, (error) => {
+                    console.error("Firebase error: ", error);
+                    document.getElementById('tableLoader').innerHTML = `<p class="text-rose-600 font-bold">خطأ في الاتصال بقاعدة البيانات. تأكد من إعدادات Firebase.</p>`;
+                });
+            } catch (err) {
+                console.log("Waiting for firebase initialization...");
+            }
+        }
+
+        window.renderMembers = function(items) {
+            const tbody = document.getElementById('membersTableBody');
+            const mobileGrid = document.getElementById('membersMobileGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            tbody.innerHTML = '';
+            mobileGrid.innerHTML = '';
+
+            if (items.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            const todayStr = new Date().toISOString().split('T')[0];
+            items.sort((a, b) => (b.customId || '').localeCompare(a.customId || ''));
+
+            items.forEach((item) => {
+                const isActive = item.endDate >= todayStr;
+
+                const imgHtml = item.photoUrl ? 
+                    `<img src="${item.photoUrl}" onclick="openImageModal('${item.photoUrl}', '${escapeHtml(item.name)}')" class="w-10 h-10 rounded-xl object-cover border border-slate-300 cursor-pointer hover:scale-105 transition mx-auto">` :
+                    `<div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-mono-400 mx-auto"><i class="fa-solid fa-user text-sm"></i></div>`;
+
+                const statusBadge = isActive ? 
+                    `<span class="px-3 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>نشط</span>` : 
+                    `<span class="px-3 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>منتهي</span>`;
+
+                // PC Row
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition duration-150";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-center">${imgHtml}</td>
+                    <td class="py-3 px-4 font-mono font-bold text-mono-950">${escapeHtml(item.customId || '-')}</td>
+                    <td class="py-3 px-4 font-bold text-mono-900">${escapeHtml(item.name || '-')}</td>
+                    <td class="py-3 px-4 text-xs">
+                        <div class="font-mono font-bold text-mono-950"><i class="fa-solid fa-phone text-[10px] ml-1 text-mono-400"></i>${escapeHtml(item.phone || '-')}</div>
+                        <div class="text-[11px] text-mono-500 font-medium truncate max-w-[150px]">${escapeHtml(item.address || 'لا يوجد عنوان')}</div>
+                    </td>
+                    <td class="py-3 px-4 text-xs font-mono font-bold text-mono-700">${item.startDate || '-'}</td>
+                    <td class="py-3 px-4 text-xs font-mono font-bold ${isActive ? 'text-emerald-700' : 'text-rose-700'}">${item.endDate || '-'}</td>
+                    <td class="py-3 px-4 text-center">${statusBadge}</td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="editMember('${item.id}')" class="p-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-lg transition border border-slate-300" title="تعديل">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="promptDeleteMember('${item.id}', '${escapeHtml(item.name)}')" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg transition border border-rose-200" title="حذف">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                // Mobile Card
+                const card = document.createElement('div');
+                card.className = "mono-card rounded-2xl p-4 space-y-3 relative";
+                
+                const mobileImg = item.photoUrl ? 
+                    `<img src="${item.photoUrl}" onclick="openImageModal('${item.photoUrl}', '${escapeHtml(item.name)}')" class="w-12 h-12 rounded-xl object-cover border border-slate-300 shrink-0">` :
+                    `<div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-mono-400 shrink-0"><i class="fa-solid fa-user"></i></div>`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            ${mobileImg}
+                            <div>
+                                <h4 class="font-black text-mono-950 text-sm">${escapeHtml(item.name || '-')}</h4>
+                                <span class="text-xs font-mono font-bold text-mono-900 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 inline-block mt-0.5">${escapeHtml(item.customId || '-')}</span>
+                            </div>
+                        </div>
+                        <div>${statusBadge}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-xs">
+                        <div>
+                            <span class="text-mono-500 block text-[10px] font-bold">رقم الهاتف:</span>
+                            <span class="font-mono font-bold text-mono-950">${escapeHtml(item.phone || '-')}</span>
+                        </div>
+                        <div>
+                            <span class="text-mono-500 block text-[10px] font-bold">العنوان:</span>
+                            <span class="text-mono-800 font-semibold truncate block">${escapeHtml(item.address || 'بدون عنوان')}</span>
+                        </div>
+                        <div>
+                            <span class="text-mono-500 block text-[10px] font-bold">تاريخ البدء:</span>
+                            <span class="font-mono font-bold text-mono-800">${item.startDate || '-'}</span>
+                        </div>
+                        <div>
+                            <span class="text-mono-500 block text-[10px] font-bold">تاريخ الانتهاء:</span>
+                            <span class="font-mono font-bold ${isActive ? 'text-emerald-700' : 'text-rose-700'}">${item.endDate || '-'}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-2 border-t border-slate-100">
+                        <button onclick="editMember('${item.id}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-xl transition text-xs font-bold border border-slate-300 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-pen-to-square"></i> تعديل
+                        </button>
+                        <button onclick="promptDeleteMember('${item.id}', '${escapeHtml(item.name)}')" class="py-2 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl transition text-xs font-bold border border-rose-200 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-trash"></i> حذف
+                        </button>
+                    </div>
+                `;
+                mobileGrid.appendChild(card);
+            });
+        };
+
+        function updateStatistics() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const currentYearMonth = new Date().toISOString().slice(2, 7).replace('-', '');
+
+            let total = membersData.length;
+            let active = 0;
+            let expired = 0;
+            let thisMonth = 0;
+
+            membersData.forEach(m => {
+                if (m.endDate >= todayStr) active++;
+                else expired++;
+
+                if (m.customId && m.customId.startsWith(currentYearMonth)) {
+                    thisMonth++;
+                }
+            });
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statActive').textContent = active;
+            document.getElementById('statExpired').textContent = expired;
+            document.getElementById('statThisMonth').textContent = thisMonth;
+        }
+
+        window.applyFilters = function() {
+            const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+            const statusVal = document.getElementById('statusFilter').value;
+            const dateFromVal = document.getElementById('dateFromFilter').value;
+            const dateToVal = document.getElementById('dateToFilter').value;
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            let filtered = membersData.filter(item => {
+                const matchesSearch = !searchVal || 
+                    (item.name && item.name.toLowerCase().includes(searchVal)) ||
+                    (item.customId && item.customId.toLowerCase().includes(searchVal)) ||
+                    (item.phone && item.phone.includes(searchVal));
+
+                const isActive = item.endDate >= todayStr;
+                let matchesStatus = true;
+                if (statusVal === 'active') matchesStatus = isActive;
+                if (statusVal === 'expired') matchesStatus = !isActive;
+
+                let matchesDate = true;
+                if (dateFromVal && item.startDate < dateFromVal) matchesDate = false;
+                if (dateToVal && item.startDate > dateToVal) matchesDate = false;
+
+                return matchesSearch && matchesStatus && matchesDate;
+            });
+
+            window.renderMembers(filtered);
+        };
+
+        window.generateSmartId = function() {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const prefix = `${yy}${mm}`;
+
+            let maxSeq = 0;
+            membersData.forEach(m => {
+                if (m.customId && m.customId.startsWith(prefix)) {
+                    const seqPart = parseInt(m.customId.substring(prefix.length), 10);
+                    if (!isNaN(seqPart) && seqPart > maxSeq) {
+                        maxSeq = seqPart;
+                    }
+                }
+            });
+
+            const newSeq = String(maxSeq + 1).padStart(3, '0');
+            document.getElementById('memberCustomId').value = `${prefix}${newSeq}`;
+        };
+
+        window.autoCalculateEndDate = function() {
+            const startVal = document.getElementById('memberStartDate').value;
+            if (!startVal) return;
+            const startDate = new Date(startVal);
+            startDate.setMonth(startDate.getMonth() + 1);
+            document.getElementById('memberEndDate').value = startDate.toISOString().split('T')[0];
+        };
+
+        // Save to Firebase
+        window.saveMember = async function(e) {
+            e.preventDefault();
+
+            const docId = document.getElementById('memberDocId').value;
+            const customId = document.getElementById('memberCustomId').value.trim();
+            const name = document.getElementById('memberName').value.trim();
+            const phone = document.getElementById('memberPhone').value.trim();
+            const address = document.getElementById('memberAddress').value.trim();
+            const startDate = document.getElementById('memberStartDate').value;
+            const endDate = document.getElementById('memberEndDate').value;
+
+            let photoUrl = window.currentExistingPhotoUrl || '';
+            if (capturedImageData) {
+                photoUrl = capturedImageData;
+            }
+
+            const memberPayload = {
+                customId,
+                name,
+                phone,
+                address,
+                startDate,
+                endDate,
+                photoUrl,
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                if (docId) {
+                    const docRef = window.doc(window.db, "pool_members", docId);
+                    await window.updateDoc(docRef, memberPayload);
+                    showToast("تم تحديث بيانات المشترك بنجاح", "success");
+                } else {
+                    await window.addDoc(window.collection(window.db, "pool_members"), memberPayload);
+                    showToast("تمت إضافة المشترك بنجاح!", "success");
+                }
+                closeMemberModal();
+            } catch (err) {
+                console.error("Error saving member: ", err);
+                showToast("حدث خطأ أثناء الحفظ. يجدر التحقق من الاتصال.", "error");
+            }
+        };
+
+        window.editMember = function(docId) {
+            const item = membersData.find(m => m.id === docId);
+            if (!item) return;
+
+            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل بيانات المشترك`;
+            document.getElementById('memberDocId').value = item.id;
+            document.getElementById('memberCustomId').value = item.customId || '';
+            document.getElementById('memberName').value = item.name || '';
+            document.getElementById('memberPhone').value = item.phone || '';
+            document.getElementById('memberAddress').value = item.address || '';
+            document.getElementById('memberStartDate').value = item.startDate || '';
+            document.getElementById('memberEndDate').value = item.endDate || '';
+
+            window.currentExistingPhotoUrl = item.photoUrl || '';
+            capturedImageData = null;
+
+            if (item.photoUrl) {
+                document.getElementById('photoPreview').src = item.photoUrl;
+                document.getElementById('photoPreview').classList.remove('hidden');
+                document.getElementById('photoPlaceholder').classList.add('hidden');
+                document.getElementById('removePhotoBtn').classList.remove('hidden');
+            } else {
+                resetPhotoPreview();
+            }
+
+            document.getElementById('memberModal').classList.remove('hidden');
+        };
+
+        // Delete confirmation popup handlers
+        window.promptDeleteMember = function(docId, name) {
+            memberToDeleteId = docId;
+            document.getElementById('deleteMemberName').textContent = name;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        window.closeDeleteModal = function() {
+            memberToDeleteId = null;
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+            if (!memberToDeleteId) return;
+            try {
+                await window.deleteDoc(window.doc(window.db, "pool_members", memberToDeleteId));
+                showToast("تم حذف المشترك بنجاح", "success");
+                closeDeleteModal();
+            } catch (err) {
+                console.error("Error deleting member:", err);
+                showToast("فشل عملية الحذف", "error");
+            }
+        });
+
+        window.startWebcam = async function() {
+            const video = document.getElementById('webcamVideo');
+            const container = document.getElementById('webcamContainer');
+
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
+                video.srcObject = webcamStream;
+                container.classList.remove('hidden');
+                container.classList.add('flex');
+            } catch (err) {
+                console.error("Camera error:", err);
+                showToast("تعذر الوصول للكاميرا. يرجى إعطاء الصلاحيات اللازمة.", "error");
+            }
+        };
+
+        window.stopWebcam = function() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+            const container = document.getElementById('webcamContainer');
+            container.classList.add('hidden');
+            container.classList.remove('flex');
+        };
+
+        window.captureSnapshot = function() {
+            const video = document.getElementById('webcamVideo');
+            const canvas = document.getElementById('snapshotCanvas');
+            const context = canvas.getContext('2d');
+
+            canvas.width = 350;
+            canvas.height = 350;
+
+            const minDim = Math.min(video.videoWidth, video.videoHeight);
+            const startX = (video.videoWidth - minDim) / 2;
+            const startY = (video.videoHeight - minDim) / 2;
+
+            context.drawImage(video, startX, startY, minDim, minDim, 0, 0, 350, 350);
+            capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
+
+            document.getElementById('photoPreview').src = capturedImageData;
+            document.getElementById('photoPreview').classList.remove('hidden');
+            document.getElementById('photoPlaceholder').classList.add('hidden');
+            document.getElementById('removePhotoBtn').classList.remove('hidden');
+
+            stopWebcam();
+            showToast("تم التقاط الصورة بنجاح!", "success");
+        };
+
+        window.triggerFileInput = function() {
+            document.getElementById('fileInput').click();
+        };
+
+        window.handleFileSelect = function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.getElementById('snapshotCanvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 350;
+                    canvas.height = 350;
+                    ctx.drawImage(img, 0, 0, 350, 350);
+                    
+                    capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
+                    document.getElementById('photoPreview').src = capturedImageData;
+                    document.getElementById('photoPreview').classList.remove('hidden');
+                    document.getElementById('photoPlaceholder').classList.add('hidden');
+                    document.getElementById('removePhotoBtn').classList.remove('hidden');
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.removeCapturedPhoto = function() {
+            capturedImageData = null;
+            window.currentExistingPhotoUrl = '';
+            resetPhotoPreview();
+        };
+
+        function resetPhotoPreview() {
+            document.getElementById('photoPreview').src = '';
+            document.getElementById('photoPreview').classList.add('hidden');
+            document.getElementById('photoPlaceholder').classList.remove('hidden');
+            document.getElementById('removePhotoBtn').classList.add('hidden');
+        }
+
+        function openMemberModal() {
+            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> إضافة مشترك جديد`;
+            document.getElementById('memberForm').reset();
+            document.getElementById('memberDocId').value = '';
+            window.currentExistingPhotoUrl = '';
+            capturedImageData = null;
+            
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            document.getElementById('memberStartDate').value = todayStr;
+            
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            document.getElementById('memberEndDate').value = nextMonth.toISOString().split('T')[0];
+
+            if (window.generateSmartId) window.generateSmartId();
+
+            resetPhotoPreview();
+            document.getElementById('memberModal').classList.remove('hidden');
+        }
+
+        function closeMemberModal() {
+            if (window.stopWebcam) window.stopWebcam();
+            document.getElementById('memberModal').classList.add('hidden');
+        }
+
+        function openImageModal(url, name) {
+            document.getElementById('enlargedImage').src = url;
+            document.getElementById('imageModalTitle').textContent = `صورة المشترك: ${name}`;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        function showToast(msg, type = "info") {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMessage');
+            const iconEl = document.getElementById('toastIcon');
+
+            msgEl.textContent = msg;
+            if (type === "success") {
+                iconEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+            } else if (type === "error") {
+                iconEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i>`;
+            } else {
+                iconEl.innerHTML = `<i class="fa-solid fa-info-circle text-mono-400"></i>`;
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
