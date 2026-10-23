@@ -1,17 +1,26 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Iaat Country Club | نظام إدارة المسبح الشتوي</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
                         mono: {
                             50: '#f8fafc',
                             100: '#f1f5f9',
@@ -28,7 +37,7 @@
                     },
                     fontFamily: {
                         sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
-                        mono: ['Courier New', 'Courier', 'monospace']
+                        mono: ['Consolas', 'Courier New', 'Courier', 'monospace']
                     }
                 }
             }
@@ -44,36 +53,43 @@
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: rgba(15, 23, 42, 0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(2, 6, 23, 0.5);
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #94a3b8;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #0f172a;
+            background: #0ea5e9;
         }
 
-        .mono-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 41, 59, 0.8);
         }
 
         @keyframes pulseGlow {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.02); }
+            50% { opacity: 0.75; transform: scale(1.02); }
         }
         .developer-badge {
             animation: pulseGlow 4s infinite ease-in-out;
         }
 
-        /* Terminal CMD Overlay Style */
         .cmd-terminal {
-            background-color: #050811;
+            background-color: #030712;
             color: #38bdf8;
             font-family: 'Consolas', 'Courier New', monospace;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         }
         .cmd-cursor {
             display: inline-block;
@@ -87,12 +103,11 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-mono-900 font-sans min-h-screen flex flex-col antialiased selection:bg-mono-900 selection:text-white">
+<body class="bg-slate-100 dark:bg-mono-950 text-mono-900 dark:text-mono-50 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300">
 
-    <!-- TERMINAL CMD REFRESH MODAL (شاشة المزامنة السوداء) -->
+    <!-- TERMINAL CMD REFRESH MODAL -->
     <div id="cmdTerminalModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="cmd-terminal w-full max-w-2xl rounded-2xl border border-slate-800 overflow-hidden flex flex-col shadow-2xl">
-            <!-- Header bar -->
             <div class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
@@ -100,15 +115,11 @@
                     <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
                     <span class="text-xs font-mono text-slate-400 font-bold mr-2">Iaat OS Core Sync [Terminal Engine]</span>
                 </div>
-                <span class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20 font-mono">v3.4.0 Active</span>
+                <span class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20 font-mono">v4.0.0 Pro</span>
             </div>
-            
-            <!-- Terminal Screen Content -->
             <div id="cmdTerminalLogs" class="p-5 h-80 overflow-y-auto text-xs space-y-2 dir-ltr text-left font-mono">
                 <div class="text-slate-500">// Initiating System Refresh & Data Synchronization Process...</div>
             </div>
-
-            <!-- Footer Progress -->
             <div class="bg-slate-900/80 px-5 py-3 border-t border-slate-800 flex justify-between items-center text-xs">
                 <span id="cmdStatusText" class="text-emerald-400 font-mono font-bold flex items-center gap-2">
                     <i class="fa-solid fa-spinner fa-spin"></i> جاري مزامنة قواعد البيانات والاتصال...
@@ -119,38 +130,37 @@
     </div>
 
     <!-- PASSWORD LOCK SCREEN OVERLAY -->
-    <div id="lockScreen" class="fixed inset-0 bg-mono-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-6 relative overflow-hidden">
-            
+    <div id="lockScreen" class="fixed inset-0 bg-mono-950/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-6 relative overflow-hidden">
             <div class="flex justify-center mb-2">
-                <div class="w-24 h-24 bg-slate-50 rounded-2xl p-2 border border-slate-200 shadow-sm flex items-center justify-center">
-                    <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain">
+                <div class="w-24 h-24 bg-slate-50 dark:bg-mono-800 rounded-2xl p-2 border border-slate-200 dark:border-mono-700 shadow-inner flex items-center justify-center">
+                    <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100/0ea5e9/ffffff?text=Iaat+Club'">
                 </div>
             </div>
 
             <div>
-                <h2 class="text-2xl font-black text-mono-950">Iaat Country Club</h2>
-                <p class="text-xs text-mono-600 font-bold tracking-widest uppercase mt-1">نظام إدارة المسبح الشتوي</p>
-                <p class="text-xs text-mono-500 mt-2">يرجى إدخال رمز الوصول الخاص بك للدخول للنظام</p>
+                <h2 class="text-2xl font-black text-mono-950 dark:text-white">Iaat Country Club</h2>
+                <p class="text-xs text-brand-600 dark:text-brand-500 font-bold tracking-widest uppercase mt-1">نظام إدارة المسبح الشتوي الفاخر</p>
+                <p class="text-xs text-mono-500 dark:text-mono-400 mt-2">يرجى إدخال رمز الوصول الخاص بك للدخول للنظام</p>
             </div>
 
             <form onsubmit="checkPassword(event)" class="space-y-4">
                 <div class="relative">
-                    <input type="password" id="passInput" placeholder="أدخل الرمز الخاص بك" autofocus required class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-center text-lg font-mono font-bold text-mono-950 tracking-widest focus:outline-none focus:border-mono-900 focus:ring-2 focus:ring-mono-900/10 transition">
+                    <input type="password" id="passInput" placeholder="أدخل الرمز الخاص بك" autofocus required class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-2xl px-4 py-3.5 text-center text-lg font-mono font-bold text-mono-950 dark:text-white tracking-widest focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition">
                 </div>
-                <p id="passError" class="text-xs text-rose-600 hidden font-bold flex items-center justify-center gap-1.5">
+                <p id="passError" class="text-xs text-rose-600 dark:text-rose-400 hidden font-bold flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-circle-exclamation"></i> الكود غير صحيح!
                 </p>
-                <button type="submit" class="w-full bg-mono-950 hover:bg-mono-800 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
+                <button type="submit" class="w-full bg-mono-950 hover:bg-mono-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
                     <i class="fa-solid fa-lock-open"></i>
                     <span>دخول للنظام</span>
                 </button>
             </form>
 
-            <div class="pt-4 border-t border-slate-100 text-xs space-y-3">
-                <p class="text-mono-500 font-medium">تواجه مشكلة في تسجيل الدخول؟</p>
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-right space-y-2">
-                    <textarea id="quickSupportMsg" rows="2" placeholder="اكتب رسالتك للدعم الفني..." class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-mono-900 focus:outline-none focus:border-mono-900 resize-none">مرحباً، أحتاج إلى مساعدة بخصوص نظام إدارة المسبح الشتوي.</textarea>
+            <div class="pt-4 border-t border-slate-100 dark:border-mono-800 text-xs space-y-3">
+                <p class="text-mono-500 dark:text-mono-400 font-medium">تواجه مشكلة في تسجيل الدخول؟</p>
+                <div class="bg-slate-50 dark:bg-mono-800/50 p-3 rounded-2xl border border-slate-200 dark:border-mono-700 text-right space-y-2">
+                    <textarea id="quickSupportMsg" rows="2" class="w-full bg-white dark:bg-mono-900 border border-slate-300 dark:border-mono-700 rounded-xl p-2 text-xs text-mono-900 dark:text-white focus:outline-none focus:border-brand-500 resize-none">مرحباً، أحتاج إلى مساعدة بخصوص نظام إدارة المسبح الشتوي.</textarea>
                     <button type="button" onclick="sendWhatsAppSupport()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition text-xs shadow-sm">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
                         <span>إرسال رسالة إلى الدعم الفني</span>
@@ -158,11 +168,10 @@
                 </div>
             </div>
 
-            <!-- Developer Signature -->
-            <div class="pt-3 border-t border-slate-100 text-[11px] text-mono-400 flex flex-col items-center justify-center gap-1 developer-badge">
-                <div class="flex items-center gap-1.5 text-mono-600 font-bold">
+            <div class="pt-3 border-t border-slate-100 dark:border-mono-800 text-[11px] text-mono-400 flex flex-col items-center justify-center gap-1 developer-badge">
+                <div class="flex items-center gap-1.5 text-mono-600 dark:text-mono-300 font-bold">
                     <span>تصميم وبرمجة</span>
-                    <span class="text-mono-950 font-black bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">رضا الجمعة</span>
+                    <span class="text-mono-950 dark:text-white font-black bg-slate-100 dark:bg-mono-800 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-mono-700">رضا الجمعة</span>
                 </div>
                 <span>Iaat Country Club &copy; 2026</span>
             </div>
@@ -170,216 +179,235 @@
     </div>
 
     <!-- Top Navigation Bar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm w-full">
-        <div class="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-            
-            <div class="flex items-center gap-3 sm:gap-4">
-                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-50 rounded-2xl border border-slate-200 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-                    <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain">
+    <header class="bg-white/90 dark:bg-mono-900/90 backdrop-blur-md border-b border-slate-200 dark:border-mono-800 sticky top-0 z-30 shadow-xs w-full transition-colors">
+        <div class="w-full px-3 sm:px-5 h-20 flex items-center justify-between gap-2 sm:gap-4">
+            <div class="flex items-center gap-2 sm:gap-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-50 dark:bg-mono-800 rounded-2xl border border-slate-200 dark:border-mono-700 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
+                    <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100/0ea5e9/ffffff?text=Iaat'">
                 </div>
                 <div>
-                    <h1 class="text-base sm:text-xl font-black text-mono-950 tracking-tight">
-                        Iaat Country Club
+                    <h1 class="text-base sm:text-xl font-black text-mono-950 dark:text-white tracking-tight flex items-center gap-2">
+                        <span>Iaat Country Club</span>
+                        <span class="text-[10px] bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-full hidden sm:inline-block">نظام المسبح</span>
                     </h1>
-                    <div class="flex items-center gap-2 mt-0.5">
-                        <span id="currentUserBadge" class="text-[11px] bg-slate-100 text-mono-900 px-2 py-0.5 rounded-lg font-bold border border-slate-200">المستخدم: -</span>
-                        <span id="serverStatusBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                        <span id="currentUserBadge" class="text-[11px] bg-slate-100 dark:bg-mono-800 text-mono-900 dark:text-mono-200 px-2 py-0.5 rounded-lg font-bold border border-slate-200 dark:border-mono-700">المستخدم: -</span>
+                        <span id="serverStatusBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" id="statusDot"></span>
-                            <span id="statusText">جاري الاتصال بالسيرفر...</span>
+                            <span id="statusText">جاري الاتصال...</span>
                         </span>
                     </div>
                 </div>
             </div>
 
             <!-- Actions Header -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <!-- زر إعادة تعيين وحذف جميع البيانات (خاص بـ Sandra الإدارة) -->
-                <button id="resetAllBtn" onclick="promptResetAllData()" class="hidden px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-bold transition items-center gap-2 border border-rose-200" title="تصفية وحذف كافة المشتركين (الإدارة)">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <button onclick="toggleDarkMode()" class="p-2.5 bg-slate-100 dark:bg-mono-800 hover:bg-slate-200 dark:hover:bg-mono-700 text-mono-800 dark:text-amber-400 rounded-xl text-xs font-bold transition border border-slate-200 dark:border-mono-700" title="تبديل الوضع الليلي">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline"></i>
+                </button>
+
+                <button onclick="exportToCSV()" class="p-2.5 sm:px-3 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200 dark:border-emerald-800" title="تصدير السجلات إلى CSV/Excel">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span class="hidden md:inline">تصدير اكسل</span>
+                </button>
+
+                <button id="resetAllBtn" onclick="promptResetAllData()" class="hidden p-2.5 sm:px-3 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 rounded-xl text-xs font-bold transition items-center gap-1.5 border border-rose-200 dark:border-rose-800" title="تصفية البيانات (إدارة)">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span class="hidden md:inline">تصفية الكل (إدارة)</span>
+                    <span class="hidden md:inline">تصفية الكل</span>
                 </button>
 
-                <button onclick="triggerCmdSync()" class="px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-blue-200" title="مزامنة وتحديث النظام">
+                <button onclick="triggerCmdSync()" class="p-2.5 sm:px-3 bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 text-sky-700 dark:text-sky-400 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-sky-200 dark:border-sky-800" title="مزامنة النظام">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i>
-                    <span class="hidden md:inline">مزامنة النظام</span>
+                    <span class="hidden md:inline">مزامنة</span>
                 </button>
 
-                <button onclick="toggleFullScreen()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-slate-200" title="ملء الشاشة">
+                <button onclick="toggleFullScreen()" class="p-2.5 sm:px-3 bg-slate-100 dark:bg-mono-800 hover:bg-slate-200 dark:hover:bg-mono-700 text-mono-900 dark:text-mono-100 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200 dark:border-mono-700" title="ملء الشاشة">
                     <i class="fa-solid fa-expand" id="fullScreenIcon"></i>
-                    <span class="hidden md:inline">ملء الشاشة</span>
                 </button>
 
-                <button onclick="openSystemSettingsModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-slate-200" title="إعدادات النظام">
-                    <i class="fa-solid fa-gears"></i>
-                    <span class="hidden md:inline">إعدادات النظام</span>
-                </button>
-
-                <button onclick="lockSystem()" class="px-3 py-2 bg-mono-950 hover:bg-mono-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm" title="قفل النظام">
+                <button onclick="lockSystem()" class="p-2.5 sm:px-3 bg-mono-950 hover:bg-mono-800 dark:bg-mono-800 dark:hover:bg-mono-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm" title="قفل النظام">
                     <i class="fa-solid fa-lock"></i>
-                    <span class="hidden md:inline">قفل النظام</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content Container -->
-    <main class="flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <main class="flex-1 w-full px-3 sm:px-4 py-4 space-y-4 max-w-full mx-auto">
+
+        <!-- Expiration Alert Banner -->
+        <div id="expiringAlertBanner" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between gap-3 text-amber-800 dark:text-amber-300">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 text-lg shrink-0">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm">تنبيه اشتراكات تنتهي قريباً</h4>
+                    <p class="text-xs text-amber-700 dark:text-amber-400 mt-0.5" id="expiringAlertText">يوجد مشتركون ينتهي اشتراكهم خلال 5 أيام أو أقل.</p>
+                </div>
+            </div>
+            <button onclick="filterExpiringSoon()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-xs shrink-0">
+                عرض المشتركين
+            </button>
+        </div>
 
         <!-- Stats Grid Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <div class="mono-card rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="glass-card rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-xs">
                 <div>
-                    <p class="text-xs text-mono-500 font-bold">إجمالي المشتركين</p>
-                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 mt-1 font-mono" id="statTotal">0</h3>
+                    <p class="text-xs text-mono-500 dark:text-mono-400 font-bold">إجمالي المشتركين</p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 dark:text-white mt-1 font-mono" id="statTotal">0</h3>
                 </div>
-                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-mono-950 text-white rounded-xl flex items-center justify-center text-lg shrink-0">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-mono-950 dark:bg-brand-600 text-white rounded-2xl flex items-center justify-center text-lg shrink-0 shadow-md">
                     <i class="fa-solid fa-users"></i>
                 </div>
             </div>
 
-            <div class="mono-card rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+            <div class="glass-card rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-xs">
                 <div>
-                    <p class="text-xs text-mono-500 font-bold">اشتراكات نشطة</p>
-                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 mt-1 font-mono" id="statActive">0</h3>
+                    <p class="text-xs text-mono-500 dark:text-mono-400 font-bold">اشتراكات نشطة</p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1 font-mono" id="statActive">0</h3>
                 </div>
-                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl flex items-center justify-center text-lg shrink-0">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex items-center justify-center text-lg shrink-0">
                     <i class="fa-solid fa-user-check"></i>
                 </div>
             </div>
 
-            <div class="mono-card rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+            <div class="glass-card rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-xs">
                 <div>
-                    <p class="text-xs text-mono-500 font-bold">الاشتراكات المدفوعة</p>
-                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 mt-1 font-mono" id="statPaid">0</h3>
+                    <p class="text-xs text-mono-500 dark:text-mono-400 font-bold">الاشتراكات المدفوعة</p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-sky-600 dark:text-sky-400 mt-1 font-mono" id="statPaid">0</h3>
                 </div>
-                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-blue-50 text-blue-700 border border-blue-200 rounded-xl flex items-center justify-center text-lg shrink-0">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 rounded-2xl flex items-center justify-center text-lg shrink-0">
                     <i class="fa-solid fa-wallet"></i>
                 </div>
             </div>
 
-            <div class="mono-card rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+            <div class="glass-card rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-xs">
                 <div>
-                    <p class="text-xs text-mono-500 font-bold">مشتركو هذا الشهر</p>
-                    <h3 class="text-2xl sm:text-3xl font-black text-mono-950 mt-1 font-mono" id="statThisMonth">0</h3>
+                    <p class="text-xs text-mono-500 dark:text-mono-400 font-bold">مشتركو هذا الشهر</p>
+                    <h3 class="text-2xl sm:text-3xl font-black text-purple-600 dark:text-purple-400 mt-1 font-mono" id="statThisMonth">0</h3>
                 </div>
-                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-slate-100 text-mono-900 border border-slate-300 rounded-xl flex items-center justify-center text-lg shrink-0">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800 rounded-2xl flex items-center justify-center text-lg shrink-0">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
             </div>
         </div>
 
         <!-- Controls & Filters Section -->
-        <div class="mono-card rounded-2xl p-5 space-y-5">
-            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
-                <button onclick="openMemberModal()" class="bg-mono-950 hover:bg-mono-800 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2.5 shadow-md transition duration-200 text-sm">
+        <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4 shadow-xs">
+            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+                <button onclick="openMemberModal()" class="bg-mono-950 hover:bg-mono-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white px-5 py-3 rounded-xl font-bold flex items-center justify-center gap-2.5 shadow-md transition text-sm shrink-0">
                     <i class="fa-solid fa-user-plus"></i>
                     <span>إضافة مشترك جديد</span>
                 </button>
 
-                <div class="relative flex-1 max-w-md">
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ابحث باسم المشترك، المعرّف ID، أو الكاشير..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pr-10 pl-4 py-2.5 text-sm text-mono-950 placeholder-mono-400 focus:outline-none focus:border-mono-900 focus:ring-2 focus:ring-mono-900/10 transition">
+                <div class="relative flex-1">
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ابحث باسم المشترك، المعرّف ID، رقم الهاتف..." class="w-full bg-slate-50 dark:bg-mono-800/80 border border-slate-300 dark:border-mono-700 rounded-xl pr-10 pl-4 py-2.5 text-sm text-mono-950 dark:text-white placeholder-mono-400 focus:outline-none focus:border-brand-500 transition">
                     <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3.5 text-mono-400 text-sm"></i>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100 text-xs">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-200 dark:border-mono-800 text-xs">
                 <div>
-                    <label class="text-mono-600 font-bold mb-1.5 block">حالة الاشتراك</label>
-                    <select id="statusFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-mono-900 font-semibold focus:outline-none focus:border-mono-900">
+                    <label class="text-mono-600 dark:text-mono-400 font-bold mb-1 block">حالة الاشتراك</label>
+                    <select id="statusFilter" onchange="applyFilters()" class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2 text-mono-900 dark:text-white font-semibold focus:outline-none focus:border-brand-500">
                         <option value="all">جميع الحالات</option>
-                        <option value="active">الاشتراكات النشطة فقط</option>
-                        <option value="expired">الاشتراكات المنتهية فقط</option>
+                        <option value="active">النشطة فقط</option>
+                        <option value="expired">المنتهية فقط</option>
+                        <option value="expiring">ينتهي قريباً (&lt; 5 أيام)</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="text-mono-600 font-bold mb-1.5 block">حالة الدفع</label>
-                    <select id="paymentFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-mono-900 font-semibold focus:outline-none focus:border-mono-900">
-                        <option value="all">الكل (مدفوع وغير مدفوع)</option>
+                    <label class="text-mono-600 dark:text-mono-400 font-bold mb-1 block">حالة الدفع</label>
+                    <select id="paymentFilter" onchange="applyFilters()" class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2 text-mono-900 dark:text-white font-semibold focus:outline-none focus:border-brand-500">
+                        <option value="all">الكل (مدفوع/غير مدفوع)</option>
                         <option value="paid">مدفوع فقط</option>
                         <option value="unpaid">غير مدفوع فقط</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="text-mono-600 font-bold mb-1.5 block">تاريخ الاشتراك من</label>
-                    <input type="date" id="dateFromFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-mono-900 font-semibold focus:outline-none focus:border-mono-900">
+                    <label class="text-mono-600 dark:text-mono-400 font-bold mb-1 block">من تاريخ</label>
+                    <input type="date" id="dateFromFilter" onchange="applyFilters()" class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2 text-mono-900 dark:text-white font-semibold focus:outline-none focus:border-brand-500">
                 </div>
 
                 <div>
-                    <label class="text-mono-600 font-bold mb-1.5 block">تاريخ الاشتراك إلى</label>
-                    <input type="date" id="dateToFilter" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-mono-900 font-semibold focus:outline-none focus:border-mono-900">
+                    <label class="text-mono-600 dark:text-mono-400 font-bold mb-1 block">إلى تاريخ</label>
+                    <input type="date" id="dateToFilter" onchange="applyFilters()" class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2 text-mono-900 dark:text-white font-semibold focus:outline-none focus:border-brand-500">
                 </div>
             </div>
         </div>
 
         <!-- PC Table View -->
-        <div class="hidden lg:block mono-card rounded-2xl overflow-hidden w-full">
+        <div class="hidden lg:block glass-card rounded-2xl overflow-hidden w-full shadow-xs">
             <div class="overflow-x-auto w-full">
                 <table class="w-full text-right text-sm whitespace-nowrap">
-                    <thead class="bg-mono-950 text-white uppercase text-xs font-bold tracking-wider">
+                    <thead class="bg-mono-950 dark:bg-mono-900 text-white uppercase text-xs font-bold tracking-wider">
                         <tr>
-                            <th class="py-4 px-4 text-center">الصورة</th>
-                            <th class="py-4 px-4">رقم ID</th>
-                            <th class="py-4 px-4">اسم المشترك</th>
-                            <th class="py-4 px-4">رقم الهاتف / العنوان</th>
-                            <th class="py-4 px-4">الكاشير</th>
-                            <th class="py-4 px-4">تاريخ الاشتراك</th>
-                            <th class="py-4 px-4">تاريخ الانتهاء</th>
-                            <th class="py-4 px-4 text-center">حالة الدفع</th>
-                            <th class="py-4 px-4 text-center">الحالة</th>
-                            <th class="py-4 px-4 text-center">الإجراءات</th>
+                            <th class="py-3.5 px-4 text-center">الصورة</th>
+                            <th class="py-3.5 px-4">رقم ID</th>
+                            <th class="py-3.5 px-4">اسم المشترك</th>
+                            <th class="py-3.5 px-4">رقم الهاتف / العنوان</th>
+                            <th class="py-3.5 px-4">الكاشير</th>
+                            <th class="py-3.5 px-4">تاريخ الاشتراك</th>
+                            <th class="py-3.5 px-4">تاريخ الانتهاء</th>
+                            <th class="py-3.5 px-4 text-center">الدفع</th>
+                            <th class="py-3.5 px-4 text-center">الحالة</th>
+                            <th class="py-3.5 px-4 text-center">الإجراءات</th>
                         </tr>
                     </thead>
-                    <tbody id="membersTableBody" class="divide-y divide-slate-100 text-mono-900"></tbody>
+                    <tbody id="membersTableBody" class="divide-y divide-slate-200 dark:divide-mono-800 text-mono-900 dark:text-mono-100"></tbody>
                 </table>
             </div>
         </div>
 
         <!-- Mobile Cards Grid View -->
-        <div id="membersMobileGrid" class="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-4"></div>
+        <div id="membersMobileGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-3 sm:gap-4"></div>
 
         <!-- Loader State -->
         <div id="tableLoader" class="py-16 text-center text-mono-500 flex flex-col items-center justify-center gap-3">
-            <div class="w-10 h-10 border-4 border-mono-900 border-t-transparent rounded-full animate-spin"></div>
+            <div class="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
             <p class="text-sm font-bold">جاري مزامنة سجلات المشتركين مع قاعدة البيانات...</p>
         </div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="hidden py-16 text-center text-mono-500 flex flex-col items-center justify-center gap-3 mono-card rounded-2xl">
-            <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-mono-400 text-2xl">
+        <div id="emptyState" class="hidden py-16 text-center text-mono-500 dark:text-mono-400 flex flex-col items-center justify-center gap-3 glass-card rounded-2xl">
+            <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-mono-800 flex items-center justify-center text-mono-400 text-2xl">
                 <i class="fa-solid fa-users-slash"></i>
             </div>
             <div>
-                <p class="font-bold text-base text-mono-900">لا يوجد مشتركون لعرضهم</p>
-                <p class="text-xs text-mono-500 mt-1">قم بإضافة مشترك جديد أو تعديل معايير البحث والفلترة.</p>
+                <p class="font-bold text-base text-mono-900 dark:text-white">لا يوجد مشتركون لعرضهم</p>
+                <p class="text-xs text-mono-500 dark:text-mono-400 mt-1">قم بإضافة مشترك جديد أو تعديل معايير البحث والفلترة.</p>
             </div>
         </div>
 
     </main>
 
     <!-- Professional Footer -->
-    <footer class="mt-auto bg-white border-t border-slate-200 py-6 px-4 text-center text-xs text-mono-500 space-y-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+    <footer class="mt-auto bg-white dark:bg-mono-900 border-t border-slate-200 dark:border-mono-800 py-5 px-4 text-center text-xs text-mono-500 dark:text-mono-400 space-y-2 transition-colors w-full">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
             <span>Iaat Country Club &copy; 2026 - جميع الحقوق محفوظة</span>
-            <span class="hidden sm:inline text-slate-300">|</span>
-            <button onclick="openSupportModal()" class="inline-flex items-center gap-1.5 text-emerald-700 font-bold hover:underline">
+            <span class="hidden sm:inline text-slate-300 dark:text-mono-700">|</span>
+            <button onclick="openSupportModal()" class="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold hover:underline">
                 <i class="fa-brands fa-whatsapp"></i> تواصل مع الدعم الفني
             </button>
         </div>
-        <div class="pt-2 border-t border-slate-100 max-w-xs mx-auto flex items-center justify-center gap-1.5 text-mono-700 font-bold">
-            <i class="fa-solid fa-code text-mono-950"></i>
+        <div class="pt-2 border-t border-slate-100 dark:border-mono-800 max-w-xs mx-auto flex items-center justify-center gap-1.5 text-mono-700 dark:text-mono-300 font-bold">
+            <i class="fa-solid fa-code text-brand-500"></i>
             <span>تم برمجة هذا النظام بواسطة:</span>
-            <span class="text-mono-950 font-black bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-200 shadow-xs">رضا الجمعة</span>
+            <span class="text-mono-950 dark:text-white font-black bg-slate-100 dark:bg-mono-800 px-2.5 py-0.5 rounded-lg border border-slate-200 dark:border-mono-700 shadow-xs">رضا الجمعة</span>
         </div>
     </footer>
 
     <!-- Modal: Add / Edit Member -->
     <div id="memberModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
-            <div class="bg-mono-950 text-white px-6 py-4 flex justify-between items-center shrink-0">
+        <div class="bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+            <div class="bg-mono-950 dark:bg-mono-950 text-white px-6 py-4 flex justify-between items-center shrink-0">
                 <h3 class="text-base sm:text-lg font-bold flex items-center gap-2.5" id="modalTitle">
-                    <i class="fa-solid fa-user-plus"></i>
+                    <i class="fa-solid fa-user-plus text-brand-400"></i>
                     <span>إضافة مشترك جديد</span>
                 </h3>
                 <button onclick="closeMemberModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white transition flex items-center justify-center">
@@ -392,47 +420,47 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-mono-700 mb-1.5">رقم المعرّف (ID المشترك) <span class="text-rose-600">*</span></label>
+                        <label class="block text-xs font-bold text-mono-700 dark:text-mono-300 mb-1.5">رقم المعرّف (ID) <span class="text-rose-600">*</span></label>
                         <div class="relative">
-                            <input type="text" id="memberCustomId" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-mono font-bold focus:outline-none focus:border-mono-900">
-                            <button type="button" onclick="generateSmartId()" class="absolute left-1 top-1 bottom-1 px-3 bg-mono-950 text-white text-xs font-bold rounded-lg transition hover:bg-mono-800">
+                            <input type="text" id="memberCustomId" required class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2.5 text-sm text-mono-950 dark:text-white font-mono font-bold focus:outline-none focus:border-brand-500">
+                            <button type="button" onclick="generateSmartId()" class="absolute left-1 top-1 bottom-1 px-3 bg-mono-950 dark:bg-brand-600 text-white text-xs font-bold rounded-lg transition hover:bg-mono-800">
                                 توليد ذكي
                             </button>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-mono-700 mb-1.5">الاسم الكامل <span class="text-rose-600">*</span></label>
-                        <input type="text" id="memberName" required placeholder="أدخل اسم المشترك الثلاثي..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-semibold focus:outline-none focus:border-mono-900">
+                        <label class="block text-xs font-bold text-mono-700 dark:text-mono-300 mb-1.5">الاسم الكامل <span class="text-rose-600">*</span></label>
+                        <input type="text" id="memberName" required placeholder="أدخل اسم المشترك الثلاثي..." class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2.5 text-sm text-mono-950 dark:text-white font-semibold focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-mono-700 mb-1.5">رقم الهاتف <span class="text-rose-600">*</span></label>
-                        <input type="tel" id="memberPhone" required placeholder="03-XXXXXX أو +961..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-mono font-bold focus:outline-none focus:border-mono-900">
+                        <label class="block text-xs font-bold text-mono-700 dark:text-mono-300 mb-1.5">رقم الهاتف <span class="text-rose-600">*</span></label>
+                        <input type="tel" id="memberPhone" required placeholder="03-XXXXXX أو +961..." class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2.5 text-sm text-mono-950 dark:text-white font-mono font-bold focus:outline-none focus:border-brand-500">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-mono-700 mb-1.5">عنوان السكن</label>
-                        <input type="text" id="memberAddress" placeholder="البلدة / المدينة..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-semibold focus:outline-none focus:border-mono-900">
+                        <label class="block text-xs font-bold text-mono-700 dark:text-mono-300 mb-1.5">عنوان السكن</label>
+                        <input type="text" id="memberAddress" placeholder="البلدة / المدينة..." class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2.5 text-sm text-mono-950 dark:text-white font-semibold focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-mono-700 mb-1.5">تاريخ بدء الاشتراك <span class="text-rose-600">*</span></label>
-                        <input type="date" id="memberStartDate" required onchange="autoCalculateEndDate()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-semibold focus:outline-none focus:border-mono-900">
+                        <label class="block text-xs font-bold text-mono-700 dark:text-mono-300 mb-1.5">تاريخ بدء الاشتراك <span class="text-rose-600">*</span></label>
+                        <input type="date" id="memberStartDate" required onchange="autoCalculateEndDate()" class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2.5 text-sm text-mono-950 dark:text-white font-semibold focus:outline-none focus:border-brand-500">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-mono-700 mb-1.5">تاريخ انتهاء الاشتراك <span class="text-rose-600">*</span></label>
-                        <input type="date" id="memberEndDate" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-semibold focus:outline-none focus:border-mono-900">
+                        <label class="block text-xs font-bold text-mono-700 dark:text-mono-300 mb-1.5">تاريخ الانتهاء <span class="text-rose-600">*</span></label>
+                        <input type="date" id="memberEndDate" required class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2.5 text-sm text-mono-950 dark:text-white font-semibold focus:outline-none focus:border-brand-500">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-mono-700 mb-1.5">حالة الدفع</label>
-                        <select id="memberPaymentStatus" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-mono-950 font-bold focus:outline-none focus:border-mono-900">
+                        <label class="block text-xs font-bold text-mono-700 dark:text-mono-300 mb-1.5">حالة الدفع</label>
+                        <select id="memberPaymentStatus" class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2.5 text-sm text-mono-950 dark:text-white font-bold focus:outline-none focus:border-brand-500">
                             <option value="paid">مدفوع</option>
                             <option value="unpaid">غير مدفوع</option>
                         </select>
@@ -440,10 +468,10 @@
                 </div>
 
                 <!-- Webcam Photo Section -->
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                    <label class="block text-xs font-bold text-mono-700">صورة المشترك الشخصية</label>
+                <div class="bg-slate-50 dark:bg-mono-800/50 p-4 rounded-2xl border border-slate-200 dark:border-mono-700 space-y-3">
+                    <label class="block text-xs font-bold text-mono-700 dark:text-mono-300">صورة المشترك الشخصية</label>
                     <div class="flex flex-col sm:flex-row items-center gap-4">
-                        <div class="w-28 h-28 bg-white border-2 border-dashed border-slate-300 rounded-2xl flex items-center justify-center overflow-hidden relative shrink-0 shadow-inner">
+                        <div class="w-28 h-28 bg-white dark:bg-mono-800 border-2 border-dashed border-slate-300 dark:border-mono-600 rounded-2xl flex items-center justify-center overflow-hidden relative shrink-0 shadow-inner">
                             <img id="photoPreview" src="" class="hidden w-full h-full object-cover">
                             <div id="photoPlaceholder" class="text-center text-mono-400">
                                 <i class="fa-solid fa-camera text-2xl mb-1"></i>
@@ -453,37 +481,37 @@
 
                         <div class="flex-1 space-y-2 w-full text-center sm:text-right">
                             <div class="flex flex-wrap justify-center sm:justify-start gap-2">
-                                <button type="button" onclick="startWebcam()" class="px-3 py-2 bg-mono-950 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition hover:bg-mono-800">
+                                <button type="button" onclick="startWebcam()" class="px-3 py-2 bg-mono-950 dark:bg-mono-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition hover:bg-mono-800">
                                     <i class="fa-solid fa-video"></i> فتح الكاميرا
                                 </button>
-                                <button type="button" onclick="triggerFileInput()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-mono-900 rounded-xl text-xs font-bold border border-slate-300 flex items-center gap-1.5 transition">
+                                <button type="button" onclick="triggerFileInput()" class="px-3 py-2 bg-slate-200 dark:bg-mono-800 text-mono-900 dark:text-mono-100 rounded-xl text-xs font-bold border border-slate-300 dark:border-mono-700 flex items-center gap-1.5 transition">
                                     <i class="fa-solid fa-upload"></i> رفع ملف
                                 </button>
-                                <button type="button" onclick="removeCapturedPhoto()" id="removePhotoBtn" class="hidden px-3 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-xs font-bold border border-rose-300 flex items-center gap-1.5 transition">
+                                <button type="button" onclick="removeCapturedPhoto()" id="removePhotoBtn" class="hidden px-3 py-2 bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 rounded-xl text-xs font-bold border border-rose-300 dark:border-rose-800 flex items-center gap-1.5 transition">
                                     <i class="fa-solid fa-trash"></i> حذف
                                 </button>
                             </div>
                             <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
-                            <p class="text-[11px] text-mono-500 font-medium">التقط صورة مباشرة من الجهاز أو اختر صورة مخزنة.</p>
+                            <p class="text-[11px] text-mono-500 dark:text-mono-400 font-medium">التقط صورة مباشرة من الجهاز أو اختر صورة مخزنة.</p>
                         </div>
                     </div>
 
-                    <div id="webcamContainer" class="hidden flex-col items-center gap-2 pt-3 border-t border-slate-200">
+                    <div id="webcamContainer" class="hidden flex-col items-center gap-2 pt-3 border-t border-slate-200 dark:border-mono-700">
                         <video id="webcamVideo" autoplay playsinline class="w-full max-w-xs sm:max-w-sm rounded-xl border-2 border-mono-900 bg-black"></video>
                         <div class="flex gap-2">
-                            <button type="button" onclick="captureSnapshot()" class="px-4 py-2 bg-mono-950 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+                            <button type="button" onclick="captureSnapshot()" class="px-4 py-2 bg-mono-950 dark:bg-brand-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md">
                                 <i class="fa-solid fa-camera-retro"></i> التقاط الصورة
                             </button>
-                            <button type="button" onclick="stopWebcam()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-mono-900 rounded-xl text-xs font-bold transition">
+                            <button type="button" onclick="stopWebcam()" class="px-4 py-2 bg-slate-200 dark:bg-mono-800 text-mono-900 dark:text-mono-100 rounded-xl text-xs font-bold transition">
                                 إغلاق الكاميرا
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-3 border-t border-slate-200 shrink-0">
-                    <button type="button" onclick="closeMemberModal()" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-mono-900 text-xs font-bold transition">إلغاء</button>
-                    <button type="submit" id="saveBtn" class="px-6 py-2.5 rounded-xl bg-mono-950 hover:bg-mono-800 text-white text-xs font-bold shadow-md transition flex items-center gap-2">
+                <div class="flex justify-end gap-3 pt-3 border-t border-slate-200 dark:border-mono-800 shrink-0">
+                    <button type="button" onclick="closeMemberModal()" class="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-mono-800 text-mono-900 dark:text-mono-100 text-xs font-bold transition">إلغاء</button>
+                    <button type="submit" id="saveBtn" class="px-6 py-2.5 rounded-xl bg-mono-950 dark:bg-brand-600 hover:bg-mono-800 dark:hover:bg-brand-500 text-white text-xs font-bold shadow-md transition flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>حفظ البيانات</span>
                     </button>
@@ -494,37 +522,37 @@
 
     <!-- Modal: Delete Single Member -->
     <div id="deleteModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
-            <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-100">
+        <div class="bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-100 dark:border-rose-900">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div>
-                <h4 class="text-lg font-black text-mono-950">تأكيد الحذف</h4>
-                <p class="text-xs text-mono-500 mt-1">هل أنت متأكد من رغبتك في حذف المشترك <span id="deleteMemberName" class="font-bold text-mono-900"></span>؟ لا يمكن التراجع عن هذا الإجراء.</p>
+                <h4 class="text-lg font-black text-mono-950 dark:text-white">تأكيد الحذف</h4>
+                <p class="text-xs text-mono-500 dark:text-mono-400 mt-1">هل أنت متأكد من رغبتك في حذف المشترك <span id="deleteMemberName" class="font-bold text-mono-900 dark:text-white"></span>؟ لا يمكن التراجع عن هذا الإجراء.</p>
             </div>
             <div class="flex gap-2 pt-2">
-                <button type="button" onclick="closeDeleteModal()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-mono-900 rounded-xl text-xs font-bold transition">إلغاء</button>
+                <button type="button" onclick="closeDeleteModal()" class="flex-1 py-2.5 bg-slate-200 dark:bg-mono-800 text-mono-900 dark:text-mono-100 rounded-xl text-xs font-bold transition">إلغاء</button>
                 <button type="button" id="confirmDeleteBtn" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-md">تأكيد الحذف</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Reset All Data Confirmation (Sandra Admin Only) -->
+    <!-- Modal: Reset All Data Confirmation -->
     <div id="resetAllModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
-            <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-100">
+        <div class="bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-100 dark:border-rose-900">
                 <i class="fa-solid fa-bomb"></i>
             </div>
             <div>
-                <h4 class="text-lg font-black text-rose-600">تحذير خطير: حذف كافة البيانات!</h4>
-                <p class="text-xs text-mono-600 mt-1.5 leading-relaxed">أنتِ على وشك مسح وحذف **جميع سجلات المشتركين** من قاعدة البيانات نهائياً. هذا الإجراء مخصص لإدارة الكاشير Sandra فقط ولا يمكن التراجع عنه أبداً.</p>
+                <h4 class="text-lg font-black text-rose-600 dark:text-rose-400">تحذير خطير: حذف كافة البيانات!</h4>
+                <p class="text-xs text-mono-600 dark:text-mono-300 mt-1.5 leading-relaxed">أنتِ على وشك مسح وحذف **جميع سجلات المشتركين** من قاعدة البيانات نهائياً. هذا الإجراء مخصص لإدارة الكاشير Sandra فقط ولا يمكن التراجع عنه أبداً.</p>
             </div>
-            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-right space-y-1">
-                <label class="block text-[11px] font-bold text-mono-700">أدخلي رمز Sandra الخاص بك لتأكيد الحذف الكلي:</label>
-                <input type="password" id="adminResetPasswordInput" placeholder="أدخلي الكود (sa123)" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono font-bold text-mono-950 text-center tracking-widest focus:outline-none focus:border-rose-600">
+            <div class="bg-slate-50 dark:bg-mono-800/50 p-3 rounded-2xl border border-slate-200 dark:border-mono-700 text-right space-y-1">
+                <label class="block text-[11px] font-bold text-mono-700 dark:text-mono-300">أدخلي رمز Sandra الخاص بك لتأكيد الحذف الكلي:</label>
+                <input type="password" id="adminResetPasswordInput" placeholder="أدخلي الكود (sa123)" class="w-full bg-white dark:bg-mono-900 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2 text-xs font-mono font-bold text-mono-950 dark:text-white text-center tracking-widest focus:outline-none focus:border-rose-600">
             </div>
             <div class="flex gap-2 pt-2">
-                <button type="button" onclick="closeResetAllModal()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-mono-900 rounded-xl text-xs font-bold transition">إلغاء</button>
+                <button type="button" onclick="closeResetAllModal()" class="flex-1 py-2.5 bg-slate-200 dark:bg-mono-800 text-mono-900 dark:text-mono-100 rounded-xl text-xs font-bold transition">إلغاء</button>
                 <button type="button" onclick="confirmResetAllData()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-md">مسح كافة البيانات</button>
             </div>
         </div>
@@ -532,76 +560,37 @@
 
     <!-- Modal: Full Image View -->
     <div id="imageModal" class="fixed inset-0 bg-mono-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4" onclick="closeImageModal()">
-        <div class="relative max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-4 flex flex-col items-center shadow-2xl" onclick="event.stopPropagation()">
-            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-mono-500 hover:text-mono-950 bg-slate-100 w-8 h-8 rounded-full transition flex items-center justify-center">
+        <div class="relative max-w-lg w-full bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl p-4 flex flex-col items-center shadow-2xl" onclick="event.stopPropagation()">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-mono-500 hover:text-mono-950 dark:hover:text-white bg-slate-100 dark:bg-mono-800 w-8 h-8 rounded-full transition flex items-center justify-center">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <h4 class="text-sm font-bold text-mono-950 mb-3" id="imageModalTitle">صورة المشترك</h4>
-            <img id="enlargedImage" src="" class="max-h-[70vh] w-auto rounded-2xl border border-slate-300 object-contain shadow-lg">
-        </div>
-    </div>
-
-    <!-- Modal: System Settings -->
-    <div id="systemSettingsModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 text-mono-950 flex items-center justify-center text-lg border border-slate-200">
-                        <i class="fa-solid fa-gears"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-base font-black text-mono-950">إعدادات النظام العامة</h4>
-                        <p class="text-[11px] text-mono-500 font-bold">إدارة الاتصال والخيارات</p>
-                    </div>
-                </div>
-                <button onclick="closeSystemSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-mono-700 transition flex items-center justify-center">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            
-            <div class="space-y-4 pt-2 text-xs">
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-                    <p class="font-bold text-mono-900">حالة السيرفر والمزامنة:</p>
-                    <p class="text-mono-600">النظام مرتبط بقاعدة البيانات السحابية مباشرة. عند الحاجة يمكنك بدء مزامنة الأوامر البرمجية.</p>
-                </div>
-
-                <div class="space-y-2">
-                    <button type="button" onclick="closeSystemSettingsModal(); triggerCmdSync();" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition text-xs shadow-md">
-                        <i class="fa-solid fa-terminal"></i>
-                        <span>بدء مزامنة الأوامر البرمجية (CMD Engine)</span>
-                    </button>
-                    
-                    <button type="button" onclick="closeSystemSettingsModal(); openSupportModal();" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition text-xs shadow-md">
-                        <i class="fa-brands fa-whatsapp"></i>
-                        <span>طلب دعم فني مباشر</span>
-                    </button>
-                </div>
-            </div>
+            <h4 class="text-sm font-bold text-mono-950 dark:text-white mb-3" id="imageModalTitle">صورة المشترك</h4>
+            <img id="enlargedImage" src="" class="max-h-[70vh] w-auto rounded-2xl border border-slate-300 dark:border-mono-700 object-contain shadow-lg">
         </div>
     </div>
 
     <!-- Modal: Support WhatsApp -->
     <div id="supportModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+        <div class="bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg border border-emerald-200">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg border border-emerald-200 dark:border-emerald-800">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
                     <div>
-                        <h4 class="text-base font-black text-mono-950">التواصل مع الدعم الفني</h4>
+                        <h4 class="text-base font-black text-mono-950 dark:text-white">التواصل مع الدعم الفني</h4>
                         <p class="text-[11px] text-mono-500 font-mono font-bold">+961 81 112 046</p>
                     </div>
                 </div>
-                <button onclick="closeSupportModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-mono-700 transition flex items-center justify-center">
+                <button onclick="closeSupportModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-mono-800 text-mono-700 dark:text-mono-300 transition flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             
             <div class="space-y-3 pt-2">
                 <div>
-                    <label class="block text-xs font-bold text-mono-700 mb-1.5">اكتب رسالتك أو استفسارك:</label>
-                    <textarea id="modalSupportText" rows="4" placeholder="اكتب تفاصيل المشكلة أو الطلب هنا..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-mono-900 focus:outline-none focus:border-mono-900 resize-none font-medium">مرحباً رضا، أريد الاستفسار بخصوص نظام المسبح الشتوي في إيعات كونتري كلوب:</textarea>
+                    <label class="block text-xs font-bold text-mono-700 dark:text-mono-300 mb-1.5">اكتب رسالتك أو استفسارك:</label>
+                    <textarea id="modalSupportText" rows="4" class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl p-3 text-xs text-mono-900 dark:text-white focus:outline-none focus:border-brand-500 resize-none font-medium">مرحباً رضا، أريد الاستفسار بخصوص نظام المسبح الشتوي في إيعات كونتري كلوب:</textarea>
                 </div>
                 <button type="button" onclick="submitSupportMessage()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition text-xs shadow-md">
                     <i class="fa-brands fa-whatsapp text-sm"></i>
@@ -649,9 +638,8 @@
         initFirebaseListeners();
     </script>
 
-    <!-- App Scripts -->
+    <!-- App Logic Scripts -->
     <script>
-        // حسابات الكاشير فقط - تم تحويل صلاحيات الإدارة الكاملة لـ Sandra وتلغية حساب الإدارة 2018
         const VALID_USERS = {
             "sa123": { name: "Sandra", role: "admin" },
             "le999": { name: "Lekaa", role: "cashier" },
@@ -662,6 +650,74 @@
         let webcamStream = null;
         let capturedImageData = null;
         let memberToDeleteId = null;
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function playSound(type = 'success') {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'success') {
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.15);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.2);
+                }
+            } catch(e) {}
+        }
+
+        function showToast(message, type = "info") {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            
+            if (type === "success") {
+                toastIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+            } else if (type === "error") {
+                toastIcon.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i>`;
+            } else {
+                toastIcon.innerHTML = `<i class="fa-solid fa-circle-info text-sky-400"></i>`;
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('iaat_theme_dark', isDark ? 'true' : 'false');
+        }
+
+        if (localStorage.getItem('iaat_theme_dark') === 'false') {
+            document.documentElement.classList.remove('dark');
+        }
 
         function checkPassword(e) {
             e.preventDefault();
@@ -678,7 +734,6 @@
                 
                 document.getElementById('currentUserBadge').textContent = `المستخدم: ${loggedUser}`;
                 
-                // إظهار زر التصفية الكلية فقط إذا كان الحساب هو Sandra (sa123)
                 if (inputVal === "sa123") {
                     document.getElementById('resetAllBtn').classList.remove('hidden');
                     document.getElementById('resetAllBtn').classList.add('inline-flex');
@@ -687,8 +742,10 @@
                     document.getElementById('resetAllBtn').classList.remove('inline-flex');
                 }
 
+                playSound('success');
                 showToast(`مرحباً بكِ، ${loggedUser}`, "success");
             } else {
+                playSound('error');
                 document.getElementById('passError').classList.remove('hidden');
                 document.getElementById('passInput').value = '';
                 document.getElementById('passInput').focus();
@@ -705,7 +762,6 @@
             document.getElementById('resetAllBtn').classList.add('hidden');
         }
 
-        // تحقق من حالة الجلسة عند التحميل
         if (sessionStorage.getItem('iaat_auth_session') === 'true') {
             document.getElementById('lockScreen').classList.add('hidden');
             const savedUser = sessionStorage.getItem('iaat_logged_user') || 'مستخدم عام';
@@ -731,7 +787,6 @@
             }
         }
 
-        // --- شاشة المزامنة والتحميل السوداء المبتكرة (CMD Console Simulator) ---
         function triggerCmdSync() {
             const modal = document.getElementById('cmdTerminalModal');
             const logsContainer = document.getElementById('cmdTerminalLogs');
@@ -743,7 +798,7 @@
 
             const cmdSteps = [
                 { text: "> CONNECTING to cloud host: db.iaatcountryclub.internal...", delay: 200, percent: 15 },
-                { text: "> AUTHENTICATING session token [Sandra_Admin_Node]...", delay: 500, percent: 30 },
+                { text: "> AUTHENTICATING session token...", delay: 500, percent: 30 },
                 { text: "> FETCHING latest pool_members collection from Firestore...", delay: 800, percent: 50 },
                 { text: "> SYNCING member records & profile photo payloads...", delay: 1100, percent: 75 },
                 { text: "> PURGING local memory cache & rebuilding data tables...", delay: 1400, percent: 90 },
@@ -756,7 +811,6 @@
                     line.className = index === cmdSteps.length - 1 ? 'text-emerald-400 font-bold' : 'text-sky-300';
                     line.innerHTML = `${step.text} <span class="cmd-cursor"></span>`;
                     
-                    // إزالة الـ cursor القديم
                     const oldCursors = logsContainer.querySelectorAll('.cmd-cursor');
                     oldCursors.forEach(c => c.remove());
 
@@ -776,8 +830,6 @@
             }, 2200);
         }
 
-        function openSystemSettingsModal() { document.getElementById('systemSettingsModal').classList.remove('hidden'); }
-        function closeSystemSettingsModal() { document.getElementById('systemSettingsModal').classList.add('hidden'); }
         function sendWhatsAppSupport() {
             const msg = document.getElementById('quickSupportMsg').value;
             window.open(`https://wa.me/96181112046?text=${encodeURIComponent(msg)}`, '_blank');
@@ -796,10 +848,10 @@
             const text = document.getElementById('statusText');
             text.textContent = message;
             if (isConnected) {
-                badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+                badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800";
                 dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
             } else {
-                badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200";
+                badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800";
                 dot.className = "w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse";
             }
         }
@@ -813,15 +865,44 @@
                     });
                     document.getElementById('tableLoader').classList.add('hidden');
                     updateStatistics();
+                    checkExpiringSoonAlerts();
                     applyFilters();
                     updateServerStatus(true, "متصل بالسيرفر");
                 }, (error) => {
                     console.error("Firebase error: ", error);
-                    updateServerStatus(false, "خطأ في اتصال السيرفر");
+                    updateServerStatus(false, "خطأ بالاتصال");
                 });
             } catch (err) {
                 updateServerStatus(false, "جاري التهيئة...");
             }
+        }
+
+        function checkExpiringSoonAlerts() {
+            const today = new Date();
+            let expiringCount = 0;
+
+            membersData.forEach(item => {
+                if (item.endDate) {
+                    const end = new Date(item.endDate);
+                    const diffDays = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+                    if (diffDays >= 0 && diffDays <= 5) {
+                        expiringCount++;
+                    }
+                }
+            });
+
+            const banner = document.getElementById('expiringAlertBanner');
+            if (expiringCount > 0) {
+                document.getElementById('expiringAlertText').textContent = `تنبيه: يوجد ${expiringCount} مشترك ينتهي اشتراكهم خلال 5 أيام أو أقل!`;
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function filterExpiringSoon() {
+            document.getElementById('statusFilter').value = 'expiring';
+            applyFilters();
         }
 
         window.renderMembers = function(items) {
@@ -847,42 +928,45 @@
                 const addedBy = item.addedBy || 'غير محدد';
 
                 const imgHtml = item.photoUrl ? 
-                    `<img src="${item.photoUrl}" onclick="openImageModal('${item.photoUrl}', '${escapeHtml(item.name)}')" class="w-10 h-10 rounded-xl object-cover border border-slate-300 cursor-pointer hover:scale-105 transition mx-auto">` :
-                    `<div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-mono-400 mx-auto"><i class="fa-solid fa-user text-sm"></i></div>`;
+                    `<img src="${item.photoUrl}" onclick="openImageModal('${item.photoUrl}', '${escapeHtml(item.name)}')" class="w-10 h-10 rounded-xl object-cover border border-slate-300 dark:border-mono-700 cursor-pointer hover:scale-105 transition mx-auto">` :
+                    `<div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-mono-800 border border-slate-200 dark:border-mono-700 flex items-center justify-center text-mono-400 mx-auto"><i class="fa-solid fa-user text-sm"></i></div>`;
 
                 const statusBadge = isActive ? 
-                    `<span class="px-3 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>نشط</span>` : 
-                    `<span class="px-3 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>منتهي</span>`;
+                    `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400"></span>نشط</span>` : 
+                    `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-600 dark:bg-rose-400"></span>منتهي</span>`;
 
                 const paymentBadge = isPaid ? 
-                    `<span class="px-3 py-1 rounded-full text-[11px] font-black bg-blue-100 text-blue-800 border border-blue-300 inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>مدفوع</span>` : 
-                    `<span class="px-3 py-1 rounded-full text-[11px] font-black bg-amber-100 text-amber-800 border border-amber-300 inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>غير مدفوع</span>`;
+                    `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800 inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-sky-600 dark:bg-sky-400"></span>مدفوع</span>` : 
+                    `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400"></span>غير مدفوع</span>`;
 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition duration-150";
+                tr.className = "hover:bg-slate-50 dark:hover:bg-mono-800/50 transition duration-150";
                 tr.innerHTML = `
                     <td class="py-3 px-4 text-center">${imgHtml}</td>
-                    <td class="py-3 px-4 font-mono font-bold text-mono-950">${escapeHtml(item.customId || '-')}</td>
-                    <td class="py-3 px-4 font-bold text-mono-900">${escapeHtml(item.name || '-')}</td>
+                    <td class="py-3 px-4 font-mono font-bold text-mono-950 dark:text-white">${escapeHtml(item.customId || '-')}</td>
+                    <td class="py-3 px-4 font-bold text-mono-900 dark:text-mono-100">${escapeHtml(item.name || '-')}</td>
                     <td class="py-3 px-4 text-xs">
-                        <div class="font-mono font-bold text-mono-950"><i class="fa-solid fa-phone text-[10px] ml-1 text-mono-400"></i>${escapeHtml(item.phone || '-')}</div>
-                        <div class="text-[11px] text-mono-500 font-medium truncate max-w-[150px]">${escapeHtml(item.address || 'لا يوجد عنوان')}</div>
+                        <div class="font-mono font-bold text-mono-950 dark:text-white"><i class="fa-solid fa-phone text-[10px] ml-1 text-mono-400"></i>${escapeHtml(item.phone || '-')}</div>
+                        <div class="text-[11px] text-mono-500 dark:text-mono-400 font-medium truncate max-w-[150px]">${escapeHtml(item.address || 'لا يوجد عنوان')}</div>
                     </td>
                     <td class="py-3 px-4 text-xs">
-                        <span class="bg-slate-100 text-mono-900 px-2.5 py-1 rounded-lg font-bold border border-slate-200 inline-flex items-center gap-1">
-                            <i class="fa-solid fa-user-shield text-[10px] text-mono-500"></i> ${escapeHtml(addedBy)}
+                        <span class="bg-slate-100 dark:bg-mono-800 text-mono-900 dark:text-mono-200 px-2 py-0.5 rounded-lg font-bold border border-slate-200 dark:border-mono-700 inline-flex items-center gap-1">
+                            <i class="fa-solid fa-user-shield text-[10px] text-mono-400"></i> ${escapeHtml(addedBy)}
                         </span>
                     </td>
-                    <td class="py-3 px-4 text-xs font-mono font-bold text-mono-700">${item.startDate || '-'}</td>
-                    <td class="py-3 px-4 text-xs font-mono font-bold ${isActive ? 'text-emerald-700' : 'text-rose-700'}">${item.endDate || '-'}</td>
+                    <td class="py-3 px-4 text-xs font-mono font-bold text-mono-700 dark:text-mono-300">${item.startDate || '-'}</td>
+                    <td class="py-3 px-4 text-xs font-mono font-bold ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">${item.endDate || '-'}</td>
                     <td class="py-3 px-4 text-center">${paymentBadge}</td>
                     <td class="py-3 px-4 text-center">${statusBadge}</td>
                     <td class="py-3 px-4 text-center">
-                        <div class="flex items-center justify-center gap-1.5">
-                            <button onclick="editMember('${item.id}')" class="p-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-lg transition border border-slate-300" title="تعديل">
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="renewOneMonth('${item.id}')" class="p-2 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded-lg transition border border-emerald-200 dark:border-emerald-800" title="تجديد شهر سريع">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                            <button onclick="editMember('${item.id}')" class="p-2 bg-slate-100 dark:bg-mono-800 hover:bg-slate-200 dark:hover:bg-mono-700 text-mono-900 dark:text-mono-100 rounded-lg transition border border-slate-300 dark:border-mono-700" title="تعديل">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button onclick="promptDeleteMember('${item.id}', '${escapeHtml(item.name)}')" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg transition border border-rose-200" title="حذف">
+                            <button onclick="promptDeleteMember('${item.id}', '${escapeHtml(item.name)}')" class="p-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 rounded-lg transition border border-rose-200 dark:border-rose-800" title="حذف">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -890,50 +974,54 @@
                 `;
                 tbody.appendChild(tr);
 
+                // Mobile Card Render
                 const card = document.createElement('div');
-                card.className = "mono-card rounded-2xl p-4 space-y-3 relative";
+                card.className = "glass-card rounded-2xl p-4 space-y-3 relative shadow-xs";
                 
                 const mobileImg = item.photoUrl ? 
-                    `<img src="${item.photoUrl}" onclick="openImageModal('${item.photoUrl}', '${escapeHtml(item.name)}')" class="w-12 h-12 rounded-xl object-cover border border-slate-300 shrink-0">` :
-                    `<div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-mono-400 shrink-0"><i class="fa-solid fa-user"></i></div>`;
+                    `<img src="${item.photoUrl}" onclick="openImageModal('${item.photoUrl}', '${escapeHtml(item.name)}')" class="w-12 h-12 rounded-xl object-cover border border-slate-300 dark:border-mono-700 shrink-0">` :
+                    `<div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-mono-800 border border-slate-200 dark:border-mono-700 flex items-center justify-center text-mono-400 shrink-0"><i class="fa-solid fa-user"></i></div>`;
 
                 card.innerHTML = `
-                    <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-start justify-between gap-2">
                         <div class="flex items-center gap-3">
                             ${mobileImg}
-                            <div>
-                                <h4 class="font-black text-mono-950 text-sm">${escapeHtml(item.name || '-')}</h4>
-                                <span class="text-xs font-mono font-bold text-mono-900 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 inline-block mt-0.5">${escapeHtml(item.customId || '-')}</span>
+                            <div class="min-w-0">
+                                <h4 class="font-black text-mono-950 dark:text-white text-sm truncate">${escapeHtml(item.name || '-')}</h4>
+                                <span class="text-[11px] font-mono font-bold text-mono-900 dark:text-mono-200 bg-slate-100 dark:bg-mono-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-mono-700 inline-block mt-0.5">${escapeHtml(item.customId || '-')}</span>
                             </div>
                         </div>
-                        <div class="flex flex-col gap-1 items-end">${statusBadge} ${paymentBadge}</div>
+                        <div class="flex flex-col gap-1 items-end shrink-0">${statusBadge} ${paymentBadge}</div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-xs">
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-mono-800 text-xs">
                         <div>
-                            <span class="text-mono-500 block text-[10px] font-bold">رقم الهاتف:</span>
-                            <span class="font-mono font-bold text-mono-950">${escapeHtml(item.phone || '-')}</span>
+                            <span class="text-mono-500 dark:text-mono-400 block text-[10px] font-bold">الهاتف:</span>
+                            <span class="font-mono font-bold text-mono-950 dark:text-white">${escapeHtml(item.phone || '-')}</span>
                         </div>
                         <div>
-                            <span class="text-mono-500 block text-[10px] font-bold">بواسطة:</span>
-                            <span class="font-bold text-mono-900 truncate block">${escapeHtml(addedBy)}</span>
+                            <span class="text-mono-500 dark:text-mono-400 block text-[10px] font-bold">الكاشير:</span>
+                            <span class="font-bold text-mono-900 dark:text-mono-200 truncate block">${escapeHtml(addedBy)}</span>
                         </div>
                         <div>
-                            <span class="text-mono-500 block text-[10px] font-bold">تاريخ البدء:</span>
-                            <span class="font-mono font-bold text-mono-800">${item.startDate || '-'}</span>
+                            <span class="text-mono-500 dark:text-mono-400 block text-[10px] font-bold">تاريخ البدء:</span>
+                            <span class="font-mono font-bold text-mono-800 dark:text-mono-300">${item.startDate || '-'}</span>
                         </div>
                         <div>
-                            <span class="text-mono-500 block text-[10px] font-bold">تاريخ الانتهاء:</span>
-                            <span class="font-mono font-bold ${isActive ? 'text-emerald-700' : 'text-rose-700'}">${item.endDate || '-'}</span>
+                            <span class="text-mono-500 dark:text-mono-400 block text-[10px] font-bold">تاريخ الانتهاء:</span>
+                            <span class="font-mono font-bold ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">${item.endDate || '-'}</span>
                         </div>
                     </div>
 
-                    <div class="flex gap-2 pt-2 border-t border-slate-100">
-                        <button onclick="editMember('${item.id}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-mono-900 rounded-xl transition text-xs font-bold border border-slate-300 flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-pen-to-square"></i> تعديل
+                    <div class="flex items-center gap-1.5 pt-2 border-t border-slate-200 dark:border-mono-800">
+                        <button onclick="renewOneMonth('${item.id}')" class="flex-1 py-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-xl transition text-xs font-bold border border-emerald-200 dark:border-emerald-800 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-arrows-rotate"></i> تجديد شهر
                         </button>
-                        <button onclick="promptDeleteMember('${item.id}', '${escapeHtml(item.name)}')" class="py-2 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl transition text-xs font-bold border border-rose-200 flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-trash"></i> حذف
+                        <button onclick="editMember('${item.id}')" class="py-2 px-3 bg-slate-100 dark:bg-mono-800 text-mono-900 dark:text-mono-100 rounded-xl transition text-xs font-bold border border-slate-300 dark:border-mono-700 flex items-center justify-center">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="promptDeleteMember('${item.id}', '${escapeHtml(item.name)}')" class="py-2 px-3 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 rounded-xl transition text-xs font-bold border border-rose-200 dark:border-rose-800 flex items-center justify-center">
+                            <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 `;
@@ -968,7 +1056,8 @@
             const paymentVal = document.getElementById('paymentFilter').value;
             const dateFromVal = document.getElementById('dateFromFilter').value;
             const dateToVal = document.getElementById('dateToFilter').value;
-            const todayStr = new Date().toISOString().split('T')[0];
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
 
             let filtered = membersData.filter(item => {
                 const matchesSearch = !searchVal || 
@@ -979,8 +1068,18 @@
 
                 const isActive = item.endDate >= todayStr;
                 let matchesStatus = true;
+                
                 if (statusVal === 'active') matchesStatus = isActive;
                 if (statusVal === 'expired') matchesStatus = !isActive;
+                if (statusVal === 'expiring') {
+                    if (item.endDate) {
+                        const end = new Date(item.endDate);
+                        const diffDays = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+                        matchesStatus = diffDays >= 0 && diffDays <= 5;
+                    } else {
+                        matchesStatus = false;
+                    }
+                }
 
                 let matchesPayment = true;
                 if (paymentVal === 'paid') matchesPayment = item.paymentStatus === 'paid';
@@ -994,6 +1093,75 @@
             });
 
             window.renderMembers(filtered);
+        };
+
+        window.renewOneMonth = async function(docId) {
+            const item = membersData.find(m => m.id === docId);
+            if (!item) return;
+
+            const currentEnd = item.endDate ? new Date(item.endDate) : new Date();
+            const today = new Date();
+            const baseDate = currentEnd > today ? currentEnd : today;
+            
+            baseDate.setMonth(baseDate.getMonth() + 1);
+            const newEndDateStr = baseDate.toISOString().split('T')[0];
+
+            try {
+                await window.updateDoc(window.doc(window.db, "pool_members", docId), {
+                    endDate: newEndDateStr,
+                    paymentStatus: 'paid',
+                    updatedAt: new Date().toISOString()
+                });
+                playSound('success');
+                showToast(`تم تمديد اشتراك ${item.name} شهر إضافي بنجاح!`, "success");
+            } catch (e) {
+                playSound('error');
+                showToast("حدث خطأ أثناء تجديد الاشتراك", "error");
+            }
+        };
+
+        window.openImageModal = function(url, title) {
+            document.getElementById('enlargedImage').src = url;
+            document.getElementById('imageModalTitle').textContent = `صورة المشترك: ${title}`;
+            document.getElementById('imageModal').classList.remove('hidden');
+        };
+
+        window.closeImageModal = function() {
+            document.getElementById('imageModal').classList.add('hidden');
+        };
+
+        window.exportToCSV = function() {
+            if (membersData.length === 0) {
+                showToast("لا توجد بيانات لتصديرها!", "error");
+                return;
+            }
+
+            let csvContent = "\uFEFF";
+            csvContent += "ID المشترك,الاسم الكامل,رقم الهاتف,العنوان,الكاشير,تاريخ البدء,تاريخ الانتهاء,حالة الدفع\n";
+
+            membersData.forEach(item => {
+                const row = [
+                    `"${item.customId || ''}"`,
+                    `"${item.name || ''}"`,
+                    `"${item.phone || ''}"`,
+                    `"${item.address || ''}"`,
+                    `"${item.addedBy || ''}"`,
+                    `"${item.startDate || ''}"`,
+                    `"${item.endDate || ''}"`,
+                    `"${item.paymentStatus === 'paid' ? 'مدفوع' : 'غير مدفوع'}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `iaat_pool_members_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("تم تصدير ملف الاكسل/CSV بنجاح!", "success");
         };
 
         window.generateSmartId = function() {
@@ -1021,6 +1189,108 @@
             document.getElementById('memberEndDate').value = startDate.toISOString().split('T')[0];
         };
 
+        window.openMemberModal = function() {
+            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-brand-400"></i> إضافة مشترك جديد`;
+            document.getElementById('memberDocId').value = '';
+            document.getElementById('memberForm').reset();
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('memberStartDate').value = todayStr;
+            autoCalculateEndDate();
+            generateSmartId();
+            
+            window.currentExistingPhotoUrl = '';
+            capturedImageData = null;
+            resetPhotoPreview();
+
+            document.getElementById('memberModal').classList.remove('hidden');
+        };
+
+        window.closeMemberModal = function() {
+            stopWebcam();
+            document.getElementById('memberModal').classList.add('hidden');
+        };
+
+        window.resetPhotoPreview = function() {
+            document.getElementById('photoPreview').src = '';
+            document.getElementById('photoPreview').classList.add('hidden');
+            document.getElementById('photoPlaceholder').classList.remove('hidden');
+            document.getElementById('removePhotoBtn').classList.add('hidden');
+        };
+
+        window.triggerFileInput = function() {
+            document.getElementById('fileInput').click();
+        };
+
+        window.handleFileSelect = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                capturedImageData = e.target.result;
+                document.getElementById('photoPreview').src = capturedImageData;
+                document.getElementById('photoPreview').classList.remove('hidden');
+                document.getElementById('photoPlaceholder').classList.add('hidden');
+                document.getElementById('removePhotoBtn').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.startWebcam = async function() {
+            const container = document.getElementById('webcamContainer');
+            const video = document.getElementById('webcamVideo');
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                video.srcObject = webcamStream;
+                container.classList.remove('hidden');
+                container.classList.add('flex');
+            } catch (err) {
+                showToast("تعذر الوصول للكاميرا، يرجى التأكد من الصلاحيات", "error");
+            }
+        };
+
+        window.stopWebcam = function() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+            const container = document.getElementById('webcamContainer');
+            container.classList.add('hidden');
+            container.classList.remove('flex');
+        };
+
+        window.captureSnapshot = function() {
+            const video = document.getElementById('webcamVideo');
+            const canvas = document.getElementById('snapshotCanvas');
+            if (!webcamStream) return;
+
+            canvas.width = 300;
+            canvas.height = 300;
+            const ctx = canvas.getContext('2d');
+            
+            const minDim = Math.min(video.videoWidth, video.videoHeight);
+            const startX = (video.videoWidth - minDim) / 2;
+            const startY = (video.videoHeight - minDim) / 2;
+            
+            ctx.drawImage(video, startX, startY, minDim, minDim, 0, 0, 300, 300);
+            capturedImageData = canvas.toDataURL('image/jpeg', 0.8);
+
+            document.getElementById('photoPreview').src = capturedImageData;
+            document.getElementById('photoPreview').classList.remove('hidden');
+            document.getElementById('photoPlaceholder').classList.add('hidden');
+            document.getElementById('removePhotoBtn').classList.remove('hidden');
+
+            stopWebcam();
+            showToast("تم التقاط الصورة بنجاح!", "success");
+        };
+
+        window.removeCapturedPhoto = function() {
+            capturedImageData = null;
+            window.currentExistingPhotoUrl = '';
+            resetPhotoPreview();
+        };
+
         window.saveMember = async function(e) {
             e.preventDefault();
 
@@ -1046,13 +1316,16 @@
             try {
                 if (docId) {
                     await window.updateDoc(window.doc(window.db, "pool_members", docId), memberPayload);
+                    playSound('success');
                     showToast("تم تحديث بيانات المشترك بنجاح", "success");
                 } else {
                     await window.addDoc(window.collection(window.db, "pool_members"), memberPayload);
+                    playSound('success');
                     showToast("تمت إضافة المشترك بنجاح!", "success");
                 }
                 closeMemberModal();
             } catch (err) {
+                playSound('error');
                 showToast("حدث خطأ أثناء الحفظ", "error");
             }
         };
@@ -1061,7 +1334,7 @@
             const item = membersData.find(m => m.id === docId);
             if (!item) return;
 
-            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> تعديل بيانات المشترك`;
+            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-brand-400"></i> تعديل بيانات المشترك`;
             document.getElementById('memberDocId').value = item.id;
             document.getElementById('memberCustomId').value = item.customId || '';
             document.getElementById('memberName').value = item.name || '';
@@ -1090,37 +1363,39 @@
             memberToDeleteId = docId;
             document.getElementById('deleteMemberName').textContent = name;
             document.getElementById('deleteModal').classList.remove('hidden');
-        }
+        };
 
         window.closeDeleteModal = function() {
             memberToDeleteId = null;
             document.getElementById('deleteModal').classList.add('hidden');
-        }
+        };
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
             if (!memberToDeleteId) return;
             try {
                 await window.deleteDoc(window.doc(window.db, "pool_members", memberToDeleteId));
+                playSound('success');
                 showToast("تم حذف المشترك بنجاح", "success");
                 closeDeleteModal();
             } catch (err) {
+                playSound('error');
                 showToast("فشل عملية الحذف", "error");
             }
         });
 
-        // دوال تصفية وحذف كافة البيانات (خاص بـ Sandra الإدارة)
         window.promptResetAllData = function() {
             document.getElementById('adminResetPasswordInput').value = '';
             document.getElementById('resetAllModal').classList.remove('hidden');
-        }
+        };
 
         window.closeResetAllModal = function() {
             document.getElementById('resetAllModal').classList.add('hidden');
-        }
+        };
 
         window.confirmResetAllData = async function() {
             const passInput = document.getElementById('adminResetPasswordInput').value.trim();
             if (passInput !== "sa123") {
+                playSound('error');
                 showToast("رمز Sandra غير صحيح!", "error");
                 return;
             }
@@ -1133,149 +1408,16 @@
                 querySnapshot.forEach((docSnap) => {
                     deletePromises.push(window.deleteDoc(window.doc(window.db, "pool_members", docSnap.id)));
                 });
-
+                
                 await Promise.all(deletePromises);
-                showToast("تم مسح وحذف كافة البيانات بنجاح!", "success");
+                playSound('success');
+                showToast("تم مسح جميع البيانات بنجاح!", "success");
                 closeResetAllModal();
             } catch (err) {
-                console.error("Reset all error:", err);
+                playSound('error');
                 showToast("حدث خطأ أثناء تصفية البيانات", "error");
             }
         };
-
-        window.startWebcam = async function() {
-            const video = document.getElementById('webcamVideo');
-            const container = document.getElementById('webcamContainer');
-            try {
-                webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
-                video.srcObject = webcamStream;
-                container.classList.remove('hidden');
-                container.classList.add('flex');
-            } catch (err) {
-                showToast("تعذر الوصول للكاميرا", "error");
-            }
-        };
-
-        window.stopWebcam = function() {
-            if (webcamStream) {
-                webcamStream.getTracks().forEach(track => track.stop());
-                webcamStream = null;
-            }
-            const container = document.getElementById('webcamContainer');
-            container.classList.add('hidden');
-            container.classList.remove('flex');
-        };
-
-        window.captureSnapshot = function() {
-            const video = document.getElementById('webcamVideo');
-            const canvas = document.getElementById('snapshotCanvas');
-            const context = canvas.getContext('2d');
-            canvas.width = 350;
-            canvas.height = 350;
-
-            const minDim = Math.min(video.videoWidth, video.videoHeight);
-            context.drawImage(video, (video.videoWidth - minDim) / 2, (video.videoHeight - minDim) / 2, minDim, minDim, 0, 0, 350, 350);
-            capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
-
-            document.getElementById('photoPreview').src = capturedImageData;
-            document.getElementById('photoPreview').classList.remove('hidden');
-            document.getElementById('photoPlaceholder').classList.add('hidden');
-            document.getElementById('removePhotoBtn').classList.remove('hidden');
-
-            stopWebcam();
-            showToast("تم التقاط الصورة بنجاح!", "success");
-        };
-
-        window.triggerFileInput = function() { document.getElementById('fileInput').click(); };
-
-        window.handleFileSelect = function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.getElementById('snapshotCanvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 350;
-                    canvas.height = 350;
-                    ctx.drawImage(img, 0, 0, 350, 350);
-                    capturedImageData = canvas.toDataURL('image/jpeg', 0.85);
-                    document.getElementById('photoPreview').src = capturedImageData;
-                    document.getElementById('photoPreview').classList.remove('hidden');
-                    document.getElementById('photoPlaceholder').classList.add('hidden');
-                    document.getElementById('removePhotoBtn').classList.remove('hidden');
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        };
-
-        window.removeCapturedPhoto = function() {
-            capturedImageData = null;
-            window.currentExistingPhotoUrl = '';
-            resetPhotoPreview();
-        };
-
-        function resetPhotoPreview() {
-            document.getElementById('photoPreview').src = '';
-            document.getElementById('photoPreview').classList.add('hidden');
-            document.getElementById('photoPlaceholder').classList.remove('hidden');
-            document.getElementById('removePhotoBtn').classList.add('hidden');
-        }
-
-        function openMemberModal() {
-            document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> إضافة مشترك جديد`;
-            document.getElementById('memberForm').reset();
-            document.getElementById('memberDocId').value = '';
-            document.getElementById('memberPaymentStatus').value = 'paid';
-            window.currentExistingPhotoUrl = '';
-            capturedImageData = null;
-            
-            const today = new Date();
-            document.getElementById('memberStartDate').value = today.toISOString().split('T')[0];
-            const nextMonth = new Date();
-            nextMonth.setMonth(nextMonth.getMonth() + 1);
-            document.getElementById('memberEndDate').value = nextMonth.toISOString().split('T')[0];
-
-            if (window.generateSmartId) window.generateSmartId();
-            resetPhotoPreview();
-            document.getElementById('memberModal').classList.remove('hidden');
-        }
-
-        function closeMemberModal() {
-            if (window.stopWebcam) window.stopWebcam();
-            document.getElementById('memberModal').classList.add('hidden');
-        }
-
-        function openImageModal(url, name) {
-            document.getElementById('enlargedImage').src = url;
-            document.getElementById('imageModalTitle').textContent = `صورة المشترك: ${name}`;
-            document.getElementById('imageModal').classList.remove('hidden');
-        }
-
-        function closeImageModal() { document.getElementById('imageModal').classList.add('hidden'); }
-
-        function showToast(msg, type = "info") {
-            const toast = document.getElementById('toast');
-            const msgEl = document.getElementById('toastMessage');
-            const iconEl = document.getElementById('toastIcon');
-
-            msgEl.textContent = msg;
-            if (type === "success") iconEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
-            else if (type === "error") iconEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i>`;
-            else iconEl.innerHTML = `<i class="fa-solid fa-info-circle text-mono-400"></i>`;
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            return String(text)
-                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
     </script>
 </body>
 </html>
