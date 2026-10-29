@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Iaat Country Club | نظام إدارة المسبح الشتوي</title>
     
+    <!-- Google Fonts (Tajawal & Fira Code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,6 +18,18 @@
             theme: {
                 extend: {
                     colors: {
+                        gold: {
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                        },
+                        cyanGlow: {
+                            400: '#38bdf8',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                        },
                         brand: {
                             50: '#f0f9ff',
                             100: '#e0f2fe',
@@ -36,8 +53,8 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
-                        mono: ['Consolas', 'Courier New', 'Courier', 'monospace']
+                        sans: ['Tajawal', 'Segoe UI', 'sans-serif'],
+                        mono: ['Fira Code', 'Consolas', 'monospace']
                     }
                 }
             }
@@ -59,11 +76,8 @@
             background: rgba(2, 6, 23, 0.5);
         }
         ::-webkit-scrollbar-thumb {
-            background: #94a3b8;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
             background: #0ea5e9;
+            border-radius: 4px;
         }
 
         .glass-card {
@@ -77,6 +91,58 @@
             border: 1px solid rgba(30, 41, 59, 0.8);
         }
 
+        /* Glassmorphism Luxury Styling for Lock Screen */
+        .glass-luxury {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        html:not(.dark) .glass-luxury {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08),
+                        inset 0 1px 0 rgba(255, 255, 255, 1);
+        }
+
+        .gold-glow-border {
+            position: relative;
+        }
+        .gold-glow-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.6), rgba(56, 189, 248, 0.1), rgba(234, 179, 8, 0.5));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .user-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .user-card.active {
+            border-color: rgba(250, 204, 21, 0.9) !important;
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.35);
+            transform: translateY(-3px);
+            background-color: rgba(234, 179, 8, 0.12) !important;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
         @keyframes pulseGlow {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.75; transform: scale(1.02); }
@@ -88,7 +154,7 @@
         .cmd-terminal {
             background-color: #030712;
             color: #38bdf8;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: 'Fira Code', 'Consolas', monospace;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         }
         .cmd-cursor {
@@ -115,7 +181,7 @@
                     <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
                     <span class="text-xs font-mono text-slate-400 font-bold mr-2">Iaat OS Core Sync [Terminal Engine]</span>
                 </div>
-                <span class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20 font-mono">v4.0.0 Pro</span>
+                <span class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20 font-mono">v4.2.0 Luxury</span>
             </div>
             <div id="cmdTerminalLogs" class="p-5 h-80 overflow-y-auto text-xs space-y-2 dir-ltr text-left font-mono">
                 <div class="text-slate-500">// Initiating System Refresh & Data Synchronization Process...</div>
@@ -129,36 +195,95 @@
         </div>
     </div>
 
-    <!-- PASSWORD LOCK SCREEN OVERLAY -->
-    <div id="lockScreen" class="fixed inset-0 bg-mono-950/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-6 relative overflow-hidden">
+    <!-- LUXURY PASSWORD LOCK SCREEN OVERLAY -->
+    <div id="lockScreen" class="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div id="lockCard" class="glass-luxury gold-glow-border rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-6 relative overflow-hidden my-auto">
+            
+            <!-- Logo Header -->
             <div class="flex justify-center mb-2">
-                <div class="w-24 h-24 bg-slate-50 dark:bg-mono-800 rounded-2xl p-2 border border-slate-200 dark:border-mono-700 shadow-inner flex items-center justify-center">
-                    <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100/0ea5e9/ffffff?text=Iaat+Club'">
+                <div class="relative inline-flex">
+                    <div class="w-24 h-24 bg-white dark:bg-mono-900 rounded-2xl p-2 border border-gold-500/40 shadow-inner flex items-center justify-center relative z-10">
+                        <img src="https://j.top4top.io/p_394764vo31.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100/0ea5e9/ffffff?text=Iaat+Club'">
+                    </div>
+                    <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-gold-500 to-cyanGlow-500 blur-sm opacity-40 animate-pulse"></div>
                 </div>
             </div>
 
             <div>
-                <h2 class="text-2xl font-black text-mono-950 dark:text-white">Iaat Country Club</h2>
-                <p class="text-xs text-brand-600 dark:text-brand-500 font-bold tracking-widest uppercase mt-1">نظام إدارة المسبح الشتوي الفاخر</p>
-                <p class="text-xs text-mono-500 dark:text-mono-400 mt-2">يرجى إدخال رمز الوصول الخاص بك للدخول للنظام</p>
+                <h2 class="text-2xl font-black text-slate-900 dark:text-white">Iaat Country Club</h2>
+                <p class="text-xs text-gold-600 dark:text-gold-400 font-bold tracking-widest uppercase mt-1">نظام إدارة المسبح الشتوي الفاخر</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">اختر الحساب ثم أدخل رمز المرور الخاص بك</p>
             </div>
 
+            <!-- User Selection Badges (No Profile Photos) -->
+            <div class="space-y-2 text-right">
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                    <span><i class="fa-solid fa-user-gear text-gold-500 ml-1.5"></i> اختر الحساب المطلوب:</span>
+                    <span id="selectedUserNotice" class="text-[10px] text-gold-600 dark:text-gold-400 font-bold hidden">تم التحديد</span>
+                </label>
+
+                <div class="grid grid-cols-3 gap-2.5">
+                    <!-- User 1: Sandra -->
+                    <button type="button" onclick="selectAccountUser('Sandra', this)" class="user-card group p-3 rounded-2xl bg-white/70 dark:bg-mono-800/80 border border-slate-300 dark:border-mono-700 hover:border-gold-500 text-center flex flex-col items-center gap-2 cursor-pointer transition">
+                        <div class="w-10 h-10 rounded-xl bg-gold-500/10 text-gold-600 dark:text-gold-400 border border-gold-500/30 flex items-center justify-center text-lg shadow-xs group-hover:scale-110 transition duration-200">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-[11px] font-bold text-slate-900 dark:text-white group-hover:text-gold-500 truncate">ساندرا</h4>
+                            <span class="text-[8px] text-gold-600 dark:text-gold-400 font-semibold block mt-0.5">المدير العام</span>
+                        </div>
+                    </button>
+
+                    <!-- User 2: Lekaa -->
+                    <button type="button" onclick="selectAccountUser('Lekaa', this)" class="user-card group p-3 rounded-2xl bg-white/70 dark:bg-mono-800/80 border border-slate-300 dark:border-mono-700 hover:border-cyanGlow-500 text-center flex flex-col items-center gap-2 cursor-pointer transition">
+                        <div class="w-10 h-10 rounded-xl bg-cyanGlow-500/10 text-cyanGlow-600 dark:text-cyanGlow-400 border border-cyanGlow-500/30 flex items-center justify-center text-lg shadow-xs group-hover:scale-110 transition duration-200">
+                            <i class="fa-solid fa-cash-register"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-[11px] font-bold text-slate-900 dark:text-white group-hover:text-cyanGlow-400 truncate">لقاء</h4>
+                            <span class="text-[8px] text-cyanGlow-600 dark:text-cyanGlow-400 font-semibold block mt-0.5">كاشير</span>
+                        </div>
+                    </button>
+
+                    <!-- User 3: Mohammad -->
+                    <button type="button" onclick="selectAccountUser('Mohammad', this)" class="user-card group p-3 rounded-2xl bg-white/70 dark:bg-mono-800/80 border border-slate-300 dark:border-mono-700 hover:border-emerald-500 text-center flex flex-col items-center gap-2 cursor-pointer transition">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-lg shadow-xs group-hover:scale-110 transition duration-200">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-[11px] font-bold text-slate-900 dark:text-white group-hover:text-emerald-400 truncate">محمد</h4>
+                            <span class="text-[8px] text-emerald-600 dark:text-emerald-400 font-semibold block mt-0.5">كاشير</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lock Form -->
             <form onsubmit="checkPassword(event)" class="space-y-4">
                 <div class="relative">
-                    <input type="password" id="passInput" placeholder="أدخل الرمز الخاص بك" autofocus required class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-2xl px-4 py-3.5 text-center text-lg font-mono font-bold text-mono-950 dark:text-white tracking-widest focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition">
+                    <input type="password" id="passInput" placeholder="أدخل رمز المرور..." autofocus required class="w-full bg-white dark:bg-mono-950 border border-slate-300 dark:border-mono-700 rounded-2xl px-4 py-3.5 pr-11 pl-12 text-center text-lg font-mono font-bold text-mono-950 dark:text-white tracking-widest focus:outline-none focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition">
+                    
+                    <span class="absolute right-3.5 top-3.5 text-slate-400 pointer-events-none">
+                        <i class="fa-solid fa-key text-sm"></i>
+                    </span>
+
+                    <button type="button" onclick="togglePasscodeVisibility()" class="absolute left-3 top-3.5 text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 text-sm transition" title="إظهار/إخفاء الرمز">
+                        <i class="fa-solid fa-eye" id="eyeIcon"></i>
+                    </button>
                 </div>
+
                 <p id="passError" class="text-xs text-rose-600 dark:text-rose-400 hidden font-bold flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-circle-exclamation"></i> الكود غير صحيح!
+                    <i class="fa-solid fa-circle-exclamation"></i> الرمز غير صحيح أو لا يطابق الحساب المكتوب!
                 </p>
-                <button type="submit" class="w-full bg-mono-950 hover:bg-mono-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
+
+                <button type="submit" class="w-full bg-gradient-to-r from-gold-600 via-gold-500 to-amber-600 hover:from-gold-500 hover:to-amber-500 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
                     <i class="fa-solid fa-lock-open"></i>
-                    <span>دخول للنظام</span>
+                    <span>تسجيل الدخول للنظام</span>
                 </button>
             </form>
 
-            <div class="pt-4 border-t border-slate-100 dark:border-mono-800 text-xs space-y-3">
-                <p class="text-mono-500 dark:text-mono-400 font-medium">تواجه مشكلة في تسجيل الدخول؟</p>
+            <div class="pt-4 border-t border-slate-200 dark:border-mono-800 text-xs space-y-3">
+                <p class="text-slate-600 dark:text-mono-400 font-medium">تواجه مشكلة في تسجيل الدخول؟</p>
                 <div class="bg-slate-50 dark:bg-mono-800/50 p-3 rounded-2xl border border-slate-200 dark:border-mono-700 text-right space-y-2">
                     <textarea id="quickSupportMsg" rows="2" class="w-full bg-white dark:bg-mono-900 border border-slate-300 dark:border-mono-700 rounded-xl p-2 text-xs text-mono-900 dark:text-white focus:outline-none focus:border-brand-500 resize-none">مرحباً، أحتاج إلى مساعدة بخصوص نظام إدارة المسبح الشتوي.</textarea>
                     <button type="button" onclick="sendWhatsAppSupport()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition text-xs shadow-sm">
@@ -168,8 +293,8 @@
                 </div>
             </div>
 
-            <div class="pt-3 border-t border-slate-100 dark:border-mono-800 text-[11px] text-mono-400 flex flex-col items-center justify-center gap-1 developer-badge">
-                <div class="flex items-center gap-1.5 text-mono-600 dark:text-mono-300 font-bold">
+            <div class="pt-3 border-t border-slate-200 dark:border-mono-800 text-[11px] text-mono-400 flex flex-col items-center justify-center gap-1 developer-badge">
+                <div class="flex items-center gap-1.5 text-slate-700 dark:text-mono-300 font-bold">
                     <span>تصميم وبرمجة</span>
                     <span class="text-mono-950 dark:text-white font-black bg-slate-100 dark:bg-mono-800 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-mono-700">رضا الجمعة</span>
                 </div>
@@ -207,7 +332,7 @@
                     <i class="fa-solid fa-sun hidden dark:inline"></i>
                 </button>
 
-                <!-- زر تصدير أكسل مخفي افتراضياً ولا يظهر إلا لحساب Sandra فقط -->
+                <!-- زر تصدير أكسل لحساب Sandra فقط -->
                 <button id="exportExcelBtn" onclick="exportToCSV()" class="hidden p-2.5 sm:px-3 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 rounded-xl text-xs font-bold transition items-center gap-1.5 border border-emerald-200 dark:border-emerald-800" title="تصدير السجلات إلى CSV/Excel">
                     <i class="fa-solid fa-file-excel"></i>
                     <span class="hidden md:inline">تصدير اكسل</span>
@@ -218,7 +343,6 @@
                     <span class="hidden md:inline">تصفية الكل</span>
                 </button>
 
-                <!-- زر المزامنة يظهر لحساب Sandra فقط -->
                 <button id="syncSysBtn" onclick="triggerCmdSync()" class="hidden p-2.5 sm:px-3 bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 text-sky-700 dark:text-sky-400 rounded-xl text-xs font-bold transition items-center gap-1.5 border border-sky-200 dark:border-sky-800" title="مزامنة النظام">
                     <i class="fa-solid fa-rotate" id="refreshIcon"></i>
                     <span class="hidden md:inline">مزامنة</span>
@@ -642,12 +766,14 @@
 
     <!-- App Logic Scripts -->
     <script>
+        // تعريف الحسابات مع رموز الدعم الخاصة بها والصلاحيات
         const VALID_USERS = {
             "sa123": { name: "Sandra", role: "admin" },
             "le999": { name: "Lekaa", role: "cashier" },
             "mo0123": { name: "Mohammad", role: "cashier" }
         };
 
+        let selectedAccountName = null; // الحساب المحدد حالياً
         let membersData = [];
         let webcamStream = null;
         let capturedImageData = null;
@@ -686,6 +812,13 @@
                     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
                     osc.start(ctx.currentTime);
                     osc.stop(ctx.currentTime + 0.2);
+                } else if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.08);
                 }
             } catch(e) {}
         }
@@ -712,6 +845,7 @@
         }
 
         function toggleDarkMode() {
+            playSound('click');
             document.documentElement.classList.toggle('dark');
             const isDark = document.documentElement.classList.contains('dark');
             localStorage.setItem('iaat_theme_dark', isDark ? 'true' : 'false');
@@ -721,56 +855,151 @@
             document.documentElement.classList.remove('dark');
         }
 
-        function checkPassword(e) {
-            e.preventDefault();
-            const inputVal = document.getElementById('passInput').value.trim();
-            
-            if (VALID_USERS[inputVal]) {
-                const userData = VALID_USERS[inputVal];
-                const loggedUser = userData.name;
-                
-                document.getElementById('lockScreen').classList.add('hidden');
-                sessionStorage.setItem('iaat_auth_session', 'true');
-                sessionStorage.setItem('iaat_logged_user', loggedUser);
-                sessionStorage.setItem('iaat_pass_code', inputVal);
-                
-                document.getElementById('currentUserBadge').textContent = `المستخدم: ${loggedUser}`;
-                
-                // إظهار أزرار الصلاحيات الخاصة بـ Sandra فقط (بما فيها زر تصدير أكسل)
-                if (inputVal === "sa123") {
-                    document.getElementById('exportExcelBtn').classList.remove('hidden');
-                    document.getElementById('exportExcelBtn').classList.add('inline-flex');
-                    document.getElementById('resetAllBtn').classList.remove('hidden');
-                    document.getElementById('resetAllBtn').classList.add('inline-flex');
-                    document.getElementById('syncSysBtn').classList.remove('hidden');
-                    document.getElementById('syncSysBtn').classList.add('inline-flex');
-                } else {
-                    document.getElementById('exportExcelBtn').classList.add('hidden');
-                    document.getElementById('exportExcelBtn').classList.remove('inline-flex');
-                    document.getElementById('resetAllBtn').classList.add('hidden');
-                    document.getElementById('resetAllBtn').classList.remove('inline-flex');
-                    document.getElementById('syncSysBtn').classList.add('hidden');
-                    document.getElementById('syncSysBtn').classList.remove('inline-flex');
-                }
+        // اختيار الحساب فقط دون ملء كلمة السير تلقائياً
+        function selectAccountUser(userName, element) {
+            playSound('click');
+            document.querySelectorAll('.user-card').forEach(card => card.classList.remove('active'));
+            element.classList.add('active');
 
-                playSound('success');
-                showToast(`مرحباً بكِ، ${loggedUser}`, "success");
-                applyFilters();
+            selectedAccountName = userName;
+
+            const passInput = document.getElementById('passInput');
+            passInput.value = ''; // يترك فارغاً للتحقق اليدوي
+            passInput.focus();
+
+            const notice = document.getElementById('selectedUserNotice');
+            notice.textContent = `تم اختيار حساب: ${userName}`;
+            notice.classList.remove('hidden');
+
+            document.getElementById('passError').classList.add('hidden');
+        }
+
+        function togglePasscodeVisibility() {
+            playSound('click');
+            const input = document.getElementById('passInput');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
             } else {
-                playSound('error');
-                document.getElementById('passError').classList.remove('hidden');
-                document.getElementById('passInput').value = '';
-                document.getElementById('passInput').focus();
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
             }
         }
 
+        function checkPassword(e) {
+            e.preventDefault();
+            const inputVal = document.getElementById('passInput').value.trim();
+            const lockCard = document.getElementById('lockCard');
+            
+            // تحقق من الكود المدخل والحساب المختار
+            if (VALID_USERS[inputVal]) {
+                const userData = VALID_USERS[inputVal];
+                
+                // التأكد من تطابق الحساب المكتوب برمز المرور الصحيح له
+                if (selectedAccountName && selectedAccountName !== userData.name) {
+                    playSound('error');
+                    document.getElementById('passError').textContent = `كود الدخول المكتوب لا يطابق حساب (${selectedAccountName})`;
+                    document.getElementById('passError').classList.remove('hidden');
+                    lockCard.classList.add('animate-shake');
+                    setTimeout(() => lockCard.classList.remove('animate-shake'), 450);
+                    return;
+                }
+
+                document.getElementById('passError').classList.add('hidden');
+                startLoginTerminalSync(userData, inputVal);
+            } else {
+                playSound('error');
+                document.getElementById('passError').textContent = "الرمز غير صحيح! يرجى إعادة المحاولة.";
+                document.getElementById('passError').classList.remove('hidden');
+                document.getElementById('passInput').value = '';
+                document.getElementById('passInput').focus();
+                lockCard.classList.add('animate-shake');
+                setTimeout(() => lockCard.classList.remove('animate-shake'), 450);
+            }
+        }
+
+        function startLoginTerminalSync(userData, inputVal) {
+            const modal = document.getElementById('cmdTerminalModal');
+            const logsBox = document.getElementById('cmdTerminalLogs');
+            const percentText = document.getElementById('cmdPercent');
+            const statusText = document.getElementById('cmdStatusText');
+
+            modal.classList.remove('hidden');
+            logsBox.innerHTML = '<div class="text-slate-500">// Initiating Iaat OS Auth Engine...</div>';
+
+            const steps = [
+                { text: `> CONNECTING to cloud host: db.iaatcountryclub.internal...`, delay: 150, percent: 25 },
+                { text: `> VALIDATING Passcode Token for [${userData.name}]... OK`, delay: 350, percent: 50 },
+                { text: `> SYNCING member records & permissions...`, delay: 600, percent: 80 },
+                { text: `> AUTH SUCCESS: Welcome ${userData.name}! Session Active.`, delay: 850, percent: 100 }
+            ];
+
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = index === steps.length - 1 ? 'text-emerald-400 font-bold' : 'text-sky-300';
+                    line.innerHTML = `${step.text} <span class="cmd-cursor"></span>`;
+                    
+                    const oldCursors = logsBox.querySelectorAll('.cmd-cursor');
+                    oldCursors.forEach(c => c.remove());
+
+                    logsBox.appendChild(line);
+                    logsBox.scrollTop = logsBox.scrollHeight;
+
+                    percentText.textContent = `${step.percent}%`;
+                }, step.delay);
+            });
+
+            setTimeout(() => {
+                statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> اكتملت المصادقة بنجاح!`;
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    
+                    document.getElementById('lockScreen').classList.add('hidden');
+                    sessionStorage.setItem('iaat_auth_session', 'true');
+                    sessionStorage.setItem('iaat_logged_user', userData.name);
+                    sessionStorage.setItem('iaat_pass_code', inputVal);
+                    
+                    document.getElementById('currentUserBadge').textContent = `المستخدم: ${userData.name}`;
+                    
+                    // إظهار صلاحيات الأدمن لـ Sandra فقط
+                    if (inputVal === "sa123") {
+                        document.getElementById('exportExcelBtn').classList.remove('hidden');
+                        document.getElementById('exportExcelBtn').classList.add('inline-flex');
+                        document.getElementById('resetAllBtn').classList.remove('hidden');
+                        document.getElementById('resetAllBtn').classList.add('inline-flex');
+                        document.getElementById('syncSysBtn').classList.remove('hidden');
+                        document.getElementById('syncSysBtn').classList.add('inline-flex');
+                    } else {
+                        document.getElementById('exportExcelBtn').classList.add('hidden');
+                        document.getElementById('exportExcelBtn').classList.remove('inline-flex');
+                        document.getElementById('resetAllBtn').classList.add('hidden');
+                        document.getElementById('resetAllBtn').classList.remove('inline-flex');
+                        document.getElementById('syncSysBtn').classList.add('hidden');
+                        document.getElementById('syncSysBtn').classList.remove('inline-flex');
+                    }
+
+                    playSound('success');
+                    showToast(`مرحباً بك، ${userData.name}!`, "success");
+                    applyFilters();
+                }, 400);
+            }, 1100);
+        }
+
         function lockSystem() {
+            playSound('click');
             sessionStorage.removeItem('iaat_auth_session');
             sessionStorage.removeItem('iaat_logged_user');
             sessionStorage.removeItem('iaat_pass_code');
+            selectedAccountName = null;
             document.getElementById('lockScreen').classList.remove('hidden');
             document.getElementById('passInput').value = '';
             document.getElementById('passError').classList.add('hidden');
+            document.getElementById('selectedUserNotice').classList.add('hidden');
+            document.querySelectorAll('.user-card').forEach(c => c.classList.remove('active'));
             document.getElementById('exportExcelBtn').classList.add('hidden');
             document.getElementById('resetAllBtn').classList.add('hidden');
             document.getElementById('syncSysBtn').classList.add('hidden');
@@ -793,6 +1022,7 @@
         }
 
         function toggleFullScreen() {
+            playSound('click');
             const icon = document.getElementById('fullScreenIcon');
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(() => {});
@@ -806,6 +1036,7 @@
         }
 
         function triggerCmdSync() {
+            playSound('click');
             const modal = document.getElementById('cmdTerminalModal');
             const logsContainer = document.getElementById('cmdTerminalLogs');
             const statusText = document.getElementById('cmdStatusText');
@@ -852,7 +1083,7 @@
             const msg = document.getElementById('quickSupportMsg').value;
             window.open(`https://wa.me/96181112046?text=${encodeURIComponent(msg)}`, '_blank');
         }
-        function openSupportModal() { document.getElementById('supportModal').classList.remove('hidden'); }
+        function openSupportModal() { playSound('click'); document.getElementById('supportModal').classList.remove('hidden'); }
         function closeSupportModal() { document.getElementById('supportModal').classList.add('hidden'); }
         function submitSupportMessage() {
             const msg = document.getElementById('modalSupportText').value;
@@ -1157,6 +1388,7 @@
         };
 
         window.renewOneMonth = async function(docId) {
+            playSound('click');
             const item = membersData.find(m => m.id === docId);
             if (!item) return;
 
@@ -1182,6 +1414,7 @@
         };
 
         window.openImageModal = function(url, title) {
+            playSound('click');
             document.getElementById('enlargedImage').src = url;
             document.getElementById('imageModalTitle').textContent = `صورة المشترك: ${title}`;
             document.getElementById('imageModal').classList.remove('hidden');
@@ -1192,13 +1425,16 @@
         };
 
         window.exportToCSV = function() {
+            playSound('click');
             const loggedUser = sessionStorage.getItem('iaat_logged_user') || '';
             if (loggedUser !== 'Sandra') {
+                playSound('error');
                 showToast("عذراً، هذا الإجراء مخصص لـ Sandra فقط", "error");
                 return;
             }
 
             if (membersData.length === 0) {
+                playSound('error');
                 showToast("لا توجد بيانات لتصديرها!", "error");
                 return;
             }
@@ -1228,10 +1464,12 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            playSound('success');
             showToast("تم تصدير ملف الاكسل/CSV بنجاح!", "success");
         };
 
         window.generateSmartId = function() {
+            playSound('click');
             const now = new Date();
             const yy = String(now.getFullYear()).slice(-2);
             const mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -1257,6 +1495,7 @@
         };
 
         window.openMemberModal = function() {
+            playSound('click');
             document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-brand-400"></i> إضافة مشترك جديد`;
             document.getElementById('memberDocId').value = '';
             document.getElementById('memberForm').reset();
@@ -1286,6 +1525,7 @@
         };
 
         window.triggerFileInput = function() {
+            playSound('click');
             document.getElementById('fileInput').click();
         };
 
@@ -1305,6 +1545,7 @@
         };
 
         window.startWebcam = async function() {
+            playSound('click');
             const container = document.getElementById('webcamContainer');
             const video = document.getElementById('webcamVideo');
             try {
@@ -1313,6 +1554,7 @@
                 container.classList.remove('hidden');
                 container.classList.add('flex');
             } catch (err) {
+                playSound('error');
                 showToast("تعذر الوصول للكاميرا، يرجى التأكد من الصلاحيات", "error");
             }
         };
@@ -1328,6 +1570,7 @@
         };
 
         window.captureSnapshot = function() {
+            playSound('click');
             const video = document.getElementById('webcamVideo');
             const canvas = document.getElementById('snapshotCanvas');
             if (!webcamStream) return;
@@ -1349,10 +1592,12 @@
             document.getElementById('removePhotoBtn').classList.remove('hidden');
 
             stopWebcam();
+            playSound('success');
             showToast("تم التقاط الصورة بنجاح!", "success");
         };
 
         window.removeCapturedPhoto = function() {
+            playSound('click');
             capturedImageData = null;
             window.currentExistingPhotoUrl = '';
             resetPhotoPreview();
@@ -1374,6 +1619,7 @@
             if (docId) {
                 const existingItem = membersData.find(m => m.id === docId);
                 if (existingItem && loggedUser !== 'Sandra' && existingItem.addedBy !== loggedUser) {
+                    playSound('error');
                     showToast("عذراً، لا تمتلك صلاحية تعديل هذا المشترك", "error");
                     closeMemberModal();
                     return;
@@ -1410,11 +1656,13 @@
         };
 
         window.editMember = function(docId) {
+            playSound('click');
             const item = membersData.find(m => m.id === docId);
             if (!item) return;
 
             const loggedUser = sessionStorage.getItem('iaat_logged_user') || '';
             if (loggedUser !== 'Sandra' && item.addedBy !== loggedUser) {
+                playSound('error');
                 showToast("عذراً، لا تمتلك صلاحية تعديل مشترك أضافه مستخدم آخر", "error");
                 return;
             }
@@ -1445,15 +1693,18 @@
         };
 
         window.promptDeleteMember = function(docId, name) {
+            playSound('click');
             const item = membersData.find(m => m.id === docId);
             const loggedUser = sessionStorage.getItem('iaat_logged_user') || '';
 
             if (loggedUser === 'Mohammad') {
+                playSound('error');
                 showToast("عذراً، حساب محمد لا يمتلك صلاحية الحذف نهائياً", "error");
                 return;
             }
 
             if (loggedUser !== 'Sandra' && (!item || item.addedBy !== loggedUser)) {
+                playSound('error');
                 showToast("عذراً، لا تمتلك صلاحية حذف هذا المشترك", "error");
                 return;
             }
@@ -1482,6 +1733,7 @@
         });
 
         window.promptResetAllData = function() {
+            playSound('click');
             document.getElementById('adminResetPasswordInput').value = '';
             document.getElementById('resetAllModal').classList.remove('hidden');
         };
