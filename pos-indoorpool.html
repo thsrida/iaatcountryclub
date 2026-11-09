@@ -171,6 +171,17 @@
 </head>
 <body class="bg-slate-100 dark:bg-mono-950 text-mono-900 dark:text-mono-50 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300">
 
+    <!-- SYSTEM EXPIRATION WARNING HEADER BAR -->
+    <div id="systemPayReminderBar" class="hidden bg-gradient-to-r from-amber-600 via-rose-600 to-amber-600 text-white px-4 py-2 text-center text-xs font-bold flex items-center justify-between shadow-md flex-wrap gap-2">
+        <div class="flex items-center gap-2 mx-auto">
+            <i class="fa-solid fa-triangle-exclamation animate-bounce text-amber-300 text-sm"></i>
+            <span>تنبيه الاستحقاق الشهري (تاريخ 27 من الشهر): يرجى تسديد مبلغ <b>180$</b> قبل تاريخ نهاية الشهر لتجنب قفل النظام!</span>
+        </div>
+        <button onclick="openSubscriptionDetailsModal()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-xl text-[11px] font-black border border-white/40 transition">
+            <i class="fa-solid fa-eye ml-1"></i> عرض تفاصيل 180$
+        </button>
+    </div>
+
     <!-- TERMINAL CMD REFRESH MODAL -->
     <div id="cmdTerminalModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="cmd-terminal w-full max-w-2xl rounded-2xl border border-slate-800 overflow-hidden flex flex-col shadow-2xl">
@@ -213,6 +224,12 @@
                 <h2 class="text-2xl font-black text-slate-900 dark:text-white">Iaat Country Club</h2>
                 <p class="text-xs text-gold-600 dark:text-gold-400 font-bold tracking-widest uppercase mt-1">نظام إدارة المسبح الشتوي الفاخر</p>
                 <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">يجب اختيار الحساب أولاً ثم أدخل رمز المرور</p>
+            </div>
+
+            <!-- Lock Notice Banner for Expired Subscription -->
+            <div id="lockSystemExpiredBanner" class="hidden p-3 rounded-2xl bg-rose-500/20 border border-rose-500/50 text-rose-300 text-xs font-bold text-center space-y-1">
+                <p><i class="fa-solid fa-lock text-rose-400"></i> تم إيقاف النظام لتأخر تسديد المستحقات (180$)</p>
+                <p class="text-[10px] text-rose-400">يرجى التواصل مع المبرمج رضا الجمعة لإعادة التفعيل.</p>
             </div>
 
             <!-- User Selection Badges -->
@@ -293,7 +310,7 @@
                 </div>
             </div>
 
-            <div class="pt-3 border-t border-slate-200 dark:border-mono-800 text-[11px] text-mono-400 flex flex-col items-center justify-center gap-1 developer-badge">
+            <div class="pt-3 border-t border-slate-200 dark:border-mono-800 text-[11px] text-mono-400 flex flex-col items-center justify-center gap-1 developer-badge cursor-pointer" onclick="openSystemAdminModal()">
                 <div class="flex items-center gap-1.5 text-slate-700 dark:text-mono-300 font-bold">
                     <span>تصميم وبرمجة</span>
                     <span class="text-mono-950 dark:text-white font-black bg-slate-100 dark:bg-mono-800 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-mono-700">رضا الجمعة</span>
@@ -327,6 +344,11 @@
 
             <!-- Actions Header -->
             <div class="flex items-center gap-1.5 sm:gap-2">
+                <button onclick="openSubscriptionDetailsModal()" class="p-2.5 sm:px-3 bg-gradient-to-r from-amber-500/10 to-gold-500/10 hover:from-amber-500/20 hover:to-gold-500/20 text-amber-600 dark:text-gold-400 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-amber-500/30" title="تفاصيل باقة الخدمات والاشتراك (180$)">
+                    <i class="fa-solid fa-gem text-gold-500"></i>
+                    <span class="hidden md:inline">باقة 180$</span>
+                </button>
+
                 <button onclick="toggleDarkMode()" class="p-2.5 bg-slate-100 dark:bg-mono-800 hover:bg-slate-200 dark:hover:bg-mono-700 text-mono-800 dark:text-amber-400 rounded-xl text-xs font-bold transition border border-slate-200 dark:border-mono-700" title="تبديل الوضع الليلي">
                     <i class="fa-solid fa-moon dark:hidden"></i>
                     <i class="fa-solid fa-sun hidden dark:inline"></i>
@@ -516,16 +538,109 @@
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
             <span>Iaat Country Club &copy; 2026 - جميع الحقوق محفوظة</span>
             <span class="hidden sm:inline text-slate-300 dark:text-mono-700">|</span>
+            <button onclick="openSubscriptionDetailsModal()" class="inline-flex items-center gap-1.5 text-gold-600 dark:text-gold-400 font-bold hover:underline">
+                <i class="fa-solid fa-shield-halved"></i> حزمة خدمات وكلاء النظام (180$)
+            </button>
+            <span class="hidden sm:inline text-slate-300 dark:text-mono-700">|</span>
             <button onclick="openSupportModal()" class="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold hover:underline">
                 <i class="fa-brands fa-whatsapp"></i> تواصل مع الدعم الفني
             </button>
         </div>
-        <div class="pt-2 border-t border-slate-100 dark:border-mono-800 max-w-xs mx-auto flex items-center justify-center gap-1.5 text-mono-700 dark:text-mono-300 font-bold">
+        <div class="pt-2 border-t border-slate-100 dark:border-mono-800 max-w-xs mx-auto flex items-center justify-center gap-1.5 text-mono-700 dark:text-mono-300 font-bold cursor-pointer" onclick="openSystemAdminModal()">
             <i class="fa-solid fa-code text-brand-500"></i>
             <span>تم برمجة هذا النظام بواسطة:</span>
             <span class="text-mono-950 dark:text-white font-black bg-slate-100 dark:bg-mono-800 px-2.5 py-0.5 rounded-lg border border-slate-200 dark:border-mono-700 shadow-xs">رضا الجمعة</span>
         </div>
     </footer>
+
+    <!-- MODAL: Detailed Subscription Breakdown (180$) -->
+    <div id="subscriptionDetailsModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-mono-900 border border-gold-500/30 rounded-3xl max-w-xl w-full p-6 sm:p-7 space-y-5 shadow-2xl relative my-auto">
+            
+            <button onclick="closeSubscriptionDetailsModal()" class="absolute top-5 left-5 w-8 h-8 rounded-full bg-slate-100 dark:bg-mono-800 text-mono-700 dark:text-mono-300 transition flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="flex items-center gap-3 border-b border-slate-200 dark:border-mono-800 pb-4">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-gold-500/20 to-amber-500/20 text-gold-600 dark:text-gold-400 border border-gold-500/40 flex items-center justify-center text-xl shrink-0 shadow-inner">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black text-mono-950 dark:text-white">تفاصيل باقة الخدمات والتطوير (180$)</h3>
+                    <p class="text-xs text-gold-600 dark:text-gold-400 font-bold">الحزمة الإدارية والتسويقية لمنتجع Iaat Country Club</p>
+                </div>
+            </div>
+
+            <!-- Services List Breakdown -->
+            <div class="space-y-3">
+                <p class="text-xs font-bold text-mono-700 dark:text-mono-300">يتضمن الاشتراك الشهري (180$) الخدمات المتكاملة التالية:</p>
+
+                <div class="grid grid-cols-1 gap-3">
+                    <!-- Service 1: Social Media Manager -->
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-mono-800/60 border border-slate-200 dark:border-mono-700 flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 flex items-center justify-center text-base shrink-0 mt-0.5">
+                            <i class="fa-solid fa-hashtag"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs font-black text-mono-950 dark:text-white flex items-center gap-2">
+                                <span>Social Media Manager</span>
+                                <span class="text-[9px] bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded-md font-bold">مشمول</span>
+                            </h4>
+                            <p class="text-[11px] text-mono-500 dark:text-mono-400 mt-0.5">إدارة منصات التواصل الاجتماعي، وتصميم المنشورات والحملات الإعلانية الموسمية لاستقطاب الأعضاء المسبح الشتوي.</p>
+                        </div>
+                    </div>
+
+                    <!-- Service 2: Website Management -->
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-mono-800/60 border border-slate-200 dark:border-mono-700 flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/30 flex items-center justify-center text-base shrink-0 mt-0.5">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs font-black text-mono-950 dark:text-white flex items-center gap-2">
+                                <span>Website Management</span>
+                                <span class="text-[9px] bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-md font-bold">مشمول</span>
+                            </h4>
+                            <p class="text-[11px] text-mono-500 dark:text-mono-400 mt-0.5">إدارة الموقع الإلكتروني للنادي، صيانة الواجهات، تحسين الأداء والتأكد من سرعة وسلاسة الاستجابة 24/7.</p>
+                        </div>
+                    </div>
+
+                    <!-- Service 3: System Subscription -->
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-mono-800/60 border border-slate-200 dark:border-mono-700 flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-base shrink-0 mt-0.5">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs font-black text-mono-950 dark:text-white flex items-center gap-2">
+                                <span>System Subscription (Pool OS)</span>
+                                <span class="text-[9px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md font-bold">مشمول</span>
+                            </h4>
+                            <p class="text-[11px] text-mono-500 dark:text-mono-400 mt-0.5">تشغيل واستضافة قواعد البيانات السحابية (Firebase)، وحفظ سجلات الأعضاء، وإدارة وتوليد IDs التلقائية والمزامنة.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Due Date Schedule Banner -->
+            <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-gold-500/10 to-amber-500/15 border border-gold-500/40 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-check text-gold-500"></i> موعد الدفع والاستحقاق الشهري:
+                    </span>
+                    <span class="text-xs font-mono font-black text-gold-600 dark:text-gold-400 bg-gold-500/20 px-2.5 py-0.5 rounded-lg">يوم 27 من كل شهر</span>
+                </div>
+                <p class="text-[11px] text-mono-600 dark:text-mono-300 leading-relaxed">
+                    يُرجى تسديد مبلغ <b>180$</b> في تاريخ 27 من كل شهر ميلادي لضمان استمرار تشغيل النظام والمنصات دون انقطاع.
+                </p>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button onclick="closeSubscriptionDetailsModal()" class="w-full sm:w-auto px-6 py-2.5 bg-mono-950 dark:bg-brand-600 hover:bg-mono-800 text-white rounded-xl text-xs font-bold transition shadow-md">
+                    فهمت ذلك
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal: Add / Edit Member -->
     <div id="memberModal" class="fixed inset-0 bg-mono-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
@@ -683,6 +798,45 @@
         </div>
     </div>
 
+    <!-- Modal: Owner System Admin Modal (تفعيل اشتراك النظام - خاص برضا الجمعة) -->
+    <div id="systemAdminModal" class="fixed inset-0 bg-mono-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-mono-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-gold-500 text-lg"></i>
+                    <h4 class="text-base font-black text-mono-950 dark:text-white">إدارة ترخيص وااشتراك النظام (رضا الجمعة)</h4>
+                </div>
+                <button onclick="closeSystemAdminModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-mono-800 text-mono-700 dark:text-mono-300 transition flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="sysAdminAuthForm" class="space-y-3">
+                <p class="text-xs text-mono-600 dark:text-mono-400">أدخل رمز الأمان الخاص بك  لتفعيل الاشتراك الشهري (180$):</p>
+                <input type="password" id="sysAdminPin" placeholder="أدخل رمز ..." class="w-full bg-slate-50 dark:bg-mono-800 border border-slate-300 dark:border-mono-700 rounded-xl px-3 py-2.5 text-xs font-mono text-center tracking-widest text-mono-950 dark:text-white focus:outline-none focus:border-brand-500">
+                <button type="button" onclick="unlockSystemAdminPanel()" class="w-full py-2.5 bg-mono-950 dark:bg-brand-600 text-white text-xs font-bold rounded-xl shadow-md">دخول لوحة التحكم</button>
+            </div>
+
+            <div id="sysAdminControls" class="hidden space-y-4">
+                <div class="bg-slate-50 dark:bg-mono-800/60 p-3 rounded-2xl border border-slate-200 dark:border-mono-700 space-y-1 text-xs">
+                    <p class="font-bold text-mono-900 dark:text-white">حالة الترخيص الحالية:</p>
+                    <p id="sysAdminStatusLabel" class="font-mono text-emerald-500 font-bold">نشط لشهر محدد</p>
+                </div>
+
+                <div class="space-y-2">
+                    <button type="button" onclick="activateCurrentMonthSubscription()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>تأكيد استلام (180$) وتفعيل الشهر الحالي</span>
+                    </button>
+                    <button type="button" onclick="deactivateCurrentSubscription()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-ban"></i>
+                        <span>قفل النظام فوراً (حظر الوصول)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Full Image View -->
     <div id="imageModal" class="fixed inset-0 bg-mono-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4" onclick="closeImageModal()">
         <div class="relative max-w-lg w-full bg-white dark:bg-mono-900 border border-slate-200 dark:border-mono-800 rounded-3xl p-4 flex flex-col items-center shadow-2xl" onclick="event.stopPropagation()">
@@ -736,7 +890,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyABfBoajVCS8E6u8o1fJrQUuqvS9LPBM9g",
@@ -758,9 +912,12 @@
         window.updateDoc = updateDoc;
         window.deleteDoc = deleteDoc;
         window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
         window.onSnapshot = onSnapshot;
 
         initFirebaseListeners();
+        initSystemLicenseListener();
     </script>
 
     <!-- App Logic Scripts -->
@@ -772,11 +929,17 @@
             "Mohammad": { pass: "mo0123", role: "cashier" }
         };
 
-        let selectedAccountName = null; // الحساب المحدد حالياً (إلزامي)
+        const SYSTEM_OWNER_PIN = "reda2003"; // رمز أمان لوحة المالك الخاص بك حصراً لتفعيل 180$
+
+        let selectedAccountName = null; 
         let membersData = [];
         let webcamStream = null;
         let capturedImageData = null;
         let memberToDeleteId = null;
+
+        // حالة ترخيص النظام الشهري
+        let systemActiveMonth = null;
+        let isSystemLockedByDebt = false;
 
         function escapeHtml(str) {
             if (!str) return '';
@@ -854,6 +1017,123 @@
             document.documentElement.classList.remove('dark');
         }
 
+        /* --- فتح وإغلاق نافذة تفاصيل الاشتراك 180$ --- */
+        function openSubscriptionDetailsModal() {
+            playSound('click');
+            document.getElementById('subscriptionDetailsModal').classList.remove('hidden');
+        }
+
+        function closeSubscriptionDetailsModal() {
+            document.getElementById('subscriptionDetailsModal').classList.add('hidden');
+        }
+
+        /* --- مراقبة ترخيص النظام وتذكير الدفع 180$ --- */
+        function getCurrentYearMonth() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            return `${y}-${m}`;
+        }
+
+        function initSystemLicenseListener() {
+            try {
+                window.onSnapshot(window.doc(window.db, "system_settings", "subscription"), (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        systemActiveMonth = data.activeMonth;
+                    } else {
+                        systemActiveMonth = getCurrentYearMonth();
+                    }
+                    evaluateSystemAccessState();
+                });
+            } catch(e) {
+                systemActiveMonth = getCurrentYearMonth();
+                evaluateSystemAccessState();
+            }
+        }
+
+        function evaluateSystemAccessState() {
+            const now = new Date();
+            const dayOfMonth = now.getDate();
+            const currentYM = getCurrentYearMonth();
+
+            const reminderBar = document.getElementById('systemPayReminderBar');
+            const expiredLockBanner = document.getElementById('lockSystemExpiredBanner');
+
+            // التذكير بالدفع يوم 27 وما فوق من الشهر
+            if (dayOfMonth >= 27 && systemActiveMonth <= currentYM) {
+                reminderBar.classList.remove('hidden');
+            } else {
+                reminderBar.classList.add('hidden');
+            }
+
+            // التحقق مما إذا تم تجاوز الشهر ولم يتم الدفع والتفعيل
+            if (systemActiveMonth < currentYM) {
+                isSystemLockedByDebt = true;
+                expiredLockBanner.classList.remove('hidden');
+                lockSystem(); // قفل شاشة العرض فوراً
+            } else {
+                isSystemLockedByDebt = false;
+                expiredLockBanner.classList.add('hidden');
+            }
+        }
+
+        function openSystemAdminModal() {
+            playSound('click');
+            document.getElementById('sysAdminAuthForm').classList.remove('hidden');
+            document.getElementById('sysAdminControls').classList.add('hidden');
+            document.getElementById('sysAdminPin').value = '';
+            document.getElementById('systemAdminModal').classList.remove('hidden');
+        }
+
+        function closeSystemAdminModal() {
+            document.getElementById('systemAdminModal').classList.add('hidden');
+        }
+
+        function unlockSystemAdminPanel() {
+            const pin = document.getElementById('sysAdminPin').value.trim();
+            if (pin === SYSTEM_OWNER_PIN) {
+                playSound('success');
+                document.getElementById('sysAdminAuthForm').classList.add('hidden');
+                document.getElementById('sysAdminControls').classList.remove('hidden');
+                document.getElementById('sysAdminStatusLabel').textContent = `الشهر المفعّل حالياً: ${systemActiveMonth || 'غير معروف'}`;
+            } else {
+                playSound('error');
+                showToast("رمز الأمان (reda2003) غير صحيح!", "error");
+            }
+        }
+
+        async function activateCurrentMonthSubscription() {
+            try {
+                const currentYM = getCurrentYearMonth();
+                await window.setDoc(window.doc(window.db, "system_settings", "subscription"), {
+                    activeMonth: currentYM,
+                    lastPaymentDate: new Date().toISOString(),
+                    amountPaid: 180
+                });
+                playSound('success');
+                showToast("تم تفعيل اشتراك الشهر الحالي وتحديث النظام بنجاح!", "success");
+                closeSystemAdminModal();
+            } catch(e) {
+                playSound('error');
+                showToast("حدث خطأ أثناء التفعيل السحابي", "error");
+            }
+        }
+
+        async function deactivateCurrentSubscription() {
+            try {
+                await window.setDoc(window.doc(window.db, "system_settings", "subscription"), {
+                    activeMonth: "2020-01",
+                    lastPaymentDate: new Date().toISOString()
+                });
+                playSound('error');
+                showToast("تم حظر وتوقيف النظام", "error");
+                closeSystemAdminModal();
+            } catch(e) {
+                showToast("حدث خطأ في عملية الحظر", "error");
+            }
+        }
+
         // اختيار الحساب (إلزامي قبل إدخال الرمز)
         function selectAccountUser(userName, element) {
             playSound('click');
@@ -891,11 +1171,23 @@
         // دالة التحقق من تسجيل الدخول (تشترط اختيار الحساب أولاً وتطابق كلمة المرور)
         function checkPassword(e) {
             e.preventDefault();
+
+            // فحص إغلاق النظام بإنهاء الاشتراك والتأخر عن دفع الـ 180
+            if (isSystemLockedByDebt) {
+                playSound('error');
+                const lockCard = document.getElementById('lockCard');
+                const errorElement = document.getElementById('passError');
+                errorElement.textContent = "عذراً! تم إيقاف النظام لتأخر تسديد الاشتراك الشهري (180$). اتصل بالمبرمج رضا.";
+                errorElement.classList.remove('hidden');
+                lockCard.classList.add('animate-shake');
+                setTimeout(() => lockCard.classList.remove('animate-shake'), 450);
+                return;
+            }
+
             const inputPass = document.getElementById('passInput').value.trim();
             const lockCard = document.getElementById('lockCard');
             const errorElement = document.getElementById('passError');
 
-            // الشرط الأساسي: هل تم اختيار الحساب؟
             if (!selectedAccountName) {
                 playSound('error');
                 errorElement.textContent = "يجب اختيار الحساب أولاً بالنقر على إحدى البطاقات بالأعلى!";
@@ -907,7 +1199,6 @@
 
             const userObj = VALID_USERS[selectedAccountName];
 
-            // التحقق من صحة كلمة المرور للحساب المختار
             if (userObj && userObj.pass === inputPass) {
                 errorElement.classList.add('hidden');
                 startLoginTerminalSync(selectedAccountName, userObj.pass);
