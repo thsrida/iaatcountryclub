@@ -1,97 +1,715 @@
 <!DOCTYPE html>
+
 <html lang="ar" dir="rtl">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iaat Country Club | صيانة مؤقتة</title>
-    
-    <!-- Google Fonts (Tajawal) -->
+
+    <meta name="theme-color" content="#f1f5f9">
+
+    <title>Iaat Country Club | System Update</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS CDN -->
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
+
         tailwind.config = {
+
             theme: {
+
                 extend: {
+
                     colors: {
+
                         brand: {
+
                             50: '#f0f9ff',
+
                             100: '#e0f2fe',
+
                             500: '#0ea5e9',
+
                             600: '#0284c7',
+
                             700: '#0369a1',
+
                             900: '#0c4a6e',
+
                         }
+
                     },
+
                     fontFamily: {
+
                         sans: ['Tajawal', 'Segoe UI', 'sans-serif']
+
                     }
+
                 }
+
             }
+
         }
+
     </script>
-    
-    <!-- FontAwesome Icons -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
-        .system-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+
+        * {
+
+            box-sizing: border-box;
+
         }
+
+        body {
+
+            font-family: 'Tajawal', sans-serif;
+
+        }
+
+        .system-card {
+
+            background: #ffffff;
+
+            border: 1px solid #e2e8f0;
+
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
+
+                        0 8px 10px -6px rgba(0, 0, 0, 0.01);
+
+        }
+
+        .update-btn {
+
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+
+            transition: all .25s ease;
+
+        }
+
+        .update-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 8px 20px rgba(2,132,199,.2);
+
+        }
+
+        .update-btn:disabled {
+
+            opacity: .65;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+        }
+
+        .progress-track {
+
+            height: 9px;
+
+            background: #e2e8f0;
+
+            border-radius: 30px;
+
+            overflow: hidden;
+
+        }
+
+        .progress-fill {
+
+            height: 100%;
+
+            width: 0%;
+
+            background: linear-gradient(90deg, #0284c7, #38bdf8);
+
+            border-radius: 30px;
+
+            transition: width .5s linear;
+
+        }
+
+        .timer {
+
+            font-size: 42px;
+
+            font-weight: 900;
+
+            font-variant-numeric: tabular-nums;
+
+            color: #0369a1;
+
+            letter-spacing: 2px;
+
+        }
+
+        .restart-box {
+
+            animation: appear .5s ease;
+
+        }
+
+        @keyframes appear {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(12px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0);
+
+            }
+
+        }
+
+        .pulse-icon {
+
+            animation: pulse 2s infinite;
+
+        }
+
+        @keyframes pulse {
+
+            0%, 100% {
+
+                opacity: 1;
+
+            }
+
+            50% {
+
+                opacity: .55;
+
+            }
+
+        }
+
     </style>
+
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex items-center justify-center p-4 antialiased">
 
-    <!-- Container Card -->
+<body class="bg-slate-100 text-slate-800 min-h-screen flex items-center justify-center p-4 antialiased">
+
     <div class="system-card rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center space-y-6 relative z-10">
-        
-        <!-- Logo Header -->
+
+        <!-- Logo -->
+
         <div class="flex justify-center mx-auto">
+
             <div class="w-20 h-20 bg-slate-50 rounded-2xl p-2 border border-slate-200 flex items-center justify-center shadow-sm">
-                <img src="https://j.top4top.io/p_394764vo31.png" alt="Iaat Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/80x80/0ea5e9/ffffff?text=Iaat'">
+
+                <img
+
+                    src="https://j.top4top.io/p_394764vo31.png"
+
+                    alt="Iaat Logo"
+
+                    class="w-full h-full object-contain"
+
+                    onerror="this.src='https://placehold.co/80x80/0ea5e9/ffffff?text=Iaat'">
+
             </div>
+
         </div>
 
-        <!-- Title & Subtitle -->
+        <!-- Title -->
+
         <div class="space-y-2">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> صيانة دورية مؤقتة
+
+            <span id="maintenanceBadge"
+
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+
+                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+
+                صيانة دورية مؤقتة
+
             </span>
-            <h1 class="text-2xl font-black text-slate-900">Iaat Country Club</h1>
-            <p class="text-xs text-slate-500 font-bold tracking-wide">نظام إدارة المسبح الشتوي</p>
-        </div>
 
-        <!-- Message Box -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-            <p class="text-sm font-semibold text-slate-700 leading-relaxed text-center">
-                عذراً لإنقطاع الخدمة المؤقت. نقوم حالياً بإجراء تحديثات وتحسينات على النظام لضمان أفضل أداء.
+            <h1 class="text-2xl font-black text-slate-900">
+
+                Iaat Country Club
+
+            </h1>
+
+            <p class="text-xs text-slate-500 font-bold tracking-wide">
+
+                نظام إدارة المسبح الشتوي
+
             </p>
-            <div class="p-3 bg-brand-50 rounded-lg border border-brand-100 text-center">
-                <p class="text-xs font-bold text-brand-700 flex items-center justify-center gap-1.5">
-                    <i class="fa-regular fa-clock text-brand-600"></i> سنعود للعمل فور الانتهاء من التحديثات مباشرة.
-                </p>
-            </div>
+
         </div>
 
-        <p class="text-xs text-slate-500 font-medium">
-            نشكر تفهمكم وحسن تعاونكم.
-        </p>
+        <!-- Maintenance Message -->
+
+        <div id="maintenanceSection">
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+
+                <p class="text-sm font-semibold text-slate-700 leading-relaxed text-center">
+
+                    عذراً لانقطاع الخدمة المؤقت. نقوم حالياً بإجراء تحديثات وتحسينات على النظام لضمان أفضل أداء.
+
+                </p>
+
+                <div class="p-3 bg-brand-50 rounded-lg border border-brand-100 text-center">
+
+                    <p class="text-xs font-bold text-brand-700 flex items-center justify-center gap-1.5">
+
+                        <i class="fa-regular fa-clock text-brand-600"></i>
+
+                        يرجى تحميل التحديث والانتظار حتى انتهاء العملية.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Download Button -->
+
+        <div id="downloadSection" class="space-y-3">
+
+            <button
+
+                id="downloadBtn"
+
+                onclick="startUpdate()"
+
+                class="update-btn w-full text-white font-bold py-4 px-5 rounded-xl flex items-center justify-center gap-3">
+
+                <i class="fa-solid fa-cloud-arrow-down text-lg"></i>
+
+                <span>Download Update</span>
+
+            </button>
+
+            <p class="text-xs text-slate-400">
+
+                اضغط على الزر لبدء عملية التحديث
+
+            </p>
+
+        </div>
+
+        <!-- Timer Section -->
+
+        <div id="timerSection" class="hidden space-y-5">
+
+            <div class="bg-slate-50 rounded-xl border border-slate-200 p-5 space-y-3">
+
+                <div class="flex items-center justify-center gap-2 text-brand-700">
+
+                    <i class="fa-solid fa-arrows-rotate pulse-icon"></i>
+
+                    <span class="text-sm font-bold">
+
+                        UPDATE IN PROGRESS
+
+                    </span>
+
+                </div>
+
+                <div class="timer" id="timer">
+
+                    15:00
+
+                </div>
+
+                <p class="text-xs text-slate-500">
+
+                    الوقت المتبقي لانتهاء التحديث
+
+                </p>
+
+                <div class="progress-track">
+
+                    <div class="progress-fill" id="progressBar"></div>
+
+                </div>
+
+                <div class="flex justify-between text-xs text-slate-400 font-bold">
+
+                    <span>Started</span>
+
+                    <span id="progressPercent">0%</span>
+
+                </div>
+
+            </div>
+
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-3">
+
+                <p class="text-xs text-blue-700 font-bold leading-relaxed">
+
+                    <i class="fa-solid fa-circle-info ml-1"></i>
+
+                    يرجى عدم إغلاق النظام. سيتم إعلامك عند انتهاء وقت التحديث.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Restart Section -->
+
+        <div id="restartSection" class="hidden restart-box">
+
+            <div class="bg-green-50 border border-green-200 rounded-xl p-6 space-y-4">
+
+                <div class="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+
+                    <i class="fa-solid fa-circle-check text-3xl text-green-600"></i>
+
+                </div>
+
+                <h2 class="text-xl font-black text-green-800">
+
+                    Update Completed
+
+                </h2>
+
+                <div class="bg-white border border-green-200 rounded-lg p-4">
+
+                    <p class="text-lg font-black text-green-700" dir="ltr">
+
+                        Restart POS Please
+
+                    </p>
+
+                </div>
+
+                <p class="text-xs text-green-700 font-medium">
+
+                    انتهت مدة التحديث. يرجى إعادة تشغيل جهاز POS للمتابعة.
+
+                </p>
+
+            </div>
+
+        </div>
 
         <!-- Footer -->
+
         <div class="pt-4 border-t border-slate-100 flex flex-col items-center justify-center gap-1 text-[11px] text-slate-400">
+
             <div class="flex items-center gap-1.5 text-slate-600 font-bold">
+
                 <span>تطوير وإشراف:</span>
-                <span class="text-slate-800 font-black bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">رضا الجمعة</span>
+
+                <span class="text-slate-800 font-black bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
+
+                    رضا الجمعة
+
+                </span>
+
             </div>
+
             <span>Iaat Country Club &copy; 2026</span>
+
         </div>
 
     </div>
 
+<script>
+
+// ========================================
+
+// UPDATE SETTINGS
+
+// ========================================
+
+const UPDATE_DURATION = 15 * 60 * 1000;
+
+const STORAGE_KEY = "iaat_pos_update_end_time";
+
+let countdownInterval = null;
+
+let endTime = null;
+
+// ========================================
+
+// ELEMENTS
+
+// ========================================
+
+const downloadBtn = document.getElementById("downloadBtn");
+
+const downloadSection = document.getElementById("downloadSection");
+
+const timerSection = document.getElementById("timerSection");
+
+const maintenanceSection = document.getElementById("maintenanceSection");
+
+const restartSection = document.getElementById("restartSection");
+
+const timerElement = document.getElementById("timer");
+
+const progressBar = document.getElementById("progressBar");
+
+const progressPercent = document.getElementById("progressPercent");
+
+const maintenanceBadge = document.getElementById("maintenanceBadge");
+
+// ========================================
+
+// START UPDATE
+
+// ========================================
+
+function startUpdate() {
+
+    // Prevent restarting an active countdown
+
+    if (localStorage.getItem(STORAGE_KEY)) {
+
+        return;
+
+    }
+
+    // Save the exact end time
+
+    endTime = Date.now() + UPDATE_DURATION;
+
+    localStorage.setItem(STORAGE_KEY, endTime.toString());
+
+    downloadSection.classList.add("hidden");
+
+    maintenanceSection.classList.add("hidden");
+
+    maintenanceBadge.classList.add("hidden");
+
+    timerSection.classList.remove("hidden");
+
+    runCountdown();
+
+}
+
+// ========================================
+
+// COUNTDOWN
+
+// ========================================
+
+function runCountdown() {
+
+    if (countdownInterval) {
+
+        clearInterval(countdownInterval);
+
+    }
+
+    const savedTime = localStorage.getItem(STORAGE_KEY);
+
+    if (!savedTime) {
+
+        return;
+
+    }
+
+    endTime = Number(savedTime);
+
+    updateTimer();
+
+    countdownInterval = setInterval(updateTimer, 1000);
+
+}
+
+// ========================================
+
+// UPDATE TIMER DISPLAY
+
+// ========================================
+
+function updateTimer() {
+
+    const remaining = Math.max(0, endTime - Date.now());
+
+    const totalSeconds = Math.ceil(remaining / 1000);
+
+    const minutes = Math.floor(totalSeconds / 60);
+
+    const seconds = totalSeconds % 60;
+
+    timerElement.textContent =
+
+        String(minutes).padStart(2, "0") +
+
+        ":" +
+
+        String(seconds).padStart(2, "0");
+
+    // Progress calculation
+
+    const elapsed = UPDATE_DURATION - remaining;
+
+    const percentage = Math.min(
+
+        100,
+
+        Math.max(0, (elapsed / UPDATE_DURATION) * 100)
+
+    );
+
+    progressBar.style.width = percentage + "%";
+
+    progressPercent.textContent =
+
+        Math.floor(percentage) + "%";
+
+    // Finish
+
+    if (remaining <= 0) {
+
+        finishUpdate();
+
+    }
+
+}
+
+// ========================================
+
+// FINISH UPDATE
+
+// ========================================
+
+function finishUpdate() {
+
+    if (countdownInterval) {
+
+        clearInterval(countdownInterval);
+
+        countdownInterval = null;
+
+    }
+
+    timerElement.textContent = "00:00";
+
+    progressBar.style.width = "100%";
+
+    progressPercent.textContent = "100%";
+
+    timerSection.classList.add("hidden");
+
+    maintenanceSection.classList.add("hidden");
+
+    downloadSection.classList.add("hidden");
+
+    maintenanceBadge.classList.add("hidden");
+
+    restartSection.classList.remove("hidden");
+
+    // Keep completion saved so refresh won't restart the timer
+
+    localStorage.setItem(STORAGE_KEY, "completed");
+
+}
+
+// ========================================
+
+// RESTORE STATE AFTER REFRESH
+
+// ========================================
+
+function restoreUpdate() {
+
+    const savedTime = localStorage.getItem(STORAGE_KEY);
+
+    if (!savedTime) {
+
+        return;
+
+    }
+
+    // Already completed
+
+    if (savedTime === "completed") {
+
+        downloadSection.classList.add("hidden");
+
+        maintenanceSection.classList.add("hidden");
+
+        maintenanceBadge.classList.add("hidden");
+
+        restartSection.classList.remove("hidden");
+
+        return;
+
+    }
+
+    // Update still running
+
+    endTime = Number(savedTime);
+
+    downloadSection.classList.add("hidden");
+
+    maintenanceSection.classList.add("hidden");
+
+    maintenanceBadge.classList.add("hidden");
+
+    timerSection.classList.remove("hidden");
+
+    if (endTime <= Date.now()) {
+
+        finishUpdate();
+
+    } else {
+
+        runCountdown();
+
+    }
+
+}
+
+// ========================================
+
+// INITIALIZE
+
+// ========================================
+
+restoreUpdate();
+
+// ========================================
+
+// SYNC MULTIPLE TABS
+
+// ========================================
+
+window.addEventListener("storage", function(event) {
+
+    if (event.key === STORAGE_KEY) {
+
+        restoreUpdate();
+
+    }
+
+});
+
+</script>
+
 </body>
+
 </html>
